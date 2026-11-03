@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#04060b">
-<meta name="description" content="A live market terminal with Setareh, a voice analyst you can talk to: prices, insider filings, Congress trades, macro, crypto and news, refreshed every few minutes.">
+<meta name="theme-color" content="#0b0b0e">
+<meta name="description" content="Caesar, a voice strategist you can talk to, at the centre of a live intelligence terminal: markets, insider filings, Congress trades, macro, crypto and news, refreshed every few minutes.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://montezuma360.github.io/koochooloo/app.html">
 <meta property="og:title" content="Koochooloo Constellation">
-<meta property="og:description" content="Live prices, SEC insider filings and Congress trades in one terminal, read to you by Setareh, your AI analyst.">
+<meta property="og:description" content="Caesar, your private chief strategist: live markets, insider filings, Congress trades and global intelligence in one terminal.">
 <meta property="og:image" content="https://montezuma360.github.io/koochooloo/preview.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -16,30 +16,31 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.34' cy='.3' r='.8'%3E%3Cstop offset='0' stop-color='%23d9fff4'/%3E%3Cstop offset='.22' stop-color='%233ee6b0'/%3E%3Cstop offset='.58' stop-color='%233a7bff'/%3E%3Cstop offset='1' stop-color='%236a3bd6'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23g)'/%3E%3C/svg%3E">
 <title>Koochooloo Constellation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@700&text=%D8%A7%D8%B2%20%D8%AA%D9%88%20%D8%AD%D8%B1%DA%A9%D8%AA%D8%8C%20%D8%A7%D8%B2%20%D8%AE%D8%AF%D8%A7%20%D8%A8%D8%B1%DA%A9%D8%AA&display=swap">
 <style>
 /* Layout: ranked helix scene (rank = height, size = return, colour = party); ranking list top-left, detail right (bottom sheet on phones), control bar bottom. */
 :root {
-  --bg: #04060b;
-  --panel: rgba(9, 14, 26, 0.8);
-  --line: #1b2a45;
-  --fg: #d8e4f6;
-  --dim: #8396b6;
-  --buy: #3ee6b0;
-  --sell: #e85dff;
-  --dem: #5aa2ff;
-  --rep: #ff8a4c;
-  --exec: #ffd166;
-  --other: #b9c4d9;
-  --display: "Chakra Petch", "Segoe UI", sans-serif;
+  --bg: #0b0b0e;
+  --panel: rgba(17, 17, 22, 0.84);
+  --line: #2b2823;
+  --fg: #ece6d9;
+  --dim: #9b9384;
+  --buy: #4fae8a;
+  --sell: #c4505a;
+  --dem: #6f8fc9;
+  --rep: #c98a5a;
+  --exec: #b8975a;
+  --other: #a9a59c;
+  --display: "Cinzel", "Trajan Pro", Georgia, serif;
   --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   color-scheme: dark;
 }
 html, body { height: 100%; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 13px/1.45 var(--mono); overflow: hidden; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 13.5px/1.5 var(--sans, "Manrope", system-ui, sans-serif); overflow: hidden; }
 canvas#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
 .panel { position: fixed; background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-sizing: border-box; }
-button { font-family: var(--mono); }
+button { font-family: var(--sans, "Manrope", system-ui, sans-serif); }
 button:focus-visible, summary:focus-visible { outline: 2px solid var(--buy); outline-offset: 2px; }
 
 #head { top: max(16px, env(safe-area-inset-top, 0px)); left: max(16px, env(safe-area-inset-left, 0px)); width: min(350px, calc(100vw - 32px)); max-height: calc(100% - 100px); overflow: auto; padding: 14px 14px 12px; }
@@ -70,7 +71,7 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--buy); out
 #list { display: flex; flex-direction: column; }
 #list button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 22px 10px 1fr auto; gap: 8px; align-items: center; padding: 6px 4px; border-top: 1px solid var(--line); cursor: pointer; }
 #list button:hover { background: rgba(90, 162, 255, 0.1); }
-#list button[aria-current="true"] { background: rgba(62, 230, 176, 0.12); }
+#list button[aria-current="true"] { background: rgba(184, 151, 90, 0.12); }
 #list button:focus-visible { outline: 2px solid var(--buy); }
 #list .rk { color: var(--dim); font-variant-numeric: tabular-nums; }
 #list .dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -120,7 +121,7 @@ details.about p { margin: 6px 0 0; }
 }
 
 /* ---- views, charts, orb ---- */
-:root { --barh: 64px; --violet: #8b6cff; --tapeh: 30px; }
+:root { --barh: 64px; --violet: #8fa3d6; --tapeh: 30px; }
 #tape { position: fixed; top: 0; left: 0; right: 0; height: var(--tapeh); overflow: hidden; z-index: 6; background: rgba(5, 8, 16, 0.92); border-bottom: 1px solid var(--line); white-space: nowrap; }
 #tapeIn { display: inline-flex; gap: 0; animation: tape 90s linear infinite; will-change: transform; }
 #tape:hover #tapeIn { animation-play-state: paused; }
@@ -154,7 +155,7 @@ details.about p { margin: 6px 0 0; }
 @media (max-width: 700px) { .hero { grid-template-columns: 1fr 90px; } .brief li { font-size: 13px; } }
 .heroBtns { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
 .askb { all: unset; box-sizing: border-box; display: inline-block; margin-top: 10px; padding: 5px 10px; border: 1px solid var(--buy); color: var(--buy); cursor: pointer; font-size: 12px; }
-.askb:hover, .askb:focus-visible { background: rgba(62, 230, 176, 0.1); outline: none; }
+.askb:hover, .askb:focus-visible { background: rgba(184, 151, 90, 0.1); outline: none; }
 #bar .views { display: flex; gap: 6px; flex-wrap: wrap; }
 body:not(.v-c) .only-c { display: none !important; }
 body.v-hot #head, body.v-hot #detail, body.v-hot #labels, body.v-timeline #head, body.v-timeline #detail, body.v-timeline #labels, body.v-markets #head, body.v-markets #detail, body.v-markets #labels { display: none; }
@@ -163,7 +164,7 @@ body.v-hot #hover, body.v-timeline #hover, body.v-hot .legend, body.v-timeline .
 body.v-hot #charts, body.v-timeline #charts, body.v-markets #charts { display: flex; }
 .livebox { display: flex; gap: 6px; align-items: center; }
 .live { font-size: 11px; letter-spacing: 0.04em; padding: 4px 8px; border: 1px solid var(--line); color: var(--dim); white-space: nowrap; }
-.live.live { color: var(--buy); border-color: rgba(62, 230, 176, 0.5); }
+.live.live { color: var(--buy); border-color: rgba(184, 151, 90, 0.5); }
 .live.error { color: var(--exec); border-color: rgba(255, 209, 102, 0.5); }
 #bar button#liveGo { border-color: var(--exec); color: var(--exec); }
 #bar button[hidden] { display: none; }
@@ -226,7 +227,7 @@ svg.tl text { font: 400 11px var(--mono); fill: var(--dim); }
 svg.tl text.ln { fill: var(--fg); cursor: pointer; }
 svg.tl text.ln:hover { fill: var(--buy); }
 
-#orb { position: fixed; left: 50%; bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 14px); transform: translateX(-50%); width: 62px; height: 62px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; z-index: 31; color: #fff; background: radial-gradient(circle at 34% 30%, #d9fff4 0%, #3ee6b0 22%, #3a7bff 58%, #6a3bd6 100%); box-shadow: 0 0 22px 4px rgba(62, 230, 176, 0.38), 0 0 60px 12px rgba(106, 59, 214, 0.28), inset -6px -8px 16px rgba(4, 6, 11, 0.45); animation: breathe 4.2s ease-in-out infinite; }
+#orb { position: fixed; left: 50%; bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 14px); transform: translateX(-50%); width: 62px; height: 62px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; z-index: 31; color: #fff; background: radial-gradient(circle at 34% 30%, #d9fff4 0%, #3ee6b0 22%, #3a7bff 58%, #6a3bd6 100%); box-shadow: 0 0 22px 4px rgba(184, 151, 90, 0.38), 0 0 60px 12px rgba(106, 59, 214, 0.28), inset -6px -8px 16px rgba(4, 6, 11, 0.45); animation: breathe 4.2s ease-in-out infinite; }
 #orb::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: conic-gradient(from 0deg, rgba(255,255,255,0), rgba(255,255,255,0.45), rgba(255,255,255,0) 40%, rgba(255,255,255,0) 100%); animation: spin 9s linear infinite; mix-blend-mode: soft-light; }
 #orb span { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: 5px; font: 500 10px var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
 #orb:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
@@ -249,7 +250,7 @@ svg.tl text.ln:hover { fill: var(--buy); }
 #msgs { flex: 1; min-height: 80px; overflow: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 2px; }
 #msgs .m { padding: 8px 10px; border: 1px solid var(--line); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
 #msgs .m.u { align-self: flex-end; max-width: 86%; background: rgba(90, 162, 255, 0.12); }
-#msgs .m.a { align-self: flex-start; max-width: 94%; background: rgba(62, 230, 176, 0.06); }
+#msgs .m.a { align-self: flex-start; max-width: 94%; background: rgba(184, 151, 90, 0.06); }
 #msgs .m.a.err { border-color: var(--sell); color: var(--sell); }
 .hints { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .hints button { all: unset; box-sizing: border-box; padding: 4px 9px; border: 1px solid var(--line); cursor: pointer; font-size: 12px; color: var(--dim); }
@@ -266,7 +267,7 @@ svg.tl text.ln:hover { fill: var(--buy); }
   #chat { bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 86px); max-height: 56vh; }
 }
 
-/* ---- Setareh's brain: the JARVIS layer ---- */
+/* ---- Caesar's brain: the JARVIS layer ---- */
 .deck .c4 { grid-column: span 4; } .deck .c8 { grid-column: span 8; }
 @media (max-width: 900px) { .deck .c4, .deck .c8 { grid-column: span 12; } }
 .deck .card.bcard { border-color: rgba(139, 108, 255, 0.55); background: linear-gradient(160deg, rgba(139, 108, 255, 0.14), rgba(9, 14, 26, 0.6) 55%); }
@@ -306,25 +307,268 @@ svg.tl text.ln:hover { fill: var(--buy); }
 #chat .top button#cDeep[aria-pressed="true"] { border-color: var(--violet); color: var(--violet); }
 #chat .top button#cAlerts[aria-pressed="true"] { border-color: var(--exec); color: var(--exec); }
 #chat .top a.line { box-sizing: border-box; padding: 4px 10px; border: 1px solid var(--buy); color: var(--buy); font-size: 12px; text-decoration: none; white-space: nowrap; }
-#chat .top a.line:hover, #chat .top a.line:focus-visible { background: rgba(62, 230, 176, 0.1); outline: none; }
+#chat .top a.line:hover, #chat .top a.line:focus-visible { background: rgba(184, 151, 90, 0.1); outline: none; }
 #chat form button#cMic[aria-pressed="true"] { border-color: var(--sell); color: var(--sell); animation: micPulse 1.2s ease-in-out infinite; }
-@keyframes micPulse { 50% { box-shadow: 0 0 0 4px rgba(232, 93, 255, 0.25); } }
+@keyframes micPulse { 50% { box-shadow: 0 0 0 4px rgba(196, 80, 90, 0.25); } }
 @media (prefers-reduced-motion: reduce) { #chat form button#cMic[aria-pressed="true"] { animation: none; } }
+/* ================= v13 Caesar OS: the black swan is the operating system ================= */
+/* Palette: obsidian, graphite, midnight blue, deep crimson, antique gold. One deliberate dark look. */
+:root { --sans: "Manrope", "Segoe UI", system-ui, sans-serif; --gold: #b8975a; --gold-hi: #dcc28c; --crimson: #7a1f2b; --crimson-hi: #a8323f; --midnight: #0f1626; --graphite: #17171c; --ivory: #ece6d9; --hair: rgba(184, 151, 90, 0.22); --glass: rgba(20, 20, 26, 0.66); }
+body { background: radial-gradient(120% 90% at 50% 34%, #121826 0%, #0b0b0e 62%) fixed, var(--bg); }
+#tape { background: rgba(11, 11, 14, 0.94); border-bottom-color: var(--hair); }
+#tape .tk, .pill, .live, time, .num, #chat input, .mono { font-family: var(--mono); }
+.panel { border-color: var(--hair); }
+#charts { background: rgba(13, 13, 17, 0.9); }
+#charts h2 { font-weight: 600; letter-spacing: 0.08em; }
+.deck .card { background: rgba(20, 20, 26, 0.55); border-color: var(--hair); }
+.deckSub { color: var(--gold); }
+.hero { border-color: rgba(184, 151, 90, 0.35); background: radial-gradient(120% 140% at 85% 60%, rgba(122, 31, 43, 0.3), rgba(15, 22, 38, 0.4) 45%, rgba(17, 17, 21, 0.6) 75%); }
+.hero::after { background: radial-gradient(closest-side, rgba(184, 151, 90, 0.14), rgba(184, 151, 90, 0)); }
+.hero h3 { color: var(--gold-hi); font-weight: 600; }
+.brief li { border-left-color: rgba(184, 151, 90, 0.55); }
+.brief li b { color: var(--ivory); }
+.hero .swanpic { filter: drop-shadow(0 0 16px rgba(122, 31, 43, 0.55)); border-radius: 50%; }
+.askb { border-color: var(--gold); color: var(--gold-hi); }
+button:focus-visible, summary:focus-visible { outline-color: var(--gold); }
+#chat { background: rgba(14, 14, 18, 0.96); border-color: var(--hair); }
+#chat .top b { font-weight: 600; letter-spacing: 0.18em; color: var(--gold-hi); }
+#chat .top a.line, #chat form button.go { border-color: var(--gold); color: var(--gold-hi); }
+#chat input { background: #0e0e12; }
+#chat button:focus-visible, #chat input:focus-visible { outline-color: var(--gold); }
 
-/* ---- website copy: Setareh's voice agent replaces the Claude chat ---- */
-.hero .heroSwans { display: flex; justify-content: center; align-items: flex-end; position: relative; z-index: 1; filter: drop-shadow(0 0 16px rgba(255, 90, 30, 0.7)); }
+/* the orb is now a small swan medallion with a slow gold arc */
+#orb { background: var(--swan, none) center 34% / 150% no-repeat, radial-gradient(circle at 50% 40%, #1b1f2b, #0b0b0e); box-shadow: 0 0 0 1px rgba(184, 151, 90, 0.6), 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 26px rgba(122, 31, 43, 0.35); animation: none; }
+#orb::before { inset: -4px; background: conic-gradient(from 0deg, rgba(220, 194, 140, 0), rgba(220, 194, 140, 0.75) 12%, rgba(220, 194, 140, 0) 30%, rgba(220, 194, 140, 0)); -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px)); mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1.5px)); mix-blend-mode: normal; }
+#orb.busy::before { animation-duration: 1.2s; }
+#orb span { font: 600 10px/1 var(--display); letter-spacing: 0.22em; color: var(--gold-hi); }
+body.speaking #orb { box-shadow: 0 0 0 1px rgba(220, 194, 140, 0.8), 0 0 34px rgba(168, 50, 63, 0.6); }
+
+/* rooms: the constellation bar on every screen except the Command Centre */
+.rooms { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1 1 100%; min-width: 0; padding-bottom: 2px; border-bottom: 1px solid var(--hair); }
+.rooms::-webkit-scrollbar { display: none; }
+#bar .rooms button { all: unset; box-sizing: border-box; cursor: pointer; padding: 6px 10px 7px; font: 600 10.5px/1 var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); white-space: nowrap; border-bottom: 1px solid transparent; display: inline-flex; align-items: center; gap: 7px; }
+#bar .rooms button:hover, #bar .rooms button:focus-visible { color: var(--ivory); outline: none; }
+#bar .rooms button[aria-pressed="true"] { color: var(--gold-hi); border-bottom-color: var(--gold); }
+.rooms .home i { width: 18px; height: 18px; border-radius: 50%; background: var(--swan, none) center 34% / 150% no-repeat, #121620; box-shadow: 0 0 0 1px rgba(184, 151, 90, 0.6); }
+#bar .views button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold-hi); }
+#bar button:focus-visible { outline-color: var(--gold); }
+body:not(.room-trading) #bar .views, body:not(.room-trading) #bar .tools { display: none !important; }
+body.room-opps #head, body.room-opps #detail, body.room-opps #labels, body.room-opps #hover, body.room-opps .legend,
+body.room-intel #head, body.room-intel #detail, body.room-intel #labels, body.room-intel #hover, body.room-intel .legend,
+body.room-wealth #head, body.room-wealth #detail, body.room-wealth #labels, body.room-wealth #hover, body.room-wealth .legend,
+body.room-biz #head, body.room-biz #detail, body.room-biz #labels, body.room-biz #hover, body.room-biz .legend,
+body.room-settings #head, body.room-settings #detail, body.room-settings #labels, body.room-settings #hover, body.room-settings .legend { display: none; }
+body.room-opps #charts, body.room-intel #charts, body.room-wealth #charts, body.room-biz #charts, body.room-settings #charts { display: flex; }
+
+/* ---------- the Command Centre ---------- */
+#cc { position: fixed; top: var(--tapeh); left: 0; right: 0; bottom: 0; z-index: 4; display: none; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding-block: 18px calc(28px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+body.v-cc #cc { display: block; }
+body.v-cc canvas#gl { visibility: hidden; }
+body.v-cc #labels, body.v-cc #head, body.v-cc #detail, body.v-cc #charts, body.v-cc #bar, body.v-cc #orb { display: none !important; }
+.ccgrid { --S: min(540px, calc(100vh - 250px)); max-width: 1500px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, var(--S)) minmax(0, 1fr); grid-template-areas: "l s r" "f f f"; gap: 20px 28px; align-items: start; }
+.cccol { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.cccol.l { grid-area: l; } .cccol.r { grid-area: r; } .ccstage { grid-area: s; } .ccfoot { grid-area: f; }
+.ccstage { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+.ringwrap { position: relative; width: min(var(--S), 100%); aspect-ratio: 1; container-type: inline-size; }
+.ringwrap svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.ring .rot { transform-origin: 500px 500px; animation: ringTurn 300s linear infinite; }
+.ring .rot2 { transform-origin: 500px 500px; animation: ringTurn 520s linear infinite reverse; }
+@keyframes ringTurn { to { transform: rotate(360deg); } }
+.ringwrap svg.ring { filter: drop-shadow(0 0 6px rgba(168, 50, 63, 0.35)); }
+.ring .cal { font-family: "Noto Nastaliq Urdu", "Noto Naskh Arabic", "Amiri", "Times New Roman", serif; font-weight: 700; font-size: 56px; fill: #8e2433; }
+body.speaking .ring .cal, body.thinking .ring .cal { fill: #a8323f; transition: fill 0.6s; }
+.ring .mote { fill: var(--gold-hi); animation: twinkle 6s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 0.12; } 50% { opacity: 0.9; } }
+.ccglow { position: absolute; left: 50%; top: 50%; width: 74%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(168, 50, 63, 0.26), rgba(184, 151, 90, 0.07) 58%, rgba(0, 0, 0, 0) 74%); opacity: 0.5; animation: breathe 7s ease-in-out infinite; pointer-events: none; }
+body.speaking .ccglow, body.thinking .ccglow { opacity: 1; animation-duration: 1.8s; }
+@keyframes breathe { 0%, 100% { transform: translate(-50%, -50%) scale(0.97); } 50% { transform: translate(-50%, -50%) scale(1.03); } }
+.ripples i { position: absolute; left: 50%; top: 79%; width: 44%; height: 8%; border: 1px solid rgba(184, 151, 90, 0.3); border-radius: 50%; transform: translate(-50%, -50%) scale(0.5); opacity: 0; animation: ripple 7.5s ease-out infinite; pointer-events: none; }
+.ripples i:nth-child(2) { animation-delay: 2.5s; } .ripples i:nth-child(3) { animation-delay: 5s; }
+@keyframes ripple { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 15% { opacity: 0.75; } 100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; } }
+body.speaking .ripples i, body.thinking .ripples i { animation-duration: 2.4s; border-color: rgba(220, 194, 140, 0.55); }
+.swanBtn { all: unset; position: absolute; left: 50%; top: 50%; width: 60%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; cursor: pointer; z-index: 2; overflow: hidden; }
+.swanBtn .swanArt { position: absolute; inset: 0; animation: swanFloat 8s ease-in-out infinite; transform-origin: 50% 72%; }
+.swanBtn img, .swanBtn svg { width: 100%; height: 100%; display: block; }
+.swanBtn::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(38% 28% at 50% 50%, rgba(220, 194, 140, 0.16), rgba(220, 194, 140, 0) 70%) 0 0 / 220% 220% no-repeat; mix-blend-mode: screen; animation: sweep 16s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes swanFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-1.4%) scale(1.014); } }
+@keyframes sweep { from { background-position: 10% 0%; } to { background-position: 90% 40%; } }
+.swanBtn:focus-visible { outline: 1px solid var(--gold); outline-offset: 8px; }
+.swanBtn .tapHint { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); font: 600 9.5px/1 var(--display); letter-spacing: 0.24em; color: rgba(220, 194, 140, 0.85); text-transform: uppercase; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
+.swanBtn:hover .tapHint, .swanBtn:focus-visible .tapHint { opacity: 1; }
+.st { all: unset; box-sizing: border-box; position: absolute; left: 50%; top: 50%; z-index: 3; cursor: pointer; transform: translate(-50%, -50%) rotate(var(--a)) translateY(-46.4cqw) rotate(calc(-1 * var(--a))); display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 4px 6px; font: 600 10.5px/1 var(--display); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-hi); white-space: nowrap; }
+.st i { width: 8px; height: 8px; transform: rotate(45deg); border: 1px solid var(--gold); background: #0b0b0e; transition: background 0.2s, box-shadow 0.2s; }
+.st:hover i, .st:focus-visible i { background: var(--gold); box-shadow: 0 0 12px rgba(220, 194, 140, 0.6); }
+.st:hover, .st:focus-visible { color: #fff; outline: none; }
+.st small { font: 500 9px/1 var(--mono); letter-spacing: 0; text-transform: none; color: var(--dim); }
+.ccname { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.ccname b { font: 600 26px/1 var(--display); letter-spacing: 0.42em; margin-right: -0.42em; color: var(--ivory); }
+.ccname small { font: 500 11px/1.3 var(--mono); color: var(--dim); min-height: 1.3em; }
+.ccname small.live { color: var(--gold-hi); }
+.ccname em { font: italic 400 12.5px/1.3 Georgia, "Times New Roman", serif; color: rgba(236, 230, 217, 0.62); }
+.ccCmd { display: flex; gap: 6px; width: min(100%, 520px); }
+.ccCmd input { flex: 1; min-width: 0; background: rgba(14, 14, 18, 0.9); color: var(--ivory); border: 1px solid var(--hair); padding: 11px 14px; font: 400 14px/1.2 var(--sans); }
+.ccCmd input::placeholder { color: rgba(236, 230, 217, 0.4); font-style: italic; }
+.ccCmd input:focus-visible { outline: 1px solid var(--gold); border-color: var(--gold); }
+.ccCmd button { all: unset; box-sizing: border-box; cursor: pointer; padding: 0 16px; border: 1px solid var(--gold); color: var(--gold-hi); font: 600 11px/1 var(--display); letter-spacing: 0.2em; text-transform: uppercase; display: inline-flex; align-items: center; }
+.ccCmd button:hover, .ccCmd button:focus-visible { background: rgba(184, 151, 90, 0.12); outline: none; }
+.ccCmd button[aria-pressed="true"] { border-color: var(--crimson-hi); color: #f2b8bf; }
+.sugs { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 560px; }
+.sug { all: unset; box-sizing: border-box; cursor: pointer; padding: 5px 10px; border: 1px solid rgba(184, 151, 90, 0.25); color: rgba(236, 230, 217, 0.82); font: 400 12px/1.2 var(--sans); }
+.sug:hover, .sug:focus-visible { border-color: var(--gold); color: #fff; outline: none; }
+
+/* glass cards that orbit the swan */
+.cx { position: relative; background: var(--glass); border: 1px solid var(--hair); padding: 14px 16px 15px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); min-width: 0; box-sizing: border-box; }
+.cx::before { content: ""; position: absolute; top: -1px; left: -1px; width: 14px; height: 14px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); pointer-events: none; }
+.cx h4 { margin: 0 0 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font: 600 11px/1.2 var(--display); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-hi); }
+.cx h4 small { font: 500 10.5px/1 var(--mono); letter-spacing: 0; text-transform: none; color: var(--dim); white-space: nowrap; }
+.cx p { margin: 0 0 8px; }
+.cx .note { color: var(--dim); font-size: 12px; line-height: 1.45; }
+.cx ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cx li { font-size: 13px; line-height: 1.45; }
+.cx .lines li { padding-left: 12px; border-left: 1px solid rgba(184, 151, 90, 0.45); }
+.cx .acts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.cx .acts button, .rbtn { all: unset; box-sizing: border-box; cursor: pointer; padding: 5px 10px; border: 1px solid rgba(184, 151, 90, 0.45); color: var(--gold-hi); font: 600 10px/1.2 var(--display); letter-spacing: 0.16em; text-transform: uppercase; }
+.cx .acts button:hover, .cx .acts button:focus-visible, .rbtn:hover, .rbtn:focus-visible { border-color: var(--gold); background: rgba(184, 151, 90, 0.1); outline: none; }
+.rg { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.rg b { font: 600 28px/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; }
+.rg .on { color: var(--buy); } .rg .caution { color: var(--gold-hi); } .rg .off { color: #d26a73; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.stat { border-top: 1px solid var(--hair); padding-top: 7px; min-width: 0; }
+.stat span { display: block; font: 600 9.5px/1.2 var(--display); letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim); }
+.stat b { display: block; font: 500 17px/1.3 var(--mono); color: var(--ivory); font-variant-numeric: tabular-nums; }
+.stat i { font-style: normal; font: 500 11px var(--mono); color: var(--dim); }
+.gauge { position: relative; height: 4px; margin: 6px 0 2px; background: linear-gradient(90deg, #a8323f, #6d5a3a 50%, #4fae8a); opacity: 0.8; }
+.gauge u { position: absolute; top: -4px; width: 2px; height: 12px; background: var(--ivory); transform: translateX(-1px); }
+.up { color: var(--buy); } .down { color: #d26a73; } .flat { color: var(--dim); }
+.al time { font: 500 10.5px var(--mono); color: var(--gold); margin-right: 8px; }
+.al li.quiet { color: var(--dim); font-size: 12px; }
+.orow { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 58px minmax(0, 1fr) 46px; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid rgba(184, 151, 90, 0.12); width: 100%; }
+.orow:first-child { border-top: 0; }
+.orow:hover b, .orow:focus-visible b { color: var(--gold-hi); }
+.orow:focus-visible { outline: 1px solid var(--gold); outline-offset: 2px; }
+.orow b { font: 500 13px/1 var(--mono); color: var(--ivory); }
+.orow em { display: block; font-style: normal; font-size: 12px; color: rgba(236, 230, 217, 0.75); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.orow .sc { font: 500 13px/1 var(--mono); color: var(--gold-hi); text-align: right; }
+.bar { height: 3px; background: rgba(184, 151, 90, 0.15); margin-top: 5px; }
+.bar u { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-hi)); }
+.bar.risk u { background: linear-gradient(90deg, #6b2731, #c4505a); }
+.ccfoot { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 18px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 0; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
+.tile { background: rgba(16, 16, 21, 0.92); padding: 9px 11px; min-width: 0; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
+.tile span { display: block; font: 600 9.5px/1.2 var(--display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile b { display: block; font: 500 15px/1.35 var(--mono); color: var(--ivory); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile i { font: 500 11px var(--mono); font-style: normal; }
+.tile.off b { color: var(--dim); }
+.pri li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; font-size: 12.5px; }
+.pri li span { font: 600 9.5px/1.5 var(--display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+#ccToast { pointer-events: none; position: fixed; left: 50%; top: calc(var(--tapeh) + 14px); transform: translateX(-50%); z-index: 50; padding: 8px 16px; background: rgba(14, 14, 18, 0.96); border: 1px solid var(--gold); color: var(--ivory); font: 600 11px/1.2 var(--display); letter-spacing: 0.18em; text-transform: uppercase; max-width: calc(100vw - 32px); box-sizing: border-box; text-align: center; }
+
+/* ---------- rooms inside the panel ---------- */
+.room { display: flex; flex-direction: column; gap: 16px; padding-bottom: 8px; }
+.rgrid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.rgrid > * { grid-column: span 4; }
+.rgrid > .w6 { grid-column: span 6; } .rgrid > .w8 { grid-column: span 8; } .rgrid > .w12 { grid-column: span 12; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tabs button { all: unset; box-sizing: border-box; cursor: pointer; padding: 6px 11px; border: 1px solid rgba(184, 151, 90, 0.25); color: rgba(236, 230, 217, 0.8); font: 500 12px/1.2 var(--sans); }
+.tabs button b { font: 500 11px var(--mono); color: var(--dim); margin-left: 6px; }
+.tabs button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold-hi); background: rgba(184, 151, 90, 0.08); }
+.tabs button:focus-visible { outline: 1px solid var(--gold); }
+.opps { display: flex; flex-direction: column; border-top: 1px solid var(--hair); }
+.opp { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 96px minmax(0, 1fr) 132px 150px; gap: 16px; align-items: start; padding: 12px 4px; border-bottom: 1px solid rgba(184, 151, 90, 0.12); }
+.opp:hover, .opp:focus-visible { background: rgba(184, 151, 90, 0.05); outline: none; }
+.opp .sy b { display: block; font: 500 15px/1.2 var(--mono); color: var(--ivory); }
+.opp .sy i { display: block; font: 500 11.5px/1.5 var(--mono); font-style: normal; color: var(--dim); }
+.opp .tx { font-size: 12.5px; line-height: 1.5; color: rgba(236, 230, 217, 0.86); min-width: 0; }
+.opp .cats { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.cat { font: 500 10px/1 var(--mono); padding: 3px 6px; border: 1px solid rgba(184, 151, 90, 0.3); color: var(--gold-hi); }
+.cat.warn { border-color: rgba(196, 80, 90, 0.6); color: #e5939a; }
+.cat.dim { border-color: rgba(155, 147, 132, 0.35); color: var(--dim); }
+.opp .m span { display: flex; justify-content: space-between; font: 600 9.5px/1.2 var(--display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+.opp .m span b { font: 500 12px var(--mono); letter-spacing: 0; color: var(--ivory); }
+.opp .m + .m { margin-top: 8px; }
+.opp .hz { font: 500 11px/1.4 var(--mono); color: var(--dim); }
+.how { font-size: 12px; color: var(--dim); }
+.how summary { cursor: pointer; color: var(--gold-hi); font: 600 10.5px/1.6 var(--display); letter-spacing: 0.16em; text-transform: uppercase; }
+.how ul { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.mapwrap { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+.map { box-sizing: border-box; width: 100%; height: auto; display: block; background: radial-gradient(80% 90% at 50% 45%, rgba(15, 22, 38, 0.85), rgba(11, 11, 14, 0.4)); border: 1px solid var(--hair); }
+.map .land { stroke: rgba(184, 151, 90, 0.34); stroke-width: 4.2; stroke-linecap: round; fill: none; }
+.map .grat { stroke: rgba(184, 151, 90, 0.07); stroke-width: 1; fill: none; }
+.map .hs { cursor: pointer; }
+.map .hs:focus-visible { outline: none; }
+.map .hs:focus-visible .dot, .map .hs.sel .dot { stroke: var(--ivory); stroke-width: 2.5; }
+.map .hs .dot { stroke: rgba(11, 11, 14, 0.9); stroke-width: 2; }
+.map .hs .pulse { fill: none; stroke-width: 1.5; animation: hsPulse 2.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes hsPulse { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(2.6); opacity: 0; } }
+.map .hs text { font: 600 17px var(--display); letter-spacing: 0.1em; fill: var(--ivory); paint-order: stroke; stroke: rgba(11, 11, 14, 0.85); stroke-width: 5px; }
+.map .hs text.v { font: 500 15px var(--mono); letter-spacing: 0; }
+.kv { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; font-size: 12.5px; }
+.kv span { color: rgba(236, 230, 217, 0.78); }
+.kv b { font: 500 12.5px var(--mono); color: var(--ivory); text-align: right; white-space: nowrap; }
+.evs li { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; font-size: 12.5px; }
+.evs time { color: var(--gold); }
+.news li a { color: var(--ivory); text-decoration: none; }
+.news li a:hover, .news li a:focus-visible { color: var(--gold-hi); text-decoration: underline; }
+.news li small { display: block; font: 500 10.5px var(--mono); color: var(--dim); margin-top: 2px; }
+.theme { display: grid; grid-template-columns: 110px 28px minmax(0, 1fr); gap: 8px; align-items: baseline; font-size: 12.5px; padding: 5px 0; border-top: 1px solid rgba(184, 151, 90, 0.1); }
+.theme:first-child { border-top: 0; }
+.theme b { font: 600 10px/1.3 var(--display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold-hi); }
+.theme i { font: 500 12px var(--mono); font-style: normal; color: var(--ivory); }
+.theme span { color: rgba(236, 230, 217, 0.72); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vault { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
+.vault .tile { padding: 16px 16px 18px; }
+.vault .tile b { font: 400 24px/1.3 var(--display); color: var(--dim); }
+.vault .tile small { display: block; font: 500 10.5px var(--mono); color: rgba(155, 147, 132, 0.8); margin-top: 2px; }
+table.lux { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+table.lux th { text-align: left; font: 600 9.5px/1.3 var(--display); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); padding: 6px 8px; border-bottom: 1px solid var(--hair); }
+table.lux td { padding: 7px 8px; border-bottom: 1px solid rgba(184, 151, 90, 0.08); font-family: var(--mono); font-variant-numeric: tabular-nums; }
+table.lux td:first-child { font-family: var(--sans); }
+.hscroll { overflow-x: auto; }
+.tog { all: unset; box-sizing: border-box; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; padding: 9px 0; border-top: 1px solid rgba(184, 151, 90, 0.1); font-size: 13px; }
+.tog:first-child { border-top: 0; }
+.tog u { text-decoration: none; font: 600 10px/1 var(--display); letter-spacing: 0.16em; padding: 5px 8px; border: 1px solid var(--hair); color: var(--dim); }
+.tog[aria-pressed="true"] u { border-color: var(--gold); color: var(--gold-hi); }
+.tog:focus-visible { outline: 1px solid var(--gold); }
+
+@media (max-width: 1180px) {
+  .ccgrid { --S: min(520px, 92vw); grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "s s" "l r" "f f"; }
+  .rgrid > * { grid-column: span 6; } .rgrid > .w8, .rgrid > .w12 { grid-column: span 12; }
+  .opp { grid-template-columns: 84px minmax(0, 1fr) 140px; } .opp .m2 { display: none; }
+  .mapwrap { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .ccgrid { --S: min(440px, calc(100vw - 32px)); grid-template-columns: minmax(0, 1fr); grid-template-areas: "s" "l" "r" "f"; gap: 16px; }
+  .ccfoot { grid-template-columns: minmax(0, 1fr); }
+  .st { font-size: 9px; letter-spacing: 0.14em; gap: 4px; }
+  .st small { display: none; }
+  .ring .cal { font-size: 62px; }
+  .rgrid > *, .rgrid > .w6 { grid-column: span 12; }
+  .vault { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .opp { grid-template-columns: 70px minmax(0, 1fr); gap: 10px; } .opp .m1 { grid-column: 2; }
+  .map .hs text { display: none; }
+  .ccname b { font-size: 22px; }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ring .rot, .ring .rot2, .ring .mote, .ccglow, .ripples i, .swanBtn .swanArt, .swanBtn::after, .map .hs .pulse { animation: none !important; }
+  .ripples i { opacity: 0; }
+}
+
+/* ---- website copy: Caesar's voice agent replaces the Claude chat ---- */
+.hero .heroSwans { display: flex; justify-content: center; align-items: flex-end; position: relative; z-index: 1; filter: drop-shadow(0 0 16px rgba(122, 31, 43, 0.65)); }
 .hero .heroSwans .swans { margin: 0; }
 .hero .heroSwans .swan .body, .hero .heroSwans .swan .head { fill: #07080c; }
 .hero .heroSwans .swan .neck { stroke: #07080c; }
-.hero .heroSwans .swan .wing { stroke: rgba(255, 180, 120, 0.35); opacity: 1; }
-.hero .heroSwans .swan .beak { fill: #e3473b; }
-.hero .heroSwans .swan .eye { fill: #ff9a5c; }
-.hero .heroSwans .swan .rip { stroke: rgba(255, 140, 70, 0.7); }
+.hero .heroSwans .swan .wing { stroke: rgba(220, 194, 140, 0.35); opacity: 1; }
+.hero .heroSwans .swan .beak { fill: #c22f3b; }
+.hero .heroSwans .swan .eye { fill: #d9483f; }
+.hero .heroSwans .swan .rip { stroke: rgba(184, 151, 90, 0.6); }
 .hero .heroSwans .swan.one { width: 120px; height: 93px; }
 .hero .heroSwans .swan.two { width: 98px; height: 75px; }
 @media (max-width: 700px) { .hero .heroSwans .swan.one { width: 64px; height: 50px; } .hero .heroSwans .swan.two { width: 52px; height: 40px; } }
 body.web #orb, body.web #chat { display: none !important; }
-#webHint { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 96px); max-width: min(360px, calc(100vw - 32px)); z-index: 40; padding: 10px 12px; background: rgba(8, 12, 24, 0.96); border: 1px solid var(--buy); color: var(--fg); font-size: 12.5px; }
+#webHint { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 96px); max-width: min(360px, calc(100vw - 32px)); z-index: 40; padding: 10px 12px; background: rgba(14, 14, 18, 0.96); border: 1px solid var(--gold); color: var(--fg); font-size: 12.5px; }
+body.web.v-cc #webHint { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 @keyframes flashKey { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 3px var(--exec); } }
 .flash { animation: flashKey 0.8s ease-in-out 3; }
 @media (prefers-reduced-motion: reduce) { .flash { animation: none; outline: 2px solid var(--exec); } }
@@ -357,7 +601,35 @@ body.web #orb, body.web #chat { display: none !important; }
 
 <aside class="panel empty" id="detail" aria-live="polite"></aside>
 
+<section id="cc" aria-label="Caesar Command Centre">
+  <div class="ccgrid">
+    <div class="cccol l" id="ccL"></div>
+    <div class="ccstage">
+      <div class="ringwrap" id="ccRing">
+        <div class="ccglow"></div>
+        <div class="ripples" aria-hidden="true"><i></i><i></i><i></i></div>
+        <button class="swanBtn" id="ccSwan" type="button" aria-label="Caesar. Tap to speak with him"></button>
+      </div>
+      <div class="ccname"><b>Caesar</b><small id="ccState" role="status">Chief strategist</small><em>From you, the effort. From God, the blessing.</em></div>
+      <form class="ccCmd" id="ccCmd" autocomplete="off"><label class="sr" for="ccIn">Command Caesar</label><input id="ccIn" placeholder="Caesar, brief me" enterkeyhint="go"><button type="button" id="ccMic" hidden aria-pressed="false" title="Speak a command">Voice</button><button type="submit">Ask</button></form>
+      <div class="sugs" id="ccSug"></div>
+    </div>
+    <div class="cccol r" id="ccR"></div>
+    <div class="ccfoot" id="ccF"></div>
+  </div>
+</section>
+<div id="ccToast" role="status" hidden></div>
+
 <div class="panel" id="bar">
+  <div class="rooms" id="rooms" role="group" aria-label="Rooms">
+    <button type="button" class="home" data-room="cc" aria-pressed="false" title="Caesar Command Centre"><i aria-hidden="true"></i>Caesar</button>
+    <button type="button" data-room="trading" aria-pressed="false">Trading</button>
+    <button type="button" data-room="opps" aria-pressed="false">Opportunities</button>
+    <button type="button" data-room="intel" aria-pressed="false">Intelligence</button>
+    <button type="button" data-room="wealth" aria-pressed="false">Wealth</button>
+    <button type="button" data-room="biz" aria-pressed="false">Business</button>
+    <button type="button" data-room="settings" aria-pressed="false">Settings</button>
+  </div>
   <div class="views" role="group" aria-label="Views">
     <button id="vM" aria-pressed="true">Deck</button>
     <button id="vC" aria-pressed="false">Universe</button>
@@ -390,12 +662,12 @@ body.web #orb, body.web #chat { display: none !important; }
   <div class="legend2" id="cLeg"></div>
 </section>
 
-<button id="orb" aria-label="Ask Setareh" title="Ask Setareh"><span>Setareh</span></button>
-<section class="panel" id="chat" aria-label="Chat with Setareh">
-  <div class="top"><b>Setareh</b><div class="t"><a id="cLine" class="line" href="https://elevenlabs.io/app/talk-to?agent_id=agent_9201m6hqwymzess883dryvc8xcs3" target="_blank" rel="noopener noreferrer" title="Talk to Setareh hands-free in her own voice (opens her voice line)">Voice line</a><button id="cAlerts" aria-pressed="true" title="Setareh speaks critical alerts aloud">Alerts</button><button id="cDeep" aria-pressed="false" title="Slower, more thorough answers">Deep</button><button id="cVoice" aria-pressed="false">Voice</button><label class="sr" for="cVoiceSel">Setareh's voice</label><select id="cVoiceSel" title="Choose Setareh's voice"></select><button id="cClose">Close</button></div></div>
+<button id="orb" aria-label="Ask Caesar" title="Ask Caesar"><span>Caesar</span></button>
+<section class="panel" id="chat" aria-label="Chat with Caesar">
+  <div class="top"><b>Caesar</b><div class="t"><a id="cLine" class="line" href="https://elevenlabs.io/app/talk-to?agent_id=agent_9201m6hqwymzess883dryvc8xcs3" target="_blank" rel="noopener noreferrer" title="Talk to Caesar hands-free in his own voice (opens his voice line)">Voice line</a><button id="cAlerts" aria-pressed="true" title="Caesar speaks critical alerts aloud">Alerts</button><button id="cDeep" aria-pressed="false" title="Slower, more thorough answers">Deep</button><button id="cVoice" aria-pressed="false">Voice</button><label class="sr" for="cVoiceSel">Caesar's voice</label><select id="cVoiceSel" title="Choose Caesar's voice"></select><button id="cClose">Close</button></div></div>
   <div id="msgs"></div>
   <div class="hints" id="hints"></div>
-  <form id="cForm"><input id="cIn" autocomplete="off" placeholder="Ask Setareh: a stock, the macro week, crypto, the £100 race" aria-label="Message"><button id="cMic" type="button" aria-pressed="false" hidden title="Speak to Setareh">Mic</button><button class="go" id="cSend" type="submit">Send</button><button id="cStop" type="button" hidden>Stop</button></form>
+  <form id="cForm"><input id="cIn" autocomplete="off" placeholder="Ask Caesar: a stock, the macro week, crypto, the £100 race" aria-label="Message"><button id="cMic" type="button" aria-pressed="false" hidden title="Speak to Caesar">Mic</button><button class="go" id="cSend" type="submit">Send</button><button id="cStop" type="button" hidden>Stop</button></form>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -414,6 +686,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   const partyCss = { D: cv('--dem'), R: cv('--rep') };
   const partyName = { D: 'Democrat', R: 'Republican' };
   const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const SWAN = ''; // the public website uses the drawn swan, never the private photo
+  const greet = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning.' : h < 18 ? 'Good afternoon.' : 'Good evening.'; };
 
   /* ---------- copy ---------- */
   const PEOPLE = {"Donald J Trump":["","President"],"Rohit Khanna":["D","U.S. Representative \u00b7 CA-17"],"Josh Gottheimer":["D","U.S. Representative \u00b7 NJ-05"],"Gilbert Cisneros":["D","U.S. Representative \u00b7 CA-39"],"Michael T. McCaul":["R","U.S. Representative \u00b7 TX-10"],"Lisa McClain":["R","U.S. Representative \u00b7 MI-09"],"Thomas H Tuberville":["R","U.S. Senator \u00b7 AL"],"Susie Lee":["D","U.S. Representative \u00b7 NV-03"],"Daniel Goldman":["D","U.S. Representative \u00b7 NY-10"],"Greg Gianforte":["R","U.S. Representative \u00b7 MT-00"],"Sheldon Whitehouse":["D","U.S. Senator \u00b7 RI"],"Kevin Hern":["R","U.S. Representative \u00b7 OK-01"],"Donald Sternoff Beyer Jr":["D","U.S. Representative \u00b7 VA-08"],"Lois Frankel":["D","U.S. Representative \u00b7 FL-22"],"K. Michael Conaway":["R","U.S. Representative \u00b7 TX-11"],"Alan S. Lowenthal":["D","U.S. Representative \u00b7 CA-47"],"Virginia Foxx":["R","U.S. Representative \u00b7 NC-05"],"Andrew Saul":["","Commissioner"],"Shelley M Capito":["R","U.S. Senator \u00b7 WV"],"Thomas Suozzi":["D","U.S. Representative \u00b7 NY-03"],"Scott H. Peters":["D","U.S. Representative \u00b7 CA-52"],"Alan Armstrong":["R","U.S. Senator \u00b7 OK"],"Kathy Manning":["D","U.S. Representative \u00b7 NC-06"],"Suzan K. DelBene":["D","U.S. Representative \u00b7 WA-01"],"Mark Green":["R","U.S. Representative \u00b7 TN-07"],"Dean Phillips":["D","U.S. Representative \u00b7 MN-03"],"Jefferson Shreve":["R","U.S. Representative \u00b7 IN-06"],"Rob Bresnahan":["R","U.S. Representative \u00b7 PA-08"],"Susan M Collins":["R","U.S. Senator \u00b7 ME"],"Julie Johnson":["D","U.S. Representative \u00b7 TX-32"],"Thomas MacArthur":["R","U.S. Representative \u00b7 NJ-03"],"Donna Shalala":["D","U.S. Representative \u00b7 FL-27"],"Markwayne Mullin":["","Secretary"],"Marjorie Taylor Greene":["R","U.S. Representative \u00b7 GA-14"],"John Boozman":["R","U.S. Senator \u00b7 AR"],"David A. Trott":["R","U.S. Representative \u00b7 MI-11"],"April McClain Delaney":["D","U.S. Representative \u00b7 MD-06"],"Zoe Lofgren":["D","U.S. Representative \u00b7 CA-19"],"Earl Blumenauer":["D","U.S. Representative \u00b7 OR-03"],"Katherine M. Clark":["D","U.S. Representative \u00b7 MA-05"],"Nicholas Van Taylor":["R","U.S. Representative \u00b7 TX-03"],"Pete Sessions":["R","U.S. Representative \u00b7 TX-32"],"David H McCormick":["R","U.S. Senator \u00b7 PA"],"Valerie Hoyle":["D","U.S. Representative \u00b7 OR-04"],"Jared Moskowitz":["D","U.S. Representative \u00b7 FL-23"],"Tom Malinowski":["D","U.S. Representative \u00b7 NJ-07"],"Rick Scott":["R","U.S. Senator \u00b7 FL"],"John Rutherford":["R","U.S. Representative \u00b7 FL-04"],"David B. McKinley":["R","U.S. Representative \u00b7 WV-01"],"James R. Langevin":["D","U.S. Representative \u00b7 RI-02"],"John Curtis":["R","U.S. Representative \u00b7 UT-03"],"Richard W. Allen":["R","U.S. Representative \u00b7 GA-12"],"Arjun Mody":["","Deputy Commissioner"],"Ron L Wyden":["D","U.S. Senator \u00b7 OR"],"Christopher A Wright":["","Secretary"],"Marie Newman":["D","U.S. Representative \u00b7 IL-03"],"Christopher L. Jacobs":["R","U.S. Representative \u00b7 NY-27"],"Patrick Fallon":["R","U.S. Representative \u00b7 TX-04"],"Jerry Moran,":["R","U.S. Senator \u00b7 KS"],"Thomas J. Rooney":["R","U.S. Representative \u00b7 FL-17"],"John James":["R","U.S. Representative \u00b7 MI-10"],"Robert J. Wittman":["R","U.S. Representative \u00b7 VA-01"],"Peter Meijer":["R","U.S. Representative \u00b7 MI-03"],"Sheri Biggs":["R","U.S. Representative \u00b7 SC-03"],"Carlos Curbelo":["R","U.S. Representative \u00b7 FL-26"],"Gary Palmer":["R","U.S. Representative \u00b7 AL-06"],"Julia Letlow":["R","U.S. Representative \u00b7 LA-05"],"Mikie Sherrill":["D","U.S. Representative \u00b7 NJ-11"],"Nuria Fernandez":["","Administrator, Federal Transit Administr"],"John F Reed":["D","U.S. Senator \u00b7 RI"],"Tim Moore":["R","U.S. Representative \u00b7 NC-14"],"John Hoeven":["R","U.S. Senator \u00b7 ND"],"Bruce Westerman":["R","U.S. Representative \u00b7 AR-04"],"William Cassidy":["R","U.S. Senator \u00b7 LA"],"Cleo Fields":["D","U.S. Representative \u00b7 LA-06"],"Jonathan Jackson":["D","U.S. Representative \u00b7 IL-01"],"David J. Taylor":["R","U.S. Representative \u00b7 OH-02"],"Debbie Dingell":["D","U.S. Representative \u00b7 MI-12"],"Eric S Lander":["","Director"],"Barbara M Barrett":["","Secretary"],"Greg Stanton":["D","U.S. Representative \u00b7 AZ-09"],"William R. Keating":["D","U.S. Representative \u00b7 MA-09"],"John Phelan":["","Secretary"],"Nancy Pelosi":["D","U.S. Representative \u00b7 CA-12"],"Gary C Peters":["D","U.S. Senator \u00b7 MI"],"Dan Newhouse":["R","U.S. Representative \u00b7 WA-04"],"Lloyd Doggett":["D","U.S. Representative \u00b7 TX-35"],"Byron Donalds":["R","U.S. Representative \u00b7 FL-19"],"Cindy Axne":["D","U.S. Representative \u00b7 IA-03"],"Dwight Evans":["D","U.S. Representative \u00b7 PA-02"],"Greg Landsman":["D","U.S. Representative \u00b7 OH-01"],"Thomas H. Kean Jr":["R","U.S. Representative \u00b7 NJ-07"],"Donald Remy":["","Deputy Secretary"],"Joe Courtney":["D","U.S. Representative \u00b7 CT-02"],"Scott Scott Franklin":["R","U.S. Representative \u00b7 FL-15"],"Patty Murray":["D","U.S. Senator \u00b7 WA"],"Judy Chu":["D","U.S. Representative \u00b7 CA-27"],"Linda E McMahon":["","Secretary"],"David P. Joyce":["R","U.S. Representative \u00b7 OH-14"],"Ritchie John Torres":["D","U.S. Representative \u00b7 NY-15"],"Bill Flores":["R","U.S. Representative \u00b7 TX-17"],"Daniel S Sullivan":["R","U.S. Senator \u00b7 AK"],"Douglas J Burgum":["","Secretary"],"John A. Yarmuth":["D","U.S. Representative \u00b7 KY-03"],"Steve Cohen":["D","U.S. Representative \u00b7 TN-09"],"Maria Elvira Salazar":["R","U.S. Representative \u00b7 FL-27"],"Carolyn B. Maloney":["D","U.S. Representative \u00b7 NY-12"],"Lamar Smith":["R","U.S. Representative \u00b7 TX-21"],"Bob Gibbs":["R","U.S. Representative \u00b7 OH-18"],"Blake Moore":["R","U.S. Representative \u00b7 UT-01"],"Michael C. Burgess":["R","U.S. Representative \u00b7 TX-26"],"Angus S King":["I","U.S. Senator \u00b7 ME"],"John W Hickenlooper":["D","U.S. Senator \u00b7 CO"],"Bradley S. Schneider":["D","U.S. Representative \u00b7 IL-10"],"Diana Harshbarger":["R","U.S. Representative \u00b7 TN-01"],"Vern Buchanan":["R","U.S. Representative \u00b7 FL-16"],"Carol Devine Miller":["R","U.S. Representative \u00b7 WV-01"],"Mark R Warner":["D","U.S. Senator \u00b7 VA"],"Peter Welch":["D","U.S. Representative \u00b7 VT-00"],"Richard Dean McCormick":["R","U.S. Representative \u00b7 GA-06"],"Richard L. Hanna":["R","U.S. Representative \u00b7 NY-22"],"Elizabeth Fletcher":["D","U.S. Representative \u00b7 TX-07"],"Stacey Dixon":["","Principal Deputy Director of National In"],"Lisa O Monaco":["","Deputy Attorney General"],"Charles J. \"Chuck\" Fleischmann":["R","U.S. Representative \u00b7 TN-03"],"Frank J Bisignano":["","Commissioner"],"Michael K. Simpson":["R","U.S. Representative \u00b7 ID-02"],"C. Scott Franklin":["R","U.S. Representative \u00b7 FL-15"],"Thomas R Tillis":["R","U.S. Senator \u00b7 NC"],"Tony Wied":["R","U.S. Representative \u00b7 WI-08"],"Lori Chavez-DeRemer":["","Secretary"],"Austin Scott":["R","U.S. Representative \u00b7 GA-08"],"Scott A Kupor":["","Director"],"John Fetterman":["D","U.S. Senator \u00b7 PA"],"Rick Larsen":["D","U.S. Representative \u00b7 WA-02"],"Bryan Bedford":["","Administrator, Federal Aviation Administ"],"Kelly Louise Morrison":["D","U.S. Representative \u00b7 MN-03"],"Michael Patrick Guest":["R","U.S. Representative \u00b7 MS-03"],"Christopher Landau":["","Deputy Secretary"],"Neal Patrick MD, Facs Dunn":["R","U.S. Representative \u00b7 FL-02"],"Mitchell M Zais":["","Deputy Secretary"],"Roger W. Marshall":["R","U.S. Representative \u00b7 KS-01"],"Tommy Beaudreau":["","Deputy Secretary"],"Rub\u00e9n Hinojosa":["D","U.S. Representative \u00b7 TX-15"],"Lou Barletta":["R","U.S. Representative \u00b7 PA-11"],"Jennifer Granholm":["","Secretary"],"Deanne Criswell":["","Administrator, Federal Emergency Managem"],"Mo Brooks":["R","U.S. Representative \u00b7 AL-05"],"Stephen I Miran":["","Governor"],"Debbie Wasserman Schultz":["D","U.S. Representative \u00b7 FL-23"],"Mike Kelly":["R","U.S. Representative \u00b7 PA-16"],"Rahul Gupta":["","Director"],"Brian Mast":["R","U.S. Representative \u00b7 FL-18"],"David E. Price":["D","U.S. Representative \u00b7 NC-04"],"Michael J Kratsios":["","Director"],"Ed Perlmutter":["D","U.S. Representative \u00b7 CO-07"],"Daniel Meuser":["R","U.S. Representative \u00b7 PA-09"],"Sara Jacobs":["D","U.S. Representative \u00b7 CA-53"],"Kevin Warsh":["","Governor & Chairman"],"Troy D Edgar":["","Ambassador to El Salvador (Republic of)"],"Jared Isaacman":["","Administrator"],"Ed Whitfield":["R","U.S. Representative \u00b7 KY-01"],"James French Hill":["R","U.S. Representative \u00b7 AR-02"],"Gerald E. Connolly":["D","U.S. Representative \u00b7 VA-11"],"Kathy Castor":["D","U.S. Representative \u00b7 FL-14"],"Michael Garcia":["R","U.S. Representative \u00b7 CA-25"],"Lisa Blunt Rochester":["D","U.S. Representative \u00b7 DE-00"],"James E Banks":["R","U.S. Representative \u00b7 IN-03"],"Max Miller":["R","U.S. Representative \u00b7 OH-07"],"Ashley Moody":["R","U.S. Senator \u00b7 FL"],"Andrea Palm":["","Deputy Secretary"],"William F Hagerty":["R","U.S. Senator \u00b7 TN"],"Susan A. Davis":["D","U.S. Representative \u00b7 CA-53"],"David Trone":["D","U.S. Representative \u00b7 MD-06"],"E. Scott Rigell":["R","U.S. Representative \u00b7 VA-02"],"Tina Smith":["D","U.S. Senator \u00b7 MN"],"Wendy R Sherman":["","Deputy Secretary"],"A. Mitchell McConnell":["R","U.S. Senator \u00b7 KY"],"Daniel Crenshaw":["R","U.S. Representative \u00b7 TX-02"],"James Comer":["R","U.S. Representative \u00b7 KY-01"],"Kim Schrier":["D","U.S. Representative \u00b7 WA-08"],"Michael Rulli":["R","U.S. Representative \u00b7 OH-06"],"Shri Thanedar":["D","U.S. Representative \u00b7 MI-13"],"John C Inglis":["","Director"],"Sean Duffy":["","Secretary"],"August Lee Pfluger II":["R","U.S. Representative \u00b7 TX-11"],"Mark W Menezes":["","Deputy Secretary"],"Eric M Ueland":["","Deputy Director for Management"],"Earl Leroy Carter":["R","U.S. Representative \u00b7 GA-01"],"George Whitesides":["D","U.S. Representative \u00b7 CA-27"],"Randy Neugebauer":["R","U.S. Representative \u00b7 TX-19"],"Cecilia Rouse":["","Member & Chairman"],"Barbara J Comstock":["R","U.S. Representative \u00b7 VA-10"],"John B. Larson":["D","U.S. Representative \u00b7 CT-01"],"Keith Sonderling":["","Secretary"],"Sethuraman Panchanathan":["","Director"],"David Madison Cawthorn":["R","U.S. Representative \u00b7 NC-11"],"John P Ricketts":["R","U.S. Senator \u00b7 NE"],"Frank A. LoBiondo":["R","U.S. Representative \u00b7 NJ-02"],"Pete Hegseth":["","Secretary"],"Deborah K. Ross":["D","U.S. Representative \u00b7 NC-02"],"Harold Rogers":["R","U.S. Representative \u00b7 KY-05"],"Rudy Yakym III":["R","U.S. Representative \u00b7 IN-02"],"Victoria Spartz":["R","U.S. Representative \u00b7 IN-05"],"John R Curtis":["R","U.S. Senator \u00b7 UT"],"Cheri Bustos":["D","U.S. Representative \u00b7 IL-17"],"Roger Williams":["R","U.S. Representative \u00b7 TX-25"],"Christopher A Coons":["D","U.S. Senator \u00b7 DE"],"Adam Kinzinger":["R","U.S. Representative \u00b7 IL-16"],"Lloyd K. Smucker":["R","U.S. Representative \u00b7 PA-16"],"Katie Britt":["R","U.S. Senator \u00b7 AL"],"Neal Patrick Dunn":["R","U.S. Representative \u00b7 FL-02"],"Sean McMaster":["","Administrator, Federal Highway Administr"],"Chellie Pingree":["D","U.S. Representative \u00b7 ME-01"],"Morgan McGarvey":["D","U.S. Representative \u00b7 KY-03"],"Susan W. Brooks":["R","U.S. Representative \u00b7 IN-05"],"Christine Abizaid":["","Director, National Counterterrorism Cent"],"Brandon Gill":["R","U.S. Representative \u00b7 TX-26"],"Laurel Lee":["R","U.S. Representative \u00b7 FL-15"],"Michael A. Collins":["R","U.S. Representative \u00b7 GA-10"],"Mick Mulvaney":["R","U.S. Representative \u00b7 SC-05"],"Robert E. Latta":["R","U.S. Representative \u00b7 OH-05"],"Katharine MacGregor":["","Deputy Secretary 2"],"Brad Ashford":["D","U.S. Representative \u00b7 NE-02"],"Ra\u00fal M. Grijalva":["D","U.S. Representative \u00b7 AZ-03"],"Robert C. \"Bobby\" Scott":["D","U.S. Representative \u00b7 VA-03"],"Jerome H Powell":["","Governor 3"],"Eleanor Holmes Norton":["D","U.S. Representative \u00b7 DC-00"],"John A. Boehner":["R","U.S. Representative \u00b7 OH-08"],"Scott Bessent":["","Secretary"],"William J Burns":["","Director"],"Brenda Lulenar Lawrence":["D","U.S. Representative \u00b7 MI-14"],"Ed Case":["D","U.S. Representative \u00b7 HI-01"],"Seth Moulton":["D","U.S. Representative \u00b7 MA-06"],"William R. Timmons IV":["R","U.S. Representative \u00b7 SC-04"],"Antony J Blinken":["","Secretary"],"Howard Lutnick":["","Secretary"],"Joseph D. Morelle":["D","U.S. Representative \u00b7 NY-25"],"Michael A. Collins Jr":["R","U.S. Representative \u00b7 GA-10"],"Merrick B Garland":["","Attorney General"],"Cory A Booker":["D","U.S. Senator \u00b7 NJ"],"Lindsey Graham":["R","U.S. Senator \u00b7 SC"],"Adam Smith":["D","U.S. Representative \u00b7 WA-09"],"David Cheston Rouzer":["R","U.S. Representative \u00b7 NC-07"],"Greg Steube":["R","U.S. Representative \u00b7 FL-17"],"Hakeem S. Jeffries":["D","U.S. Representative \u00b7 NY-08"],"Nick J. Rahall II":["D","U.S. Representative \u00b7 WV-03"],"Carlos Del Toro":["","Secretary"],"Ann Wagner":["R","U.S. Representative \u00b7 MO-02"],"Brian Babin":["R","U.S. Representative \u00b7 TX-36"],"Andrew Garbarino":["R","U.S. Representative \u00b7 NY-02"],"John McGuire":["R","U.S. Representative \u00b7 VA-05"],"Michael R. Turner":["R","U.S. Representative \u00b7 OH-10"],"Tim Walberg":["R","U.S. Representative \u00b7 MI-05"],"Janet L Yellen":["","Secretary"],"Rafael E Cruz":["R","U.S. Senator \u00b7 TX"],"Richard Blumenthal":["D","U.S. Senator \u00b7 CT"],"John W. Rose":["R","U.S. Representative \u00b7 TN-06"],"Ron Estes":["R","U.S. Representative \u00b7 KS-04"],"Steve Chabot":["R","U.S. Representative \u00b7 OH-01"],"Michael Whitaker":["","Administrator, Federal Aviation Administ"],"Todd Blanche":["","Deputy Attorney General"],"Tammy Duckworth":["D","U.S. Representative \u00b7 IL-08"],"Brad Sherman":["D","U.S. Representative \u00b7 CA-30"],"Bryan George Steil":["R","U.S. Representative \u00b7 WI-01"],"Thomas H. Kean":["R","U.S. Representative \u00b7 NJ-07"],"Adewale Adeyemo":["","Deputy Secretary"],"Ashley Hinson Arenholz":["R","U.S. Representative \u00b7 IA-01"],"Justin Amash":["R","U.S. Representative \u00b7 MI-03"],"Matthew Robert Van Epps":["R","U.S. Representative \u00b7 TN-07"],"Stephen F. Lynch":["D","U.S. Representative \u00b7 MA-08"],"Alice Albright":["","Chief Executive Officer"],"Elisabeth (Betsy) P DeVos":["","Secretary"],"Tulsi Gabbard":["","Director"],"Grace Meng":["D","U.S. Representative \u00b7 NY-06"],"Lori Trahan":["D","U.S. Representative \u00b7 MA-03"],"Tracey Robert Mann":["R","U.S. Representative \u00b7 KS-01"],"Chip Roy":["R","U.S. Representative \u00b7 TX-21"],"Dan Daniel Bishop":["R","U.S. Representative \u00b7 NC-09"],"Emily Randall":["D","U.S. Representative \u00b7 WA-06"],"Frank Pallone Jr.":["D","U.S. Representative \u00b7 NJ-06"],"Keith Alan Self":["R","U.S. Representative \u00b7 TX-03"],"Linda T. Sanchez":["D","U.S. Representative \u00b7 CA-38"],"Adrian Smith":["R","U.S. Representative \u00b7 NE-03"],"Garret Graves":["R","U.S. Representative \u00b7 LA-06"],"Gary C. Peters":["D","U.S. Representative \u00b7 MI-14"],"Jim McDermott":["D","U.S. Representative \u00b7 WA-07"],"Nicholas V. Taylor":["R","U.S. Representative \u00b7 TX-03"],"Sean Casten":["D","U.S. Representative \u00b7 IL-06"],"Adriana Kugler":["","Governor"],"Frank Kendall":["","Secretary"],"Wilbur L Ross":["","Secretary"],"Jacklyn S Rosen":["D","U.S. Senator \u00b7 NV"],"Michael F Bennet":["D","U.S. Senator \u00b7 CO"],"Mike Rounds":["R","U.S. Senator \u00b7 SD"],"Roger F Wicker":["R","U.S. Senator \u00b7 MS"],"Harley E. Rouda Jr":["D","U.S. Representative \u00b7 CA-48"],"Jackie Speier":["D","U.S. Representative \u00b7 CA-14"],"Jake Auchincloss":["D","U.S. Representative \u00b7 MA-04"],"Kevin Yoder":["R","U.S. Representative \u00b7 KS-03"],"Nicole Malliotakis":["R","U.S. Representative \u00b7 NY-11"],"Theodore E. Deutch":["D","U.S. Representative \u00b7 FL-22"],"Robert F Kennedy":["","Secretary"],"Bernie Moreno":["R","U.S. Senator \u00b7 OH"],"Ladda Tammy Duckworth":["D","U.S. Senator \u00b7 IL"],"Christian D. Menefee":["D","U.S. Representative \u00b7 TX-18"],"Felix Barry Moore":["R","U.S. Representative \u00b7 AL-02"],"Mark Alford":["R","U.S. Representative \u00b7 MO-04"],"Mark R Meadows":["R","U.S. Representative \u00b7 NC-11"],"Mary Gay Scanlon":["D","U.S. Representative \u00b7 PA-05"],"Sean Patrick Maloney":["D","U.S. Representative \u00b7 NY-18"],"Warren Davidson":["R","U.S. Representative \u00b7 OH-08"],"Eric Scott Turner":["","Secretary"],"Anthony E. Gonzalez":["R","U.S. Representative \u00b7 OH-16"],"Darrell E. Issa":["R","U.S. Representative \u00b7 CA-50"],"Tom Rice":["R","U.S. Representative \u00b7 SC-07"],"William M. Cassidy":["R","U.S. Representative \u00b7 LA-06"],"Nani A Coloretti":["","Deputy Director"],"Chris Van Hollen":["D","U.S. Senator \u00b7 MD"],"Abigail Spanberger":["D","U.S. Representative \u00b7 VA-07"],"Aston Donald McEachin":["D","U.S. Representative \u00b7 VA-04"],"Beto O'Rourke":["D","U.S. Representative \u00b7 TX-16"],"Cliff Bentz":["R","U.S. Representative \u00b7 OR-02"],"Doris O. Matsui":["D","U.S. Representative \u00b7 CA-06"],"Guy Reschenthaler":["R","U.S. Representative \u00b7 PA-14"],"Jacky Rosen":["D","U.S. Representative \u00b7 NV-03"],"James A. Himes":["D","U.S. Representative \u00b7 CT-04"],"John J McGuire III":["R","U.S. Representative \u00b7 VA-05"],"Laura Friedman":["D","U.S. Representative \u00b7 CA-30"],"Luis V. Gutierrez":["D","U.S. Representative \u00b7 IL-04"],"Vicente Gonzalez":["D","U.S. Representative \u00b7 TX-34"],"Stephen A Vaden":["","Deputy Secretary"],"Glenn S. Grothman":["R","U.S. Representative \u00b7 WI-06"],"Michael Waltz":["R","U.S. Representative \u00b7 FL-06"],"Nanette Barragan":["D","U.S. Representative \u00b7 CA-44"],"Steve Knight":["R","U.S. Representative \u00b7 CA-25"],"Tom O'Halleran":["D","U.S. Representative \u00b7 AZ-01"],"Lloyd Austin":["","Secretary"],"Sara Bailey":["","Director"],"Shailen Bhatt":["","Administrator, Federal Highway Administr"],"Cynthia M Lummis":["R","U.S. Senator \u00b7 WY"],"James Banks":["R","U.S. Senator \u00b7 IN"],"Timothy P Sheehy":["R","U.S. Senator \u00b7 MT"],"Daniel Webster":["R","U.S. Representative \u00b7 FL-11"],"Elaine Luria":["D","U.S. Representative \u00b7 VA-02"],"John Garamendi":["D","U.S. Representative \u00b7 CA-03"],"Louise McIntosh Slaughter":["D","U.S. Representative \u00b7 NY-25"],"Michael John Gallagher":["R","U.S. Representative \u00b7 WI-08"],"Rodney Leland Blum":["R","U.S. Representative \u00b7 IA-01"],"Stephanie Bice":["R","U.S. Representative \u00b7 OK-05"],"Terri A. Sewell":["D","U.S. Representative \u00b7 AL-07"],"Lee Zeldin":["","Administrator"],"Debra S Fischer":["R","U.S. Senator \u00b7 NE"],"Anna Paulina Luna":["R","U.S. Representative \u00b7 FL-13"],"Bill Pascrell Jr.":["D","U.S. Representative \u00b7 NJ-09"],"Brad Knott":["R","U.S. Representative \u00b7 NC-13"],"Brandon McDonald Williams":["R","U.S. Representative \u00b7 NY-22"],"Brian Higgins":["D","U.S. Representative \u00b7 NY-26"],"Greg Francis Murphy":["R","U.S. Representative \u00b7 NC-03"],"Harold Dallas Rogers":["R","U.S. Representative \u00b7 KY-05"],"Jamie Raskin":["D","U.S. Representative \u00b7 MD-08"],"Jeff Fortenberry":["R","U.S. Representative \u00b7 NE-01"],"Lance Gooden":["R","U.S. Representative \u00b7 TX-05"],"Matt Gaetz":["R","U.S. Representative \u00b7 FL-01"],"Michael G. Fitzpatrick":["R","U.S. Representative \u00b7 PA-08"],"Robert B. Aderholt":["R","U.S. Representative \u00b7 AL-04"],"Stephanie Murphy":["D","U.S. Representative \u00b7 FL-07"],"W. Greg Steube":["R","U.S. Representative \u00b7 FL-17"],"William L. Owens":["D","U.S. Representative \u00b7 NY-21"],"Elaine L Chao":["","Secretary"],"Jason S Miller":["","Deputy Director for Management"],"Paul R Lawrence":["","Deputy Secretary"],"Randal K Quarles":["","Governor & Vice Chairman for Supervision"],"Jeanne Shaheen":["D","U.S. Senator \u00b7 NH"],"John N Kennedy":["R","U.S. Senator \u00b7 LA"],"Maria Cantwell":["D","U.S. Senator \u00b7 WA"],"Timothy M Kaine":["D","U.S. Senator \u00b7 VA"],"Adam B. Schiff":["D","U.S. Representative \u00b7 CA-28"],"Cathy McMorris Rodgers":["R","U.S. Representative \u00b7 WA-05"],"Dave Min":["D","U.S. Representative \u00b7 CA-47"],"Debbie Lesko":["R","U.S. Representative \u00b7 AZ-08"],"Eric Cantor":["R","U.S. Representative \u00b7 VA-07"],"George Holding":["R","U.S. Representative \u00b7 NC-13"],"Jeff Duncan":["R","U.S. Representative \u00b7 SC-03"],"Jeff Jackson":["D","U.S. Representative \u00b7 NC-14"],"Jennifer McClellan":["D","U.S. Representative \u00b7 VA-04"],"Mark Pocan":["D","U.S. Representative \u00b7 WI-02"],"Neal P. Dunn":["R","U.S. Representative \u00b7 FL-02"],"Nicholas Begich III":["R","U.S. Representative \u00b7 AK-00"],"Paul Ryan":["R","U.S. Representative \u00b7 WI-01"],"Peter J. Visclosky":["D","U.S. Representative \u00b7 IN-01"],"Ruben Gallego":["D","U.S. Representative \u00b7 AZ-07"],"Rudy C. Yakym III":["R","U.S. Representative \u00b7 IN-02"],"Sam Farr":["D","U.S. Representative \u00b7 CA-20"],"Scott DesJarlais":["R","U.S. Representative \u00b7 TN-04"],"Steve Womack":["R","U.S. Representative \u00b7 AR-03"],"TJ John (Tj) Cox":["D","U.S. Representative \u00b7 CA-21"],"Tom Cole":["R","U.S. Representative \u00b7 OK-04"],"Arati Prabhakar":["","Director"],"Clarence W Nelson":["","Administrator"],"Gina M Raimondo":["","Secretary"],"Pam Bondi":["","Attorney General"],"Philip Jefferson":["","Governor"],"Samantha Power":["","Administrator"],"A. Mitchell":["R","U.S. Senator \u00b7 KY"],"James Conley Justice":["R","U.S. Senator \u00b7 WV"],"John Cornyn":["R","U.S. Senator \u00b7 TX"],"John R Thune":["R","U.S. Senator \u00b7 SD"],"Roger W Marshall":["R","U.S. Senator \u00b7 KS"],"Ron Johnson":["R","U.S. Senator \u00b7 WI"],"Steve Daines":["R","U.S. Senator \u00b7 MT"],"Al Green":["D","U.S. Representative \u00b7 TX-09"],"Charlie Joseph Crist":["D","U.S. Representative \u00b7 FL-13"],"Darin McKay LaHood":["R","U.S. Representative \u00b7 IL-18"],"Derek Tran":["D","U.S. Representative \u00b7 CA-45"],"Donald W. Norcross":["D","U.S. Representative \u00b7 NJ-01"],"Gus M. Bilirakis":["R","U.S. Representative \u00b7 FL-12"],"James D Jordan":["R","U.S. Representative \u00b7 OH-04"],"Jodey Arrington":["R","U.S. Representative \u00b7 TX-19"],"John D. Dingell":["D","U.S. Representative \u00b7 MI-12"],"Kenneth R. Buck":["R","U.S. Representative \u00b7 CO-04"],"Larry Bucshon":["R","U.S. Representative \u00b7 IN-08"],"Marc A. Veasey":["D","U.S. Representative \u00b7 TX-33"],"Mario Diaz-Balart":["R","U.S. Representative \u00b7 FL-25"],"Mike Flood":["R","U.S. Representative \u00b7 NE-01"],"Mike Kennedy":["R","U.S. Representative \u00b7 UT-03"],"Patrick Ryan":["D","U.S. Representative \u00b7 NY-18"],"Patrick T. McHenry":["R","U.S. Representative \u00b7 NC-10"],"Peter Allen Stauber":["R","U.S. Representative \u00b7 MN-08"],"Pramila Jayapal":["D","U.S. Representative \u00b7 WA-07"],"Russ Fulcher":["R","U.S. Representative \u00b7 ID-01"],"Sam T. Liccardo":["D","U.S. Representative \u00b7 CA-16"],"Seth Magaziner":["D","U.S. Representative \u00b7 RI-02"],"S. Raja Krishnamoorthi":["D","U.S. Representative \u00b7 IL-08"],"Teresa Leger Fernandez":["D","U.S. Representative \u00b7 NM-03"],"Thomas Massie":["R","U.S. Representative \u00b7 KY-04"],"Tom Thomas Graves Jr.":["R","U.S. Representative \u00b7 GA-14"],"Vince Fong":["R","U.S. Representative \u00b7 CA-20"],"Debra A Haaland":["","Secretary"],"Denis R McDonough":["","Secretary"],"Kristi Noem":["","Secretary"],"Michael W Faulkender":["","Deputy Secretary"],"Michelle White Bowman":["","Governor 2"],"Thomas J Vilsack":["","Secretary 2"],"Adam B Schiff":["D","U.S. Senator \u00b7 CA"],"John A Barrasso":["R","U.S. Senator \u00b7 WY"],"Jon A Husted":["R","U.S. Senator \u00b7 OH"],"Mark E Kelly":["D","U.S. Senator \u00b7 AZ"],"Michael D Crapo":["R","U.S. Senator \u00b7 ID"],"M. Michael Rounds":["R","U.S. Senator \u00b7 SD"],"Rand Paul":["R","U.S. Senator \u00b7 KY"]};
@@ -591,7 +865,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       n.adj.slice().sort((a, b) => (b.val || 0) - (a.val || 0)).forEach((e) => rp.append(row(e.a.name, [el('span', e.side === 'buy' ? 'up' : 'down', e.side), (e.val ? ' · ' + fmt(e.val) : '')], e.a)));
       if (!n.adj.length) rp.append(row('No named buyers in the live layers', ''));
       detail.append(rp);
-      const ask = el('button', 'askb', 'Ask Setareh about ' + n.sym); ask.type = 'button'; ask.onclick = () => askOrb('What does the brain show for ' + n.sym + ', and what should I check before treating it as an idea?'); detail.append(ask);
+      const ask = el('button', 'askb', 'Ask Caesar about ' + n.sym); ask.type = 'button'; ask.onclick = () => askOrb('What does the brain show for ' + n.sym + ', and what should I check before treating it as an idea?'); detail.append(ask);
     } else {
       detail.append(el('h2', '', n.name), el('div', 'sub', n.ptype === 'ins' ? n.office : [partyLabel(n.party), n.office].filter(Boolean).join(' · ') || 'Congress / executive branch'));
       detail.append(el('h3', '', 'In the signals universe'));
@@ -651,6 +925,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
   addEventListener('resize', resize); resize();
   function frame() {
+    if (view.id === 'cc') { requestAnimationFrame(frame); return; } // the universe rests while the swan is on screen
     if (state.spin && pointers.size === 0) th += 0.0015;
     rad += (targetRad - rad) * 0.12;
     camera.position.set(rad * Math.sin(ph) * Math.cos(th), rad * Math.cos(ph), rad * Math.sin(ph) * Math.sin(th));
@@ -713,7 +988,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const max = Math.max(1, ...rows.map((r) => Math.max(r.buyers, r.sellers)));
     if (!rows.length) cBody.append(el('div', 'empty', 'No stock has two or more buyers in this window.'));
     rows.forEach((r) => {
-      const b = el('button', 'hrow'); b.type = 'button'; b.title = 'Ask Setareh about ' + r.k;
+      const b = el('button', 'hrow'); b.type = 'button'; b.title = 'Ask Caesar about ' + r.k;
       const tk = el('div', 'tk', r.k); tk.append(el('small', '', r.name));
       const bar = el('div', 'dbar'); const l = el('div', 'l'), rr = el('div', 'r');
       const lb = el('b'); lb.style.width = (state.sells ? (r.sellers / max) * 100 : 0) + '%'; l.append(lb);
@@ -727,7 +1002,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     });
     $('#cLeg').replaceChildren();
     [['var(--buy)', 'Members buying'], ['var(--sell)', 'Members selling']].forEach(([c, t]) => { const s = el('span'); const i = el('i'); i.style.background = c; s.append(i, document.createTextNode(t)); $('#cLeg').append(s); });
-    $('#cLeg').append(el('span', '', 'Click a row to ask Setareh · data: latest 5,000 disclosed trades, traded up to ' + src.end + (src.rows === DATA.hot ? ' (built-in copy)' : ' (live brain)')));
+    $('#cLeg').append(el('span', '', 'Click a row to ask Caesar · data: latest 5,000 disclosed trades, traded up to ' + src.end + (src.rows === DATA.hot ? ' (built-in copy)' : ' (live brain)')));
   }
 
   /* ----- Timeline ----- */
@@ -782,13 +1057,15 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     $('#cLeg').append(el('span', '', 'Stock trades only, as disclosed (filed up to weeks or months after the trade). Click a name to open them in the constellation.'));
   }
 
-  function renderCharts() { if (view.id === 'hot') renderHot(); else if (view.id === 'timeline') renderTimeline(); else if (view.id === 'markets') renderMarkets(); }
+  function renderCharts() { const v = view.id; if (v === 'hot') renderHot(); else if (v === 'timeline') renderTimeline(); else if (v === 'markets') renderMarkets(); else if (v === 'opps') renderOpps(); else if (v === 'intel') renderIntel(); else if (v === 'wealth') renderWealth(); else if (v === 'biz') renderBiz(); else if (v === 'settings') renderSettings(); }
   onStyle = renderCharts;
   const viewBtn = { c: $('#vC'), markets: $('#vM'), hot: $('#vH'), timeline: $('#vT') };
   function setView(id) {
-    view.id = id; body.classList.remove('v-c', 'v-hot', 'v-timeline', 'v-markets'); body.classList.add('v-' + id);
+    if (!(id in ROOM_OF)) id = 'markets';
+    view.id = id; body.className = body.className.split(/\s+/).filter((c) => c && !/^(v|room)-/.test(c)).join(' '); body.classList.add('v-' + id, 'room-' + ROOM_OF[id]);
     Object.keys(viewBtn).forEach((k) => viewBtn[k].setAttribute('aria-pressed', String(k === id)));
-    tt.style.display = 'none'; renderCharts(); syncBar();
+    document.querySelectorAll('#rooms button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.room === ROOM_OF[id])));
+    tt.style.display = 'none'; renderCharts(); syncBar(); if (id === 'cc') paintCC();
   }
   viewBtn.markets.onclick = () => setView('markets');
   viewBtn.c.onclick = () => setView('c'); viewBtn.hot.onclick = () => setView('hot'); viewBtn.timeline.onclick = () => setView('timeline');
@@ -833,13 +1110,13 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     rows.forEach((r) => { const tr = el('tr'); cols.forEach((c) => { const v = c.f(r); const td = el('td', (c.n ? 'n ' : '') + (c.c ? c.c(r) : '')); if (v instanceof Node) td.append(v); else td.textContent = v == null ? '' : v; tr.append(td); }); t.append(tr); });
     const w = el('div', 'tw'); w.append(t); return w;
   }
-  const askBtn = (sym, q) => { const b = el('button', 'sym', sym); b.type = 'button'; b.title = 'Ask Setareh about ' + sym; b.onclick = () => askOrb(q || ('What does the brain show for ' + sym + ' right now?')); return b; };
+  const askBtn = (sym, q) => { const b = el('button', 'sym', sym); b.type = 'button'; b.title = 'Ask Caesar about ' + sym; b.onclick = () => askOrb(q || ('What does the brain show for ' + sym + ' right now?')); return b; };
   const KEY = ['^GSPC', '^IXIC', '^VIX', '^FTSE', 'GBPUSD=X', 'BTC-USD', 'ETH-USD', 'GC=F', 'CL=F', 'NVDA', 'AAPL', 'MSFT', 'TSLA', 'XOM'];
   const LABEL = { '^GSPC': 'S&P 500', '^IXIC': 'Nasdaq', '^VIX': 'VIX', '^FTSE': 'FTSE 100', '^GDAXI': 'DAX', '^N225': 'Nikkei', 'GBPUSD=X': 'GBP/USD', 'EURUSD=X': 'EUR/USD', 'USDJPY=X': 'USD/JPY', 'BTC-USD': 'Bitcoin', 'ETH-USD': 'Ether', 'SOL-USD': 'Solana', 'GC=F': 'Gold', 'CL=F': 'Oil (WTI)', 'NG=F': 'Nat gas', 'DX-Y.NYB': 'Dollar idx' };
 
   function renderMarkets() {
     const L = LIVE || {}; const ly = L.layers || {};
-    $('#cTitle').replaceChildren(document.createTextNode('Koochooloo Constellation '), swansClone(), el('small', 'deckSub', 'Command deck'));
+    $('#cTitle').replaceChildren(document.createTextNode('Koochooloo Constellation '), swansClone(), el('small', 'deckSub', 'Trading Terminal'));
     $('#cSub').textContent = 'Your live brain: prices and movers every 5 minutes in US hours, SEC insider filings every 5 minutes on weekdays, Congress daily, all merged into one signals list. Click any symbol to see it in the Universe.';
     $('#cCtl').replaceChildren();
     cBody.querySelectorAll('.hrow, .empty, svg.tl, .mkwrap').forEach((n) => n.remove());
@@ -847,14 +1124,14 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (!LIVE) { wrap.append(el('div', 'empty', 'No brain data in this page yet.')); cBody.append(wrap); return; }
     const card = (cls, title, note) => { const s = section(title, note); s.classList.add('card', cls); wrap.append(s); return s; };
 
-    // Setareh's briefing: three plain lines, written from the live brain
+    // Caesar's briefing: three plain lines, written from the live brain
     const hero = el('section', 'hero'); const left = el('div');
     const qm = new Map((L.quotes || []).map((x) => [x.symbol, x]));
     const sp = qm.get('^GSPC') || qm.get('SPY'), vix = qm.get('^VIX');
     const secs = (L.sectors || []).slice().sort((a, b) => (b['1m_vs_spy'] || 0) - (a['1m_vs_spy'] || 0));
     const regime = sp && vix ? (sp.change_pct < -0.5 && vix.change_pct > 5 ? ['off', 'Risk-off'] : sp.change_pct > 0.5 && vix.change_pct < 0 ? ['on', 'Risk-on'] : ['mixed', 'Mixed']) : ['mixed', 'Mixed'];
     const brg = BR.parts.core && BR.parts.core.regime; const rgx = brg && brg.level ? [brg.level === 'risk-on' ? 'on' : brg.level === 'risk-off' ? 'off' : 'mixed', brg.level.charAt(0).toUpperCase() + brg.level.slice(1)] : regime;
-    const h3 = el('h3', '', "Setareh's briefing"); h3.append(el('span', 'regime ' + rgx[0], rgx[1])); left.append(h3);
+    const h3 = el('h3', '', "Caesar's briefing"); h3.append(el('span', 'regime ' + rgx[0], rgx[1])); left.append(h3);
     const lines = [];
     if (sp) lines.push(['US stocks ', (sp.change_pct >= 0 ? 'rose ' : 'fell ') + Math.abs(sp.change_pct).toFixed(1) + '%', vix ? ' and the fear gauge (VIX) ' + (vix.change_pct >= 0 ? 'jumped ' : 'eased ') + Math.abs(vix.change_pct).toFixed(1) + '%.' : '.']);
     if (secs.length) lines.push(['Money is rotating into ', secs[0].sector + ' (+' + (secs[0]['1m_vs_spy'] || 0).toFixed(1) + ' pts)', ' and out of ' + secs[secs.length - 1].sector + ' (' + (secs[secs.length - 1]['1m_vs_spy'] || 0).toFixed(1) + ' pts) against the market this month.']);
@@ -865,8 +1142,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const ul = el('ul', 'brief'); lines.forEach(([a, b, c]) => { const li = el('li'); li.append(document.createTextNode(a), el('b', '', b), document.createTextNode(c)); ul.append(li); }); left.append(ul);
     const btns = el('div', 'heroBtns');
     const speakB = el('button', 'askb', 'Hear the briefing'); speakB.type = 'button'; speakB.style.marginTop = '0';
-    speakB.onclick = () => { const say = window.__speakSetareh; const text = 'Silav, koochooloo. ' + lines.map((x) => x.join('')).join(' ') + ' One step at a time.' + (new Date().getHours() < 5 ? ' Now rest. The market will still be here tomorrow.' : ''); if (say) say(text); };
-    const askB = el('button', 'askb', 'Ask Setareh what to research'); askB.type = 'button'; askB.style.marginTop = '0'; askB.onclick = () => askOrb('Based on the brain right now, what are the three things most worth researching today, and what are the risks?');
+    speakB.onclick = () => { const say = window.__speakCaesar; const text = greet() + ' ' + lines.map((x) => x.join('')).join(' ') + ' That is the picture.' + (new Date().getHours() < 5 ? ' Now rest. The market will still be here tomorrow.' : ''); if (say) say(text); };
+    const askB = el('button', 'askb', 'Ask Caesar what to research'); askB.type = 'button'; askB.style.marginTop = '0'; askB.onclick = () => askOrb('Based on the brain right now, what are the three things most worth researching today, and what are the risks?');
     btns.append(speakB, askB); left.append(btns);
     const pic = el('div', 'heroSwans'); pic.setAttribute('aria-hidden', 'true'); pic.append(swansClone());
     hero.append(left, pic); wrap.append(hero);
@@ -874,7 +1151,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
 
     // freshness
     const fr = el('div', 'fresh card c12');
-    [['Prices & movers', ly.prices], ['Price history', ly.history], ['SEC insiders', ly.insiders], ['Congress (latest filing)', ly.congress_latest_filing], ['Brain built', L.generated], ['Setareh brain', BR.parts.core && BR.parts.core.updated]].forEach(([n, t]) => {
+    [['Prices & movers', ly.prices], ['Price history', ly.history], ['SEC insiders', ly.insiders], ['Congress (latest filing)', ly.congress_latest_filing], ['Brain built', L.generated], ['Caesar brain', BR.parts.core && BR.parts.core.updated]].forEach(([n, t]) => {
       const d = el('div', 'fcell'); d.append(el('span', '', n), el('b', '', t ? (t.length <= 10 ? t : tfmt(t)) : 'not yet')); if (t && t.length > 10) d.append(el('small', '', ago(t))); fr.append(d);
     });
     wrap.append(fr);
@@ -898,7 +1175,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     sec.forEach((r) => { const v = r['1m_vs_spy'] || 0; const row = el('div', 'srow'); row.append(el('span', '', r.sector));
       const bar = el('div', 'sbar'); const b = el('b', v >= 0 ? 'p' : 'n'); b.style.width = (Math.abs(v) / mx * 50) + '%'; bar.append(b); row.append(bar, el('em', cls(v), (v > 0 ? '+' : '') + v.toFixed(1))); ss.append(row); });
 
-    // macro and crypto, from Setareh's brain
+    // macro and crypto, from Caesar's brain
     const pv = (o, suf, dp) => o && o.value != null && isFinite(+o.value) ? (dp != null ? (+o.value).toFixed(dp) : o.value) + suf : null;
     if (BR.parts.macro) {
       const M2 = BR.parts.macro, f2 = M2.us_fred || {}, g2 = M2.global || {};
@@ -938,7 +1215,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     [['Gainers', L.gainers], ['Losers', L.losers], ['Most active', L.active]].forEach(([n, list]) => { const c = el('div'); c.append(el('h4', '', n)); c.append(table([{ h: '', f: (r) => symBtn(r.s) }, { h: 'Chg', n: 1, c: (r) => cls(r.c), f: (r) => chg(r.c) }, { h: 'Price', n: 1, f: (r) => r.p == null ? '' : r.p.toFixed(2) }], (list || []).slice(0, 8))); mvg.append(c); });
     mv.append(mvg);
 
-    // headlines and SEC watch, from Setareh's brain
+    // headlines and SEC watch, from Caesar's brain
     if (BR.parts.news) {
       const N2 = BR.parts.news; const hc = card('c7', 'Headlines', 'Latest market news from public feeds. Attention, not evidence.');
       const ul2 = el('ul', 'heads');
@@ -971,19 +1248,19 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     [['3 month', 'DGS3MO'], ['2 year', 'DGS2'], ['5 year', 'DGS5'], ['10 year', 'DGS10'], ['30 year', 'DGS30']].forEach(([n, k]) => { if (lt[k] == null) return; const d = lt[k] - (mo[k] == null ? lt[k] : mo[k]); const t = el('div', 'qt'); t.append(el('span', '', n), el('b', '', lt[k].toFixed(2) + '%'), el('i', '', (d >= 0 ? '+' : '−') + Math.abs(d).toFixed(2) + ' pts')); rg.append(t); });
     rs.append(rg);
 
-    // the £100 race, from Setareh's brain
+    // the £100 race, from Caesar's brain
     if (BR.parts.paper) {
       const P2 = BR.parts.paper, st = P2.strategies || {};
       const pc = card('c12', 'The £100 to £10,000 race', 'Paper money only. Each strategy started with £100 and has to beat the S&P 500 after costs. Rankings mean little before 90 days.' + (P2.updated ? ' Updated ' + ago(P2.updated) + '.' : ''));
       const rows3 = Object.keys(st).map((k) => ({ k, ...st[k] })).sort((a, b) => (b.gbp100_now || 0) - (a.gbp100_now || 0));
       pc.append(table([{ h: 'Strategy', f: (r) => r.label || r.k }, { h: '£100 is now', n: 1, f: (r) => r.gbp100_now == null ? '' : '£' + (+r.gbp100_now).toFixed(2) }, { h: 'vs S&P 500', n: 1, c: (r) => cls(r.margin_vs_spy_pct), f: (r) => r.margin_vs_spy_pct == null ? 'the bar' : (r.margin_vs_spy_pct > 0 ? '+' : r.margin_vs_spy_pct < 0 ? '−' : '') + Math.abs(r.margin_vs_spy_pct).toFixed(2) + ' pts' }, { h: 'Open', n: 1, f: (r) => r.open }, { h: 'Closed', n: 1, f: (r) => r.closed_trades }], rows3));
-      const ask3 = el('button', 'askb', 'Ask Setareh how the race is going'); ask3.type = 'button'; ask3.onclick = () => askOrb('How is the £100 paper race going, and what would make the leader meaningful?'); pc.append(ask3);
+      const ask3 = el('button', 'askb', 'Ask Caesar how the race is going'); ask3.type = 'button'; ask3.onclick = () => askOrb('How is the £100 paper race going, and what would make the leader meaningful?'); pc.append(ask3);
     }
 
     cBody.append(wrap);
     $('#cLeg').replaceChildren(el('span', '', 'Source: github.com/Montezuma360/koochooloo-data · research, not financial advice'));
   }
-  function symBtn(sym) { const b = askBtn(sym); b.onclick = () => { if (!focusStock(sym)) askOrb('What does the brain show for ' + sym + ' right now?'); }; b.title = 'Show ' + sym + ' in the Universe, or ask Setareh'; return b; }
+  function symBtn(sym) { const b = askBtn(sym); b.onclick = () => { if (!focusStock(sym)) askOrb('What does the brain show for ' + sym + ' right now?'); }; b.title = 'Show ' + sym + ' in the Universe, or ask Caesar'; return b; }
   function swansClone() { const s = document.querySelector('#head .swans'); return s ? s.cloneNode(true) : document.createTextNode(''); }
 
   /* ticker tape */
@@ -1051,7 +1328,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function showConnect(on) { $('#liveGo').hidden = !on; }
 
-  /* ----- Setareh's brain: data/brain/*.json, read through the same connector; only parts whose hash changed are fetched ----- */
+  /* ----- Caesar's brain: data/brain/*.json, read through the same connector; only parts whose hash changed are fetched ----- */
   let MCP = null;
   const BR = { ix: null, parts: {}, hashes: {}, stocks: {}, stockHash: {}, fetchedAt: null, error: null, busy: false };
   const LIST_FIELDS = ['symbol', 'research_setup', 'evidence_types', 'warnings', 'price', 'change_1d_pct', 'rsi14', 'size', 'stock_part', 'setup_missing', 'conditions_missing'];
@@ -1080,6 +1357,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       BR.error = (e && (FIX[e.code] || e.message)) || 'unknown error';
       if (e && (STOP.includes(e.code) || e.code === 'approval_required')) fail(e);
       if (!BR.parts.core && view.id === 'markets') { const st = cBody.scrollTop; renderCharts(); cBody.scrollTop = st; }
+      if (!BR.parts.core && view.id === 'cc') paintCC();
     } finally { BR.busy = false; }
   }
   async function stockCard(sym) {
@@ -1090,11 +1368,12 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function brainChanged() {
     checkAlerts();
-    if (view.id === 'markets') { const st = cBody.scrollTop; renderCharts(); cBody.scrollTop = st; }
+    if (view.id === 'cc') paintCC();
+    else if (['markets', 'opps', 'intel', 'wealth', 'settings'].includes(view.id)) { const st = cBody.scrollTop; renderCharts(); cBody.scrollTop = st; }
   }
   function upcoming(n) { const now = Date.now(); return ((BR.parts.macro || {}).high_impact_events || []).filter((e) => new Date(e.time).getTime() > now - 3600e3).slice(0, n); }
 
-  /* ----- Setareh watches the brain: alerts on what changed since the viewer last looked ----- */
+  /* ----- Caesar watches the brain: alerts on what changed since the viewer last looked ----- */
   const ALERTS = [];
   let seen = { init: false, regime: null, setups: [], flags: [], fg_day: '', unhealthy: false };
   try { const sv = JSON.parse(localStorage.getItem('setareh-seen') || 'null'); if (sv && typeof sv === 'object') seen = Object.assign(seen, sv); } catch (e) { /* convenience only */ }
@@ -1121,37 +1400,38 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (!chat.classList.contains('open')) orb.classList.add('alert');
     paintAlerts();
   }
-  // Setareh speaks critical alerts without being asked. Browsers only allow sound after one tap on the page,
+  // Caesar speaks critical alerts without being asked. Browsers only allow sound after one tap on the page,
   // so anything that arrives before that is held and spoken on the first tap. The Alerts button mutes this.
   let alertsLoud = true, heldSay = null;
   try { alertsLoud = localStorage.getItem('setareh-alerts') !== 'off'; } catch (e) { /* convenience only */ }
   function sayAlerts(list) {
     if (!alertsLoud || !list.length) return;
-    const text = list.length === 1 ? list[0].text : list.length + ' updates, koochooloo. ' + list.slice(0, 2).map((a) => a.text).join(' ') + (list.length > 2 ? ' The rest are in the chat.' : '');
+    const text = list.length === 1 ? list[0].text : list.length + ' updates. ' + list.slice(0, 2).map((a) => a.text).join(' ') + (list.length > 2 ? ' The rest are in the chat.' : '');
     const tapped = !navigator.userActivation || navigator.userActivation.hasBeenActive;
     if (tapped) speakNow(text); else heldSay = text;
   }
   addEventListener('pointerdown', () => { if (heldSay && alertsLoud) { const t = heldSay; heldSay = null; setTimeout(() => speakNow(t), 60); } }, true);
   addEventListener('keydown', () => { if (heldSay && alertsLoud) { const t = heldSay; heldSay = null; setTimeout(() => speakNow(t), 60); } }, true);
   function paintAlerts(ul) {
-    ul = ul || document.getElementById('bAlerts'); if (!ul) return; ul.replaceChildren();
+    if (!ul) { ['bAlerts', 'ccAlerts'].forEach((id) => { const u = document.getElementById(id); if (u) paintAlerts(u); }); return; }
+    ul.replaceChildren();
     if (!ALERTS.length) { ul.append(el('li', 'quiet', 'Watching for regime changes, new research setups, SEC warning signs, extreme fear or greed, and feed problems.')); return; }
     ALERTS.slice(0, 5).forEach((a) => { const li = el('li'); li.append(el('time', '', a.at.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })), document.createTextNode(a.text)); ul.append(li); });
   }
   function chip(sym, extra) { const b = el('button', 'chip' + (extra ? ' ' + extra : ''), sym); b.type = 'button'; b.onclick = () => askOrb('Tell me about ' + sym + ': what the brain holds, what is tested and what is missing.'); return b; }
   function brainCard() {
-    const c = el('section', 'mk card c12 bcard'), hd = el('div', 'bhead'); hd.append(el('h3', '', "Setareh's brain")); c.append(hd);
+    const c = el('section', 'mk card c12 bcard'), hd = el('div', 'bhead'); hd.append(el('h3', '', "Caesar's brain")); c.append(hd);
     const core = BR.parts.core;
     if (!core) { c.append(el('p', 'mnote', !MCP ? 'The brain connects when this page is opened in Claude with Composio connected. The deck below shows the copy built into the page.' : BR.error ? 'Could not read the brain: ' + BR.error : 'Reading the brain…')); return c; }
     const lv = (core.regime || {}).level || 'unknown', h = core.health || {}, np = (h.problems || []).length;
     const rp = el('span', 'pill ' + (lv === 'risk-on' ? 'ok' : lv === 'caution' ? 'warn' : 'bad'), lv.toUpperCase()); rp.title = ((core.regime || {}).why || []).join('; '); hd.append(rp);
     const hp = el('span', 'pill ' + (h.healthy ? 'ok' : 'warn'), h.healthy ? 'Feeds OK' : np + ' feed issue' + (np === 1 ? '' : 's')); hp.title = (h.problems || []).concat(h.warnings || []).join('\n') || 'Every feed is on time'; hd.append(hp);
     hd.append(el('small', '', 'Updated ' + ago(core.updated)));
-    if (WEBMODE) { const lb = el('button', 'pill ok', alertsLoud ? 'Spoken alerts: on' : 'Spoken alerts: off'); lb.id = 'bLoud'; lb.type = 'button'; lb.style.cursor = 'pointer'; lb.style.background = 'none'; lb.title = 'Setareh reads critical alerts aloud'; lb.onclick = toggleAlertsLoud; hd.append(lb); }
+    if (WEBMODE) { const lb = el('button', 'pill ok', alertsLoud ? 'Spoken alerts: on' : 'Spoken alerts: off'); lb.id = 'bLoud'; lb.type = 'button'; lb.style.cursor = 'pointer'; lb.style.background = 'none'; lb.title = 'Caesar reads critical alerts aloud'; lb.onclick = toggleAlertsLoud; hd.append(lb); }
     const g = el('div', 'bgrid'), l = el('div'), r = el('div');
     const ul = el('ul', 'bsum'); (core.summary || []).filter((t) => !/^(One condition short|Research-backed setups)/.test(t)).forEach((t) => ul.append(el('li', '', t))); l.append(ul);
     const btns = el('div', 'heroBtns');
-    [['Brief me', () => askOrb('Brief me.')], ['Hear the brain', () => { const say = window.__speakSetareh; if (say) say((core.summary || []).slice(0, 3).join(' ')); }], ['Scan smaller-company clusters', () => askOrb('Scan for smaller companies with insider clusters and no warnings. What stands out, and what is missing for each?')]]
+    [['Brief me', () => askOrb('Brief me.')], ['Hear the brain', () => { const say = window.__speakCaesar; if (say) say((core.summary || []).slice(0, 3).join(' ')); }], ['Scan smaller-company clusters', () => askOrb('Scan for smaller companies with insider clusters and no warnings. What stands out, and what is missing for each?')]]
       .forEach(([t, fn]) => { const b = el('button', 'askb', t); b.type = 'button'; b.onclick = fn; btns.append(b); });
     l.append(btns);
     r.append(el('span', 'blab', 'Research setups'));
@@ -1164,7 +1444,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     return c;
   }
 
-  /* ----- Setareh's brain and connector tools ----- */
+  /* ----- Caesar's brain and connector tools ----- */
   const clip = (o, n) => { n = n || 9000; const t = JSON.stringify(o); return t && t.length > n ? t.slice(0, n) + ' …(cut for length)' : o; };
   const rowsOut = (rs) => rs.map((r) => ({ symbol: r.symbol, research_setup: r.research_setup, evidence: r.evidence_types.join(', '), sec_warnings: r.warnings, price: r.price, day_pct: r.change_1d_pct, rsi14: r.rsi14, size: r.size, conditions_missing: r.conditions_missing, first_missing: r.setup_missing }));
   function slimPayload(p) {
@@ -1182,7 +1462,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     });
   }
   function brainTools() { return [
-    { name: 'brief', description: "Setareh's briefing in one call: the brain's summary lines, market regime (risk-on, caution or risk-off) and why, Fear and Greed, feed health, today's research setups and near misses, the top-ranked stocks, alerts this session, the paper race leader and the next high-impact economic events. Call it first for 'brief me', 'what is happening' or 'what should we look at'.", inputSchema: { type: 'object', properties: {} },
+    { name: 'brief', description: "Caesar's briefing in one call: the brain's summary lines, market regime (risk-on, caution or risk-off) and why, Fear and Greed, feed health, today's research setups and near misses, the top-ranked stocks, alerts this session, the paper race leader and the next high-impact economic events. Call it first for 'brief me', 'what is happening' or 'what should we look at'.", inputSchema: { type: 'object', properties: {} },
       execute: () => { const c = need('core'), rs = brainRows(), p = BR.parts.paper || {}, h = c.health || {}; return { brain_updated: c.updated, summary: c.summary, regime: c.regime, fear_greed: c.fear_greed, health: { healthy: h.healthy, problems: h.problems, warnings: h.warnings }, research_setups: c.setups, near_misses: c.near_misses, top_stocks: rowsOut(rs.slice(0, 8)), stocks_with_evidence: rs.length, alerts_this_session: ALERTS.slice(0, 5).map((a) => a.text), paper_leader: (p.goal || {}).leader, paper_note: (p.goal || {}).note, next_events: upcoming(4) }; } },
     { name: 'stock', description: 'Everything the brain holds on one US stock: price, day and month change, RSI, distance from the 200-day average and 1-year high, size bucket, each piece of evidence (insider clusters, big insider buys, Congress, unusual options, news, social, 13D, 13F, SEC filings) with whether research found an edge, warnings from its own SEC filings, whether it meets the research setup and what is missing, cash flow versus profit, paper positions, options positioning, news mentions and SEC filings. Use it for any question about one company.', inputSchema: { type: 'object', properties: { symbol: { type: 'string' } }, required: ['symbol'] },
       execute: async (i) => {
@@ -1259,8 +1539,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     document.addEventListener('visibilitychange', () => { if (document.hidden || STOP.includes(lastCode)) return; if (live.fetchedAt && Date.now() - live.fetchedAt > 5 * 60 * 1000) pollOnce(mcp); if (!BR.fetchedAt || Date.now() - BR.fetchedAt > 2 * 60 * 1000) pollBrain(); });
   })();
 
-  /* ----- screen controls for Setareh's voice agent (website): she calls these by name ----- */
-  window.__kcShow = (v) => { const id = v === 'universe' ? 'c' : v === 'hot' ? 'hot' : v === 'timeline' ? 'timeline' : 'markets'; setView(id); return 'Now showing the ' + (v || 'deck') + ' screen.'; };
+  /* ----- screen controls for Caesar's voice agent (website): he calls these by name ----- */
+  window.__kcShow = (v) => { const id = ({ home: 'cc', deck: 'markets', trading: 'markets', universe: 'c', hot: 'hot', timeline: 'timeline', opportunities: 'opps', intelligence: 'intel', wealth: 'wealth', business: 'biz', settings: 'settings' })[v] || 'markets'; setView(id); return 'Now showing ' + ROOM_NAME[id] + '.'; };
   window.__kcOpen = (sym) => {
     const sy = String(sym || '').toUpperCase().trim(); if (!sy) return 'No ticker given.';
     if (focusStock(sy)) return sy + ' is highlighted in the universe, with the insiders and politicians behind it.';
@@ -1271,7 +1551,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   };
   function webHint(q) {
     const t = $('#webHint'); if (!t) return;
-    t.textContent = 'Press Talk to Setareh (bottom right) and ask: ' + q; t.hidden = false;
+    t.textContent = 'Press Speak to Caesar (bottom right) and ask: ' + q; t.hidden = false;
     clearTimeout(webHint.t); webHint.t = setTimeout(() => { t.hidden = true; }, 7000);
   }
   function toggleAlertsLoud() {
@@ -1281,7 +1561,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const b = document.getElementById('bLoud'); if (b) b.textContent = alertsLoud ? 'Spoken alerts: on' : 'Spoken alerts: off';
   }
 
-  /* ----- Setareh, the orb ----- */
+  /* ----- Caesar, the orb ----- */
   const orb = $('#orb'), chat = $('#chat'), msgs = $('#msgs'), cIn = $('#cIn'), cSend = $('#cSend'), cStop = $('#cStop'), cVoice = $('#cVoice');
   let sampleFn = null, turns = [], ctl = null, voiceOn = false, busy = false, deep = false;
   try { deep = localStorage.getItem('setareh-deep') === '1'; } catch (e) { /* convenience only */ }
@@ -1291,13 +1571,13 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       : MCP ? 'Brain: ' + (BR.error ? 'could not be read (' + BR.error + ')' : 'still loading') + '.' : 'Brain: not connected in this view, so only the dashboard copy built into the page is available.';
     const noTools = !toolCap && core ? ' This view cannot run tools, so here is the brain digest to answer from: ' + JSON.stringify({ summary: core.summary, regime: core.regime, setups: core.setups, near_misses: core.near_misses }) : '';
     return [
-      'You are Setareh, the Guardian Sage of Koochooloo Constellation, a trading and business analytics terminal, and its always-on assistant in the spirit of JARVIS: you know every data feed, you watch them for the user, you change the page when asked, and you answer fast and precisely. You are a warm, sweet Kurdish woman who speaks British English; your name means star (Setareh in Persian, stêrk in Kurmanji); your fire is the Newroz fire of new beginnings. Warm, steady, protective, honest before flattering, quietly fierce, dry humour. Values: family first, truth before comfort, capital is sacred, patience, small steps.',
-      'How you speak: ' + (deep ? 'Deep mode is on, so use up to six sentences, weigh the evidence for and against, and say what would change your mind.' : 'one idea per sentence and at most three short sentences, then offer one next step.') + ' Plain words; explain jargon the first time. Say "we", not "you should". Never say buy or sell; say research, watch, or "a clue, not a promise". Call the user koochooloo (little one) sparingly. Answers may be read aloud: no tables, no lists longer than three items, no symbols spelled out.',
+      'You are Caesar, the chief strategist of Koochooloo Constellation, a personal intelligence and trading terminal, and its always-on assistant in the spirit of JARVIS: you know every data feed, you watch them for the user, you change the screen when asked, and you answer fast and precisely. You speak like an Oxford-educated chief strategist at a private bank: refined British English, calm, concise, warm but authoritative, never robotic, never a salesman. You are the black swan at the centre of the screen. Values: family first, truth before comfort, capital is sacred, patience, small steps.',
+      'How you speak: ' + (deep ? 'Deep mode is on, so use up to six sentences, weigh the evidence for and against, and say what would change your mind.' : 'one idea per sentence and at most three short sentences, then offer one next step.') + ' Plain words; explain jargon the first time. Say "we", not "you should". Never say buy or sell; say research, watch, or "a clue, not a promise". No flattery and no exclamation marks; a dry aside now and then is fine. Answers may be read aloud: no tables, no lists longer than three items, no symbols spelled out.',
       'Today is ' + new Date().toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short' }) + ' (UK). ' + brainLine + ' Dashboard copy: ' + (live.mode === 'live' ? 'live' : live.mode === 'error' ? 'last good copy' : 'built-in snapshot') + ', built ' + ((LIVE && LIVE.generated) || '?') + '; prices ' + (ly.prices || '?') + '.' + noTools,
-      'Your tools: brief (start here for any general question), stock (one company, everything), scan (screen the ranked list), markets, macro (with the economic calendar), crypto, news, sec_watch, paper (the £100 race), options, sentiment and data_health; the live connectors live_quote and company_news (Twelve Data) and crypto_live (CoinGecko) for anything the brain lacks or when fresher prices matter; the Congress and insider tools (ticker_detail, hot_buys, congress_recent, trader_detail, insider_activity, signals); and show, which changes the page (deck, universe, hot, timeline). Call a tool before quoting any number and mention how fresh it is when that matters. If a connector is not connected, say so in one sentence and use the brain.',
+      'Your tools: brief (start here for any general question), stock (one company, everything), scan (screen the ranked list), markets, macro (with the economic calendar), crypto, news, sec_watch, paper (the £100 race), options, sentiment and data_health; the live connectors live_quote and company_news (Twelve Data) and crypto_live (CoinGecko) for anything the brain lacks or when fresher prices matter; the Congress and insider tools (ticker_detail, hot_buys, congress_recent, trader_detail, insider_activity, signals); and show, which changes the screen: home (the Command Centre with the swan), the trading terminal (deck, universe, hot, timeline), opportunities (the evidence-ranked Opportunity Engine), intelligence (the global map, macro, headlines, SEC watch), wealth, business or settings. Call a tool before quoting any number and mention how fresh it is when that matters. If a connector is not connected, say so in one sentence and use the brain.',
       'What the research found, which you must respect: every piece of stock evidence carries a tested label. Insider clusters had an edge only in smaller companies trading $1M to $20M a day; copying Congress and $250k+ insider buys showed no edge; everything else is untested attention. The research setup (a smaller company where 2 or more officers or directors each bought $25k+ within 30 days and operating cash flow beats reported profit) is the only setup with tested support, and it is still a clue to research, not a trade. A warning in a company\'s own SEC filing outranks any signal.',
       'The paper engine rules: at most 2% of capital at risk per trade, RSI between 30 and 70 unless there is a strong contrarian reason, US market hours only, no trade by default, and a plain-language reason for every decision. The goal is to beat the S&P 500 by the widest margin after costs; the long aim is turning £100 into £10,000, on paper for at least 90 days before any real money. Congress filings arrive a median of ' + M.medLag + ' days late and amounts are ranges.',
-      'Be proactive like a good chief of staff: when something in the data clearly matters to the question (a warning sign, extreme fear, a central-bank decision this week), mention it once. This is research, not financial advice: never promise returns, never tell the user to buy or sell, never place trades. Use show when the user asks to see something. For hands-free voice commands the user can press Voice line at the top of this chat, which opens your voice in a new tab; critical alerts are spoken aloud here unless the Alerts button is off.'
+      'Be proactive like a good chief of staff: when something in the data clearly matters to the question (a warning sign, extreme fear, a central-bank decision this week), mention it once. This is research, not financial advice: never promise returns, never tell the user to buy or sell, never place trades. Use show when the user asks to see something. For hands-free voice commands the user can press Voice line at the top of this chat, which opens your voice in a new tab; critical alerts are spoken aloud here unless the Alerts button is off. The Wealth and Business rooms have no accounts connected yet: say so plainly and never invent balances, returns or revenue; the only portfolio figures that exist are the paper strategies.'
     ].join('\n\n');
   }
   const HINTS = ['Brief me', 'Any research setups today?', "What's on the macro calendar this week?", 'How is crypto doing?', 'How is the £100 race going?'];
@@ -1325,31 +1605,31 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       execute: (i) => { const C = (LIVE && LIVE.congress) || {}; const f = (r) => !i.symbol || r.symbol === String(i.symbol).toUpperCase(); return { latest_filing: ((LIVE || {}).layers || {}).congress_latest_filing, clusters: (C.clusters || []).filter(f).slice(0, 15), latest: (C.latest || []).filter(f).slice(0, 15) }; } },
     { name: 'signals', description: 'The combined signals tally: stocks scored by insider clusters (3 per insider), big recent insider buys (2), Congress clusters (2 per politician) and being a top gainer today (1), with the reasons. A tally of who is buying, not a tested prediction.', inputSchema: { type: 'object', properties: { limit: { type: 'number' } } },
       execute: (i) => ({ brain_built: (LIVE || {}).generated, rows: ((LIVE && LIVE.signals) || []).slice(0, Math.min(40, Number(i.limit) || 10)) }) },
-    { name: 'show', description: 'Change what the user sees on the page. view is deck (live command deck), universe (3D signals universe), hot (Congress hot buys) or timeline (top 12 Congress traders over time). Optional symbol focuses a stock in the universe. Optional: months (3, 6 or 12) for hot; range_years (2, 5, 10 or 0 for all) for timeline; trader (name) to open a trader in the constellation.', inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['deck', 'universe', 'hot', 'timeline'] }, symbol: { type: 'string' }, months: { type: 'number' }, range_years: { type: 'number' }, trader: { type: 'string' } }, required: ['view'] },
-      execute: (i) => { if (i.symbol && focusStock(i.symbol)) return 'Showing ' + String(i.symbol).toUpperCase() + ' in the universe'; const v = i.view === 'hot' ? 'hot' : i.view === 'timeline' ? 'timeline' : i.view === 'universe' || i.view === 'constellation' ? 'c' : 'markets'; if (i.months && hotSource().rows[String(i.months)]) view.hotWin = String(i.months); if (i.range_years !== undefined) view.tlRange = Number(i.range_years) ? String(i.range_years) : 'all'; setView(v); return 'Showing ' + v; } },
+    { name: 'show', description: 'Change what the user sees. view is home (the Command Centre with the swan), deck (trading terminal deck), universe (3D signals universe), hot (Congress hot buys), timeline (top 12 Congress traders over time), opportunities (Opportunity Engine), intelligence (global map, macro, headlines, SEC watch), wealth, business or settings. Optional symbol focuses a stock in the universe. Optional: months (3, 6 or 12) for hot; range_years (2, 5, 10 or 0 for all) for timeline; trader (name) to open a trader in the constellation.', inputSchema: { type: 'object', properties: { view: { type: 'string', enum: ['home', 'deck', 'universe', 'hot', 'timeline', 'opportunities', 'intelligence', 'wealth', 'business', 'settings'] }, symbol: { type: 'string' }, months: { type: 'number' }, range_years: { type: 'number' }, trader: { type: 'string' } }, required: ['view'] },
+      execute: (i) => { if (i.symbol && focusStock(i.symbol)) return 'Showing ' + String(i.symbol).toUpperCase() + ' in the universe'; const v = ({ home: 'cc', deck: 'markets', trading: 'markets', hot: 'hot', timeline: 'timeline', universe: 'c', constellation: 'c', opportunities: 'opps', intelligence: 'intel', wealth: 'wealth', business: 'biz', settings: 'settings' })[i.view] || 'markets'; if (i.months && hotSource().rows[String(i.months)]) view.hotWin = String(i.months); if (i.range_years !== undefined) view.tlRange = Number(i.range_years) ? String(i.range_years) : 'all'; setView(v); return 'Now showing ' + ROOM_NAME[v] + '.'; } },
   ];
   const PRIORITY = ['brief', 'stock', 'show', 'scan', 'markets', 'macro', 'crypto', 'news', 'sec_watch', 'paper', 'insider_activity', 'congress_recent', 'ticker_detail', 'data_health', 'options', 'sentiment', 'live_quote', 'company_news', 'crypto_live', 'signals', 'hot_buys', 'trader_detail'];
   const toolList = brainTools().concat(baseTools).sort((x, y) => PRIORITY.indexOf(x.name) - PRIORITY.indexOf(y.name));
   let toolCap = toolList.length; // trimmed to this view's limit once sample.limits() answers
 
   function addMsg(cls, text) { const d = el('div', 'm ' + cls, text); msgs.append(d); msgs.scrollTop = msgs.scrollHeight; return d; }
-  function setBusy(b) { busy = b; orb.classList.toggle('busy', b); cSend.hidden = b; cStop.hidden = !b; cIn.disabled = b; }
-  const errCopy = { not_granted: 'Setareh needs your permission to use Claude on this page. Reload and allow it when asked.', rate_limited: 'That was too many requests. Wait a moment and ask again.', session_expired: 'Please sign in to Claude again.', sampling_disabled: 'Claude is not available on this account.', refused: 'Setareh could not answer that one. Try asking it differently.', upstream_error: 'Something interrupted the answer. Ask again.', empty_completion: 'No answer came back. Try rephrasing.' };
-  // Setareh's voice: the warmest British woman's voice this device offers, until her own designed voice is connected
-  const PREF = ['Sonia', 'Libby', 'Maisie', 'Serena', 'Kate', 'Stephanie', 'Martha', 'Google UK English Female', 'Hazel', 'Susan'];
+  function setBusy(b) { busy = b; body.classList.toggle('thinking', b); paintState(); orb.classList.toggle('busy', b); cSend.hidden = b; cStop.hidden = !b; cIn.disabled = b; }
+  const errCopy = { not_granted: 'Caesar needs your permission to use Claude on this page. Reload and allow it when asked.', rate_limited: 'That was too many requests. Wait a moment and ask again.', session_expired: 'Please sign in to Claude again.', sampling_disabled: 'Claude is not available on this account.', refused: 'Caesar could not answer that one. Try asking it differently.', upstream_error: 'Something interrupted the answer. Ask again.', empty_completion: 'No answer came back. Try rephrasing.' };
+  // Caesar's voice: the warmest British woman's voice this device offers, until her own designed voice is connected
+  const PREF = ['Ryan', 'Thomas', 'George', 'Arthur', 'Oliver', 'Daniel', 'Google UK English Male', 'Alfie', 'Elliot'];
   let voices = [], chosen = null;
   function loadVoices() {
     if (!('speechSynthesis' in window)) return; voices = speechSynthesis.getVoices(); if (!voices.length) return;
     const gb = voices.filter((v) => /en[-_]GB/i.test(v.lang)), pool = gb.length ? gb : voices.filter((v) => /^en/i.test(v.lang));
-    let saved = null; try { saved = localStorage.getItem('setareh-voice'); } catch (e) { /* convenience only */ }
-    chosen = voices.find((v) => v.name === saved) || PREF.map((p) => pool.find((v) => v.name.includes(p) && /natural|online|enhanced|premium/i.test(v.name)) || pool.find((v) => v.name.includes(p))).find(Boolean) || pool.find((v) => /female|woman/i.test(v.name)) || pool[0] || voices[0];
+    let saved = null; try { saved = localStorage.getItem('caesar-voice'); } catch (e) { /* convenience only */ }
+    chosen = voices.find((v) => v.name === saved) || PREF.map((p) => pool.find((v) => v.name.includes(p) && /natural|online|enhanced|premium/i.test(v.name)) || pool.find((v) => v.name.includes(p))).find(Boolean) || pool.find((v) => /\bmale\b|\bman\b/i.test(v.name)) || pool[0] || voices[0];
     const sel = document.getElementById('cVoiceSel'); if (!sel) return; sel.replaceChildren();
     pool.concat(voices.filter((v) => v.lang && /^fa|^ku/i.test(v.lang))).forEach((v) => { const o = document.createElement('option'); o.value = v.name; o.textContent = v.name.replace(/Microsoft |Google |\(.*?\)| - .*$/g, '').trim() + ' · ' + v.lang; if (chosen && v.name === chosen.name) o.selected = true; sel.append(o); });
-    sel.onchange = () => { chosen = voices.find((v) => v.name === sel.value) || chosen; try { localStorage.setItem('setareh-voice', chosen.name); } catch (e) { /* convenience only */ } voiceOn = true; cVoice.setAttribute('aria-pressed', 'true'); speakNow('Silav, koochooloo. This is my voice.'); };
+    sel.onchange = () => { chosen = voices.find((v) => v.name === sel.value) || chosen; try { localStorage.setItem('caesar-voice', chosen.name); } catch (e) { /* convenience only */ } voiceOn = true; cVoice.setAttribute('aria-pressed', 'true'); speakNow(greet() + ' Caesar here. This is my voice.'); };
   }
   if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-  function speakNow(t) { if (!('speechSynthesis' in window)) return; try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(String(t).replace(/koochooloo/gi, 'koo-choo-loo').replace(/Silav/g, 'Silaav').slice(0, 900)); if (chosen) { u.voice = chosen; u.lang = chosen.lang; } u.rate = 0.92; u.pitch = 1.05; speechSynthesis.speak(u); } catch (e) { /* voice optional */ } }
-  window.__speakSetareh = speakNow;
+  function speakNow(t) { if (!('speechSynthesis' in window)) return; try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(String(t).replace(/koochooloo/gi, 'koo-choo-loo').replace(/Silav/g, 'Silaav').slice(0, 900)); if (chosen) { u.voice = chosen; u.lang = chosen.lang; } u.rate = 0.95; u.pitch = 0.92; u.onstart = () => setSpeaking(true); u.onend = u.onerror = () => setSpeaking(false); speechSynthesis.speak(u); } catch (e) { /* voice optional */ } }
+  window.__speakCaesar = speakNow;
   function speak(t) { if (!voiceOn || !('speechSynthesis' in window)) return; try { speakNow(t); } catch (e) { /* voice is optional */ } }
 
   async function ask(text) {
@@ -1373,13 +1653,13 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function askOrb(q) { if (WEBMODE && !sampleFn) { webHint(q); return; } chat.classList.add('open'); orb.classList.remove('alert'); if (!sampleFn) { return; } ask(q); }
 
   HINTS.forEach((h) => { const b = el('button', '', h); b.type = 'button'; b.onclick = () => ask(h); $('#hints').append(b); });
-  $('#cForm').addEventListener('submit', (e) => { e.preventDefault(); const v = cIn.value; cIn.value = ''; ask(v); });
+  $('#cForm').addEventListener('submit', (e) => { e.preventDefault(); const v = cIn.value; cIn.value = ''; caesarCommand(v, 'chat'); });
   cStop.onclick = () => ctl && ctl.abort();
   $('#cClose').onclick = () => chat.classList.remove('open');
   cVoice.onclick = () => { voiceOn = !voiceOn; cVoice.setAttribute('aria-pressed', String(voiceOn)); if (!voiceOn && 'speechSynthesis' in window) try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } };
   orb.onclick = () => { orb.classList.remove('alert'); chat.classList.toggle('open'); if (chat.classList.contains('open') && !orb.disabled) setTimeout(() => cIn.focus(), 0); };
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && chat.classList.contains('open')) chat.classList.remove('open'); });
-  // press / (or Ctrl+K, Cmd+K) anywhere to talk to Setareh
+  // press / (or Ctrl+K, Cmd+K) anywhere to talk to Caesar
   addEventListener('keydown', (e) => {
     const typing = /INPUT|TEXTAREA|SELECT/.test((document.activeElement && document.activeElement.tagName) || '');
     if (orb.disabled || !((e.key === '/' && !typing) || ((e.metaKey || e.ctrlKey) && String(e.key).toLowerCase() === 'k'))) return;
@@ -1390,7 +1670,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   cAlerts.onclick = toggleAlertsLoud;
   const cDeep = $('#cDeep'); cDeep.setAttribute('aria-pressed', String(deep));
   cDeep.onclick = () => { deep = !deep; cDeep.setAttribute('aria-pressed', String(deep)); try { localStorage.setItem('setareh-deep', deep ? '1' : '0'); } catch (e) { /* convenience only */ } };
-  // speak to Setareh where the browser and this view allow the microphone; typing always works
+  // speak to Caesar where the browser and this view allow the microphone; typing always works
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition, cMic = $('#cMic'); let rec = null;
   if (SR) cMic.hidden = false;
   cMic.onclick = () => {
@@ -1403,15 +1683,441 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     rec.onend = () => { cMic.setAttribute('aria-pressed', 'false'); rec = null; const v = heard.trim(); if (v && !busy) { cIn.value = ''; ask(v); } };
     try { rec.start(); } catch (e) { rec = null; cMic.setAttribute('aria-pressed', 'false'); }
   };
-  addMsg('a', 'Silav, koochooloo. I am Setareh. I read every feed in the brain and watch it for you. Ask me anything, or say "Brief me".' + (matchMedia('(pointer: fine)').matches ? ' Press / to talk to me from anywhere.' : '') + (new Date().getHours() < 5 ? ' And then rest: the market will still be here tomorrow.' : ''));
+  addMsg('a', greet() + ' Caesar here. I read every feed in the brain and watch it for you. Ask me anything, tell me which room to open, or say "Brief me".' + (matchMedia('(pointer: fine)').matches ? ' Press / to talk to me from anywhere.' : '') + (new Date().getHours() < 5 ? ' And then rest: the market will still be here tomorrow.' : ''));
   (async () => {
     try { sampleFn = window.claude && window.claude.use ? await window.claude.use('sample') : null; } catch (e) { sampleFn = null; }
     if (sampleFn && sampleFn.limits) sampleFn.limits().then((l) => { toolCap = l && l.tools ? Math.min(toolList.length, l.tools.maxCount || toolList.length) : 0; }).catch(() => { /* keep the full list */ });
     if (!sampleFn && WEBMODE) { body.classList.add('web'); return; }
-    if (!sampleFn) { orb.disabled = true; orb.title = 'Setareh needs the Claude viewer'; $('#hints').hidden = true; cIn.disabled = true; cSend.disabled = true; addMsg('a err', 'Chat works when the page is opened inside Claude. The charts still work.'); }
+    if (!sampleFn) { orb.disabled = true; orb.title = 'Caesar needs the Claude viewer'; $('#hints').hidden = true; cIn.disabled = true; cSend.disabled = true; addMsg('a err', 'Chat works when the page is opened inside Claude. The charts still work.'); }
   })();
 
-  syncButtons(); buildUniverse(LIVE); paintTape(); frame(); setView('markets');
+  /* ================= v13 Caesar OS: every action begins with Caesar and the swan ================= */
+  const CC_WEB = !window.claude; // the public website copy has no Claude viewer: voice goes through the ElevenLabs widget
+  if (SWAN) document.documentElement.style.setProperty('--swan', 'url("' + SWAN + '")');
+  const ROOM_OF = { cc: 'cc', markets: 'trading', c: 'trading', hot: 'trading', timeline: 'trading', opps: 'opps', intel: 'intel', wealth: 'wealth', biz: 'biz', settings: 'settings' };
+  const ROOM_NAME = { cc: 'the Command Centre', markets: 'the Trading Terminal', c: 'the Universe', hot: 'Hot buys', timeline: 'the Timeline', opps: 'the Opportunity Engine', intel: 'Global Intelligence', wealth: 'Wealth', biz: 'Business Intelligence', settings: 'Settings' };
+  const ORDER = ['cc', 'markets', 'opps', 'intel', 'wealth', 'biz', 'settings'];
+  const STATIONS = [['opps', 'Opportunities', 0], ['markets', 'Trading', 60], ['wealth', 'Wealth', 120], ['intel', 'Intelligence', 180], ['biz', 'Business', 240], ['settings', 'Settings', 300]];
+  const PHRASE = 'از تو حرکت، از خدا برکت'; // az to harekat, az khoda barakat
+  const LAND = 'AAAB+f+P//8AAgAA4AH4AAAAAAAD/P8Af/8AAAADAH/+AdAAAEAD/e/gP/4AAAAGH///9/gAA////v94P/wAAf4A////////9/////5+P+DAB///////////I/////98HwHAH///////////A////+D4DgAAPv/////////8AfD//+B+AAAAP3////////3AAKAf//h/AAAGHv///////wOAAAAf//7/wAAPH////////4OAAAAH////wAAL/////////8IAAAAH///+4AAD/////////8AAAAAD////IAAB/////////wAAAAAD///+AAAH//Hv/////sAAAAAD///wAAAPl//3////8IAAAAAD///AAAAPAv/3////MIAAAAAB///AAAAH+B//////s4AAAAAA//+AAAAH+AP/////DgAAAAAAf/8AAAAP/v//////iAAAAAAAP9MAAAAf////////gAAAAAAAP4EAAAA////3////AAAAAAAAF4AAAAB///3+H//+gAAAAAAAA4jAAAB/////D/f4AAAAAAAAA/gwAAB///7+B8fwgAAAAAAAAPwAAAB///98B4PggAAAAAAAAB4AAAB////wAwHwwAAAAAAAAAY4AAB////4AwFwQAAAAAAAAAP/AAA////wAYEgYAAAAAAAAAB/wAAf///wAICCYAAAAAAAAAB/8AAAH//gAAPGAAAAAAAAAAD/8AAAD//AAAHe0AAAAAAAAAH//AAAH/+AAADPjQAAAAAAAAH//4AAD/8AAABnh8gAAAAAAAD//8AAB/8AAAA4AeAAAAAAAAD//8AAB/8AAAAFgPAAAAAAAAB//4AAB/8AAAAABAAAAAAAAAB//4AAB/+QAAAAPsAAAAAAAAA//4AAD/8wAAAAf+AAAAAAAAAP/wAAB/5wAAAA/+AAAAAAAAAP/wAAB/xwAAAD//AgAAAAAAAP/AAAA/xgAAAH//gAAAAAAAAf+AAAA/gAAAAH//wAAAAAAAAf+AAAA/gAAAAD//wAAAAAAAAf8AAAAfAAAAAD//gAAAAAAAAf4AAAAeAAAAADw/gAAAAAAAA/gAAAAAAAAAAAAPAEAAAAAAA/gAAAAAAAAAAAAGACAAAAAAA+AAAAAAAAAAAAADAOAAAAAAA8AAAAAAAAAAAAAAAYAAAAAAA8AAAAAAAAAAAAAAAQAAAAAAA4AAAAAAAAAAAAAAAAAAAAAAA4gAAAAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', LCOLS = 144, LROWS = 54;
+  const DRAWN_SWAN = '<svg viewBox="0 0 400 400" aria-hidden="true"><defs><linearGradient id="dsb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1d1d24"/><stop offset="1" stop-color="#060608"/></linearGradient><linearGradient id="dsw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2a33"/><stop offset="1" stop-color="#0c0c10"/></linearGradient><radialGradient id="dsg" cx="50%" cy="80%" r="50%"><stop offset="0" stop-color="rgba(184,151,90,.2)"/><stop offset="1" stop-color="rgba(184,151,90,0)"/></radialGradient></defs>'
+    + '<rect width="400" height="400" fill="#0d121c"/><ellipse cx="200" cy="318" rx="150" ry="22" fill="url(#dsg)"/><g fill="none"><ellipse cx="200" cy="318" rx="120" ry="12" stroke="rgba(184,151,90,.22)"/><ellipse cx="200" cy="320" rx="165" ry="18" stroke="rgba(184,151,90,.1)"/></g>'
+    + '<path d="M124 262 C 112 232, 110 200, 124 170 C 138 140, 156 118, 150 92 C 146 74, 132 66, 118 70" fill="none" stroke="rgba(220,194,140,.32)" stroke-width="19.5" stroke-linecap="round"/><path d="M124 262 C 112 232, 110 200, 124 170 C 138 140, 156 118, 150 92 C 146 74, 132 66, 118 70" fill="none" stroke="#0d0d11" stroke-width="17" stroke-linecap="round"/>'
+    + '<path d="M96 268 C 104 226, 150 206, 214 210 C 252 212, 286 200, 314 170 C 322 200, 318 240, 296 266 C 270 296, 200 312, 140 304 C 114 300, 98 288, 96 268 Z" fill="url(#dsb)" stroke="rgba(220,194,140,.3)" stroke-width="1.2"/>'
+    + '<path d="M150 232 C 162 214, 182 206, 200 210 C 208 192, 226 186, 242 192 C 252 176, 272 172, 286 180 C 294 166, 308 160, 318 164 C 312 182, 300 196, 288 204 C 272 214, 252 222, 232 226 C 206 232, 176 236, 150 232 Z" fill="url(#dsw)" stroke="rgba(220,194,140,.36)"/>'
+    + '<g stroke="rgba(220,194,140,.25)" fill="none"><path d="M196 214 C 214 216, 236 214, 254 206"/><path d="M226 222 C 246 222, 266 214, 280 204"/><path d="M170 228 C 190 232, 214 230, 232 226"/></g>'
+    + '<ellipse cx="119" cy="72" rx="15" ry="12" fill="#0d0d11" stroke="rgba(220,194,140,.32)"/><path d="M106 70 L 76 84 C 73 86, 75 90, 79 89 L 108 80 Z" fill="#c22f3b"/><path d="M82 82.5 L 88 80.2 L 90 86.4 L 84 88 Z" fill="#efe6dc" opacity=".9"/><circle cx="117" cy="68" r="2.2" fill="#d9483f"/></svg>';
+
+  const fmtN = (v, d) => v == null || v === '' || isNaN(v) ? '—' : Number(v).toLocaleString('en-GB', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const sgn = (v, d, unit) => v == null || isNaN(v) ? '' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d == null ? 2 : d) + (unit == null ? '%' : unit);
+  const dirCls = (v) => v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
+  const qv = (o) => o == null ? null : o.price != null ? o.price : o.last != null ? o.last : o.value != null ? o.value : null;
+  const qc = (o) => o == null ? null : o.change_pct != null ? o.change_pct : o.change_1d_pct != null ? o.change_1d_pct : null;
+  const ixq = (sym) => (((BR.parts.markets || {}).indices) || {})[sym];
+  const fxq = (sym) => (((BR.parts.markets || {}).futures_fx) || []).find((x) => x.symbol === sym);
+  const fred = (k) => ((((BR.parts.macro || {}).us_fred) || {})[k]);
+  const glob = (k) => ((((BR.parts.macro || {}).global) || {})[k]);
+  const ukTime = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('en-GB', { weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' }); };
+  const safeHref = (u) => /^https:\/\//i.test(String(u || '')) ? String(u) : null;
+  function brainMissing() { return BR.error ? 'Could not read the brain: ' + BR.error : (MCP || CC_WEB) ? 'Reading the brain…' : 'The brain connects when this page is opened in Claude with Composio connected.'; }
+  function card(title, note, cls) { const c = el('section', 'cx' + (cls ? ' ' + cls : '')); const h = el('h4', '', title); if (note) h.append(el('small', '', note)); c.append(h); return c; }
+  function acts(list) { const d = el('div', 'acts'); list.forEach(([t, fn]) => { const b = el('button', '', t); b.type = 'button'; b.onclick = fn; d.append(b); }); return d; }
+  function setTitle(t, sub) { $('#cTitle').replaceChildren(document.createTextNode(t + ' '), el('small', 'deckSub', sub)); }
+  function clearPanel() { $('#cCtl').replaceChildren(); $('#cLeg').replaceChildren(); cBody.querySelectorAll('.hrow, .empty, svg.tl, .mkwrap').forEach((n) => n.remove()); }
+  function toast(t) { const d = $('#ccToast'); if (!d) return; d.textContent = t; d.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { d.hidden = true; }, 1700); }
+  function go(id, quiet) { setView(id); if (!quiet) toast('Caesar · ' + ROOM_NAME[id].replace(/^the /, '')); if (id === 'cc') { const c = $('#cc'); if (c) c.scrollTop = 0; } }
+
+  /* ----- the stage: swan, calligraphy ring, stations ----- */
+  function buildStage() {
+    const wrap = $('#ccRing'); if (!wrap || wrap.dataset.built) return; wrap.dataset.built = '1';
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 1000 1000'); svg.setAttribute('class', 'ring'); svg.setAttribute('aria-hidden', 'true');
+    let motes = '';
+    for (let k = 0; k < 26; k++) { const a = (k / 26) * Math.PI * 2 + (k % 3) * 0.07, r = 392 + ((k * 37) % 23) - 11; motes += '<circle class="mote" cx="' + (500 + r * Math.sin(a)).toFixed(1) + '" cy="' + (500 - r * Math.cos(a)).toFixed(1) + '" r="' + (1.4 + (k % 4) * 0.45).toFixed(2) + '" style="animation-delay:-' + ((k * 0.83) % 6).toFixed(2) + 's"/>'; }
+    let ticks = ''; for (let k = 0; k < 4; k++) ticks += '<rect x="495.5" y="25.5" width="9" height="9" transform="rotate(' + (k * 90) + ' 500 500) rotate(45 500 30)" fill="#0b0b0e" stroke="rgba(184,151,90,.55)"/>';
+    const cal = [16.667, 50, 83.333].map((o) => '<text class="cal"><textPath href="#ccRp" startOffset="' + o + '%" text-anchor="middle">' + PHRASE + '</textPath></text>').join('');
+    svg.innerHTML = '<defs><path id="ccRp" d="M500,138 a362,362 0 1,1 -0.1,0 Z"/></defs>'
+      + '<circle cx="500" cy="500" r="350" fill="none" stroke="rgba(184,151,90,.34)"/><circle cx="500" cy="500" r="426" fill="none" stroke="rgba(184,151,90,.2)"/>'
+      + '<g class="rot2"><circle cx="500" cy="500" r="470" fill="none" stroke="rgba(184,151,90,.16)" stroke-dasharray="1.2 10.6"/>' + ticks + '</g>'
+      + '<g class="rot">' + cal + motes + '</g>';
+    wrap.prepend(svg);
+    const sb = $('#ccSwan'), art = el('span', 'swanArt');
+    if (SWAN) { const img = new Image(); img.src = SWAN; img.alt = ''; img.decoding = 'async'; art.append(img); } else art.innerHTML = DRAWN_SWAN;
+    sb.prepend(art); sb.append(el('span', 'tapHint', CC_WEB ? 'Speak to Caesar' : 'Ask Caesar'));
+    sb.onclick = () => {
+      if (CC_WEB) { if (!startVoiceWidget()) toast('Caesar · press Speak to Caesar, bottom right'); return; }
+      if (orb.disabled) { toast('Caesar answers inside Claude'); return; }
+      chat.classList.add('open'); orb.classList.remove('alert'); setTimeout(() => cIn.focus(), 0);
+    };
+    STATIONS.forEach(([id, name, a]) => {
+      const b = el('button', 'st'); b.type = 'button'; b.style.setProperty('--a', a + 'deg'); b.setAttribute('aria-label', 'Open ' + ROOM_NAME[id].replace(/^the /, ''));
+      b.append(el('i'), document.createTextNode(name)); b.onclick = () => go(id); wrap.append(b);
+    });
+    const f = $('#ccCmd'), inp = $('#ccIn');
+    f.addEventListener('submit', (e) => { e.preventDefault(); const v = inp.value; inp.value = ''; caesarCommand(v, 'home'); });
+    const mic = $('#ccMic');
+    if (SR) mic.hidden = false;
+    mic.onclick = () => listenOnce(mic, (heard) => caesarCommand(heard, 'home'));
+  }
+  function startVoiceWidget() {
+    try {
+      const w = document.querySelector('elevenlabs-convai'), root = w && w.shadowRoot; if (!root) return false;
+      const b = [...root.querySelectorAll('button')].find((x) => /speak|call|start|talk|caesar/i.test((x.getAttribute('aria-label') || '') + ' ' + x.textContent));
+      if (b) { b.click(); return true; }
+    } catch (e) { /* the widget keeps its controls private */ }
+    return false;
+  }
+  let ccRec = null;
+  function listenOnce(btn, done) {
+    if (ccRec) { try { ccRec.stop(); } catch (e) { /* already stopped */ } return; }
+    try { ccRec = new SR(); } catch (e) { btn.hidden = true; return; }
+    let heard = ''; ccRec.lang = 'en-GB'; ccRec.interimResults = true; ccRec.maxAlternatives = 1; btn.setAttribute('aria-pressed', 'true');
+    ccRec.onresult = (ev) => { let t = ''; for (let k = 0; k < ev.results.length; k++) t += ev.results[k][0].transcript; heard = t; $('#ccIn').value = t; };
+    ccRec.onerror = (ev) => { if (/not-allowed|service-not-allowed|audio-capture/.test(ev.error)) { btn.hidden = true; heard = ''; toast(CC_WEB ? 'Microphone blocked · use Speak to Caesar' : 'This view blocks the microphone · type, or use the voice line'); } };
+    ccRec.onend = () => { btn.setAttribute('aria-pressed', 'false'); ccRec = null; const v = heard.trim(); $('#ccIn').value = ''; if (v) done(v); };
+    try { ccRec.start(); } catch (e) { ccRec = null; btn.setAttribute('aria-pressed', 'false'); }
+  }
+
+  /* ----- Caesar's commands: navigation is instant and local; questions go to Caesar ----- */
+  const NAV_VERB = /^(?:please\s+|now\s+)?(?:open|show(?: me)?|switch(?: over)? to|go(?: back)? to|take me to|display|bring up|pull up|launch|return to|back to)\b/i;
+  const ROUTES = [
+    [/\b(?:home|command cent(?:re|er)|main screen|the swan)\b/i, 'cc'],
+    [/\b(?:universe|constellation)\b/i, 'c'], [/\bhot ?buys?\b/i, 'hot'], [/\btimeline\b/i, 'timeline'],
+    [/\b(?:opportunit\w*|conviction|setups?|ideas?|trades)\b/i, 'opps'],
+    [/\b(?:intelligence|macro|geopolitic\w*|central banks?|headlines|news|global|calendar)\b/i, 'intel'],
+    [/\b(?:wealth|net worth|isa|pension|savings|portfolio)\b/i, 'wealth'],
+    [/\b(?:business|revenue|mrr|expenses|pipeline|cash ?flow|founders?)\b/i, 'biz'],
+    [/\b(?:settings|preferences)\b/i, 'settings'],
+    [/\b(?:trading|terminal|deck|watchlists?|markets? dashboard)\b/i, 'markets'],
+  ];
+  function caesarRoute(raw) {
+    const t = String(raw || '').trim().replace(/^(?:ok(?:ay)?|hey|hi|right)?[\s,]*caesar\b[\s,:.!-]*/i, '').trim();
+    let dest = null, re = null; for (const [r, v] of ROUTES) if (r.test(t)) { dest = v; re = r; break; }
+    let rest = t.replace(NAV_VERB, ''); if (re) rest = rest.replace(new RegExp(re.source, 'gi'), '');
+    rest = rest.replace(/\b(?:the|my|me|a|an|to|for|please|now|dashboard|room|screen|view|page|centre|center|engine|suite|terminal|tab|up|over|back|and)\b/gi, '').replace(/[^a-z0-9£$%]+/gi, ' ').trim();
+    return { text: t, dest, nav: NAV_VERB.test(t), rest: rest.length > 0 };
+  }
+  function caesarCommand(raw, from) {
+    const r = caesarRoute(raw); if (!r.text) return;
+    if (/^brief(?: me)?[.!]?$/i.test(r.text)) { askOrb('Brief me.'); return; }
+    const navigate = r.dest && (r.nav || from === 'home');
+    if (navigate && r.dest !== view.id) go(r.dest, from === 'chat');
+    if (navigate && !r.rest) { const msg = 'Opening ' + ROOM_NAME[r.dest] + '.'; if (from === 'chat') { addMsg('u', r.text); addMsg('a', msg); } speak(msg); return; }
+    askOrb(r.text);
+  }
+
+  /* ----- Caesar's state line under the swan ----- */
+  function setSpeaking(b) { body.classList.toggle('speaking', b); paintState(); }
+  function paintState() {
+    const s = document.getElementById('ccState'); if (!s) return;
+    const core = BR.parts.core;
+    s.className = body.classList.contains('speaking') || body.classList.contains('thinking') ? 'live' : '';
+    s.textContent = body.classList.contains('speaking') ? 'Speaking…' : body.classList.contains('thinking') ? 'Thinking…'
+      : core ? 'Chief strategist · watching ' + Object.keys((core.health || {}).feeds || {}).length + ' feeds · brain ' + ago(core.updated) : 'Chief strategist · ' + brainMissing().replace(/…$/, '…').toLowerCase();
+  }
+
+  /* ----- evidence-based ranking: conviction comes only from what the research tested ----- */
+  const EVW = { research_setup: 'Research setup', insider_cluster: 'Insider cluster', insider_big_buy: 'Big insider buy', congress: 'Congress buying', signal_score: 'Signal tally', unusual_options: 'Unusual options', news: 'In the news', social: 'Social buzz', activist: 'Activist stake', funds_13f: 'Fund holdings', sec_red_flag: 'SEC warning', results: 'Results out' };
+  const ATTENTION = ['signal_score', 'unusual_options', 'news', 'social', 'activist', 'funds_13f', 'congress', 'insider_big_buy', 'results'];
+  function oppNote(r, ev, small, warn, rsiX) {
+    const out = [];
+    if (r.research_setup) out.push('Meets every condition of the research setup: a smaller company, 2 or more officers or directors buying $25k+ within 30 days, cash flow above profit.');
+    else if (r.setup_missing) out.push((r.conditions_missing === 1 ? 'One condition short of the setup: ' : 'Not the setup: ') + r.setup_missing + (r.conditions_missing > 1 ? ', and ' + (r.conditions_missing - 1) + ' more' : '') + '.');
+    else if (ev.has('insider_cluster')) out.push('Insider cluster' + (small ? ' in a smaller company, where our tests found an edge.' : ' in a larger company, where our tests found no edge.'));
+    else out.push('Attention only (' + [...ev].map((k) => (EVW[k] || k).toLowerCase()).join(', ') + '): untested as a predictor.');
+    if (warn) out.push('Carries a warning from its own SEC filing, which outranks any signal.');
+    if (rsiX) out.push('RSI ' + Math.round(r.rsi14) + ' is outside 30 to 70, so the paper rules would wait.');
+    return out.join(' ');
+  }
+  function rankOpps() {
+    return brainRows().map((r) => {
+      const ev = new Set(r.evidence_types), small = /smaller/i.test(r.size || ''), warn = Number(r.warnings) || 0, rsiX = r.rsi14 != null && (r.rsi14 > 70 || r.rsi14 < 30);
+      let conv = 8;
+      if (r.research_setup) conv += 62; else if (ev.has('insider_cluster') && small) conv += r.conditions_missing === 1 ? 40 : 28; else if (ev.has('insider_cluster')) conv += 12;
+      conv += Math.min(12, ATTENTION.filter((k) => ev.has(k)).length * 3);
+      if (rsiX) conv -= 10; conv -= warn * 35; conv = Math.max(0, Math.min(100, Math.round(conv)));
+      const risk = Math.min(100, 25 + (small ? 25 : 0) + (warn ? 35 : 0) + (rsiX ? 10 : 0) + (Math.abs(r.change_1d_pct || 0) >= 8 ? 10 : 0) + (r.price == null ? 10 : 0));
+      const tested = r.research_setup || (ev.has('insider_cluster') && small);
+      return Object.assign({}, r, { ev, small, warn, rsiX, conv, risk, tested, horizon: tested ? '60 days · the tested window' : 'No tested horizon', note: oppNote(r, ev, small, warn, rsiX) });
+    }).sort((a, b) => b.conv - a.conv || a.risk - b.risk || String(a.symbol).localeCompare(String(b.symbol)));
+  }
+  const caseFor = (sym) => askOrb('Give me the case for and against ' + sym + ' from the brain: the evidence, what is tested, what is missing, and the risks. Research only.');
+
+  /* ----- the Command Centre panels ----- */
+  function paintCC() {
+    buildStage(); paintState();
+    if (view.id !== 'cc') return;
+    const core = BR.parts.core;
+    $('#ccL').replaceChildren(ccRegime(core), ccBrief(core));
+    $('#ccR').replaceChildren(ccAlerts(), ccOpps(core));
+    $('#ccF').replaceChildren(ccGlobal(core), ccPriorities(core));
+    paintSugs(core);
+  }
+  function stat(lab, val, sub) { const s = el('div', 'stat'); s.append(el('span', '', lab), el('b', '', val)); if (sub) s.append(el('i', '', sub)); return s; }
+  function ccRegime(core) {
+    const c = card('Market regime', core ? ago(core.updated) : '');
+    if (!core) { c.append(el('p', 'note', brainMissing())); return c; }
+    const rg = core.regime || {}, lv = rg.level || 'unknown', fg = core.fear_greed || {};
+    const row = el('div', 'rg'); row.append(el('b', lv === 'risk-on' ? 'on' : lv === 'caution' ? 'caution' : 'off', lv.replace('-', ' '))); c.append(row);
+    const ul = el('ul', 'lines'); (rg.why || []).slice(0, 3).forEach((t) => ul.append(el('li', '', t))); c.append(ul);
+    const st = el('div', 'stats');
+    st.append(stat('VIX', fmtN(rg.vix, 1)), stat('Fear & Greed', fmtN(fg.value != null ? fg.value : rg.fear_greed, 0), fg.label || rg.fear_greed_label || ''), stat('S&P vs 200d', rg.spy_vs_200d_pct == null ? '—' : sgn(rg.spy_vs_200d_pct, 1)));
+    c.append(st);
+    if (fg.value != null) { const g = el('div', 'gauge'), u = el('u'); u.style.left = Math.max(0, Math.min(100, fg.value)) + '%'; g.append(u); g.title = 'Fear and Greed ' + Math.round(fg.value) + ' of 100: fear on the left, greed on the right'; c.append(g); }
+    c.append(acts([['Explain the regime', () => askOrb('Explain the market regime right now, and what would change it.')]]));
+    return c;
+  }
+  function ccBrief(core) {
+    const c = card('Daily intelligence briefing', core ? ukTime(core.updated) : '');
+    if (!core) { c.append(el('p', 'note', 'Caesar writes the briefing from the brain as soon as it arrives.')); return c; }
+    const lines = (core.summary || []).filter((t) => !/^One condition short/.test(t)).slice(0, 4);
+    const ul = el('ul', 'lines'); lines.forEach((t) => ul.append(el('li', '', t))); c.append(ul);
+    c.append(acts([['Hear it', () => speakNow(greet() + ' ' + lines.join(' ') + ' That is the picture.')], ['Brief me properly', () => askOrb('Brief me.')]]));
+    return c;
+  }
+  function ccAlerts() { const c = card('Alerts', ALERTS.length ? ALERTS.length + ' this session' : 'watching'); const ul = el('ul', 'al'); ul.id = 'ccAlerts'; c.append(ul); paintAlerts(ul); return c; }
+  function ccOpps(core) {
+    const c = card('High-conviction research', 'evidence-scored');
+    if (!core) { c.append(el('p', 'note', brainMissing())); return c; }
+    const top = rankOpps().slice(0, 5);
+    if (!top.length) c.append(el('p', 'note', 'Nothing with evidence today.'));
+    const list = el('div');
+    top.forEach((o) => {
+      const b = el('button', 'orow'); b.type = 'button'; b.title = 'Ask Caesar for the case for and against ' + o.symbol;
+      const mid = el('div'); mid.style.minWidth = '0'; mid.append(el('em', '', o.research_setup ? 'Research setup · every condition met' : o.note.split('. ')[0].replace(/\.$/, '')));
+      const bar = el('div', 'bar'), u = el('u'); u.style.width = o.conv + '%'; bar.append(u); mid.append(bar);
+      b.append(el('b', '', o.symbol), mid, el('span', 'sc', String(o.conv))); b.onclick = () => caseFor(o.symbol); list.append(b);
+    });
+    c.append(list, acts([['Open the Opportunity Engine', () => go('opps')]]));
+    return c;
+  }
+  const TILES = [['S&P 500 · SPY', () => ixq('SPY'), 2], ['Nasdaq 100 · QQQ', () => ixq('QQQ'), 2], ['FTSE 100', () => ixq('^FTSE'), 0], ['DAX', () => ixq('^GDAXI'), 0], ['Nikkei 225', () => ixq('^N225'), 0], ['VIX', () => ixq('^VIX'), 2],
+    ['US 10-year', () => fxq('^TNX'), 3, '%'], ['Dollar index', () => fxq('DX-Y.NYB'), 2], ['Pound / dollar', () => fxq('GBPUSD=X'), 4], ['Gold', () => fxq('GC=F'), 0], ['Brent', () => fxq('BZ=F'), 2],
+    ['Bitcoin', () => { const b = (((BR.parts.crypto || {}).top) || []).find((x) => /^btc$/i.test(x.symbol)); return b && { price: b.price, change_pct: b.change_24h_pct }; }, 0]];
+  function tilesEl(list) {
+    const t = el('div', 'tiles');
+    list.forEach(([lab, get, d, unit]) => { const q = get(), v = qv(q), ch = qc(q); const x = el('div', 'tile' + (v == null ? ' off' : '')); const b = el('b', '', v == null ? '—' : fmtN(v, d) + (unit || '')); x.append(el('span', '', lab), b); if (ch != null) x.append(el('i', dirCls(ch), sgn(ch))); t.append(x); });
+    return t;
+  }
+  function ccGlobal(core) {
+    const mk = BR.parts.markets, c = card('Global markets', mk && mk.treasury ? 'treasury ' + mk.treasury.date : '');
+    if (!core || !mk) { c.append(el('p', 'note', core ? 'Waiting for the markets part of the brain.' : brainMissing())); return c; }
+    c.append(tilesEl(TILES), acts([['Open the trading terminal', () => go('markets')], ['Open Global Intelligence', () => go('intel')]]));
+    return c;
+  }
+  function ccPriorities(core) {
+    const c = card('Priorities');
+    const ul = el('ul', 'pri'); const li = (k, v) => { const x = el('li'); x.append(el('span', '', k), el('div', '', v)); ul.append(x); };
+    const pg = (BR.parts.paper || {}).goal || {}, lead = (pg.leaderboard || [])[0];
+    li('The £100 race', lead ? '£100 is now £' + fmtN(lead.gbp100_now, 2) + ' in the leading paper strategy, ' + sgn(lead.margin_vs_spy_pct) + ' against the S&P 500 after ' + lead.days_live + ' day' + (lead.days_live === 1 ? '' : 's') + '. Rankings mean little before 90 days.' : 'Paper results arrive after the next US close.');
+    const nx = upcoming(1)[0]; li('Next event', nx ? nx.event + ' (' + nx.country + '), ' + ukTime(nx.time) + ' UK' : 'No high-impact event in the calendar yet.');
+    const h = (core || {}).health || {}; li('Data feeds', !core ? brainMissing() : h.healthy ? 'Every feed on time.' : (h.problems || []).length + ' to watch: ' + (h.problems || []).slice(0, 2).join('; '));
+    c.append(ul);
+    return c;
+  }
+  function paintSugs(core) {
+    const box = $('#ccSug'); if (!box) return; box.replaceChildren();
+    const s = ['Brief me'];
+    if (core && (core.setups || []).length) s.push('Walk me through ' + core.setups[0]);
+    const fg = core && core.fear_greed && core.fear_greed.value; if (fg != null && fg < 25) s.push('What has extreme fear meant in the past?');
+    const nx = upcoming(1)[0]; if (nx) s.push('What should I know before the ' + nx.event + '?');
+    s.push('Show me the highest-conviction ideas', 'Compare my ISA against the FTSE 100');
+    s.slice(0, 5).forEach((t) => { const b = el('button', 'sug', t); b.type = 'button'; b.onclick = () => caesarCommand(t, 'home'); box.append(b); });
+  }
+
+  /* ----- Opportunity Engine ----- */
+  let oppTab = 'all', oppMore = 40;
+  function renderOpps() {
+    clearPanel(); setTitle('Opportunity Engine', 'Ranked by evidence, never by opinion');
+    $('#cSub').textContent = 'Every stock with evidence in the brain, ranked by a conviction score built only from what our research tested. Risk rises with smaller size, SEC warnings and stretched RSI. Tap any row for Caesar’s case for and against. A list to research, never a trade list.';
+    const wrap = el('div', 'mkwrap room');
+    if (!BR.parts.core) { wrap.append(el('div', 'empty', brainMissing())); cBody.append(wrap); return; }
+    const rows = rankOpps(), coins = ((BR.parts.crypto || {}).top) || [];
+    const F = { all: () => true, setup: (o) => o.research_setup, short: (o) => !o.research_setup && o.conditions_missing === 1, cluster: (o) => o.ev.has('insider_cluster'), warn: (o) => o.warn > 0 };
+    const tabs = el('div', 'tabs');
+    [['all', 'All equities'], ['setup', 'Research setups'], ['short', 'One condition short'], ['cluster', 'Insider clusters'], ['warn', 'SEC warnings'], ['crypto', 'Crypto']].forEach(([k, t]) => {
+      const b = el('button', '', t); b.type = 'button'; b.setAttribute('aria-pressed', String(oppTab === k)); b.append(el('b', '', String(k === 'crypto' ? coins.length : rows.filter(F[k]).length)));
+      b.onclick = () => { oppTab = k; oppMore = 40; renderOpps(); }; tabs.append(b);
+    });
+    $('#cCtl').append(tabs);
+    const how = el('details', 'how'); how.append(el('summary', '', 'How the scores work'));
+    const hl = el('ul'); ['Conviction starts at 8. The research setup adds 62. An insider cluster in a smaller company adds 40 when one condition short, 28 otherwise; elsewhere 12, because tests found no edge in larger companies.',
+      'Untested attention (news, options, social, Congress, big single buys, the signal tally) adds 3 each, at most 12.', 'An SEC warning takes 35 off; RSI outside 30 to 70 takes 10 off.',
+      'Risk starts at 25: smaller company +25, SEC warning +35, stretched RSI +10, a move of 8% or more today +10, no price +10.', 'Time horizon is shown only where a test measured one: 60 days.'].forEach((t) => hl.append(el('li', '', t)));
+    how.append(hl); wrap.append(how);
+    if (oppTab === 'crypto') {
+      const c = card('Crypto', 'momentum for context'); c.append(el('p', 'note', 'No tested edge in crypto yet, so there is no conviction score here: these are the largest coins and how they moved.'));
+      const hs = el('div', 'hscroll'), t = el('table', 'lux'); t.innerHTML = '<thead><tr><th>Coin</th><th>Price</th><th>24 h</th><th>7 days</th><th>Market cap</th></tr></thead>'; const tb = el('tbody');
+      coins.forEach((x) => { const tr = el('tr'); [x.name + ' · ' + String(x.symbol).toUpperCase(), '$' + fmtN(x.price, x.price >= 100 ? 0 : x.price >= 1 ? 2 : 4)].forEach((v) => tr.append(el('td', '', v))); [x.change_24h_pct, x.change_7d_pct].forEach((v) => tr.append(el('td', dirCls(v), sgn(v)))); tr.append(el('td', '', money(x.market_cap))); tb.append(tr); });
+      t.append(tb); hs.append(t); c.append(hs); wrap.append(c); cBody.append(wrap); return;
+    }
+    const list = rows.filter(F[oppTab]), box = el('div', 'opps');
+    list.slice(0, oppMore).forEach((o) => {
+      const b = el('button', 'opp'); b.type = 'button';
+      const sy = el('div', 'sy'); sy.append(el('b', '', o.symbol), el('i', '', o.price != null ? '$' + fmtN(o.price, 2) : 'no price')); if (o.change_1d_pct != null) sy.append(el('i', dirCls(o.change_1d_pct), sgn(o.change_1d_pct) + ' today'));
+      const tx = el('div', 'tx', o.note), cats = el('div', 'cats');
+      cats.append(el('span', 'cat' + (o.tested ? '' : ' dim'), o.research_setup ? 'Tested edge' : o.tested ? 'Edge in tests' : 'Untested'));
+      [...o.ev].filter((k) => k !== 'research_setup').forEach((k) => cats.append(el('span', 'cat dim', EVW[k] || k)));
+      if (o.warn) cats.append(el('span', 'cat warn', 'SEC warning')); tx.append(cats);
+      const m1 = el('div', 'm m1'); const line = (lab, v, risk) => { const s = el('span'); s.append(document.createTextNode(lab), el('b', '', String(v))); const bar = el('div', 'bar' + (risk ? ' risk' : '')), u = el('u'); u.style.width = v + '%'; bar.append(u); const d = el('div', 'm'); d.append(s, bar); return d; };
+      m1.append(line('Conviction', o.conv), line('Risk', o.risk, true));
+      const m2 = el('div', 'm m2'); m2.append(el('div', 'hz', o.horizon), el('div', 'hz', 'Size: ' + (o.size || 'unknown') + (o.rsi14 != null ? ' · RSI ' + Math.round(o.rsi14) : '')));
+      b.append(sy, tx, m1, m2); b.onclick = () => caseFor(o.symbol); box.append(b);
+    });
+    if (!list.length) box.append(el('div', 'empty', 'Nothing in this group today. The rules wait for evidence.'));
+    wrap.append(box);
+    if (list.length > oppMore) { const more = el('button', 'rbtn', 'Show ' + Math.min(40, list.length - oppMore) + ' more of ' + list.length); more.type = 'button'; more.onclick = () => { oppMore += 40; const st = cBody.scrollTop; renderOpps(); cBody.scrollTop = st; }; wrap.append(more); }
+    wrap.append(el('p', 'mnote', 'Sector themes (defence, AI, energy, ETFs, commodities) arrive when a sector feed joins the brain. Until then, ask Caesar and he will look them up live.'));
+    cBody.append(wrap);
+  }
+
+  /* ----- Global Intelligence: a living map ----- */
+  const REGIONS = [
+    { id: 'us', side: 'R', name: 'New York', lat: 40.7, lon: -74, cur: ['USD', 'CAD'], lead: ['S&P 500', () => ixq('SPY')], rows: () => [['S&P 500 · SPY', ixq('SPY'), 2], ['VIX', ixq('^VIX'), 2], ['US 10-year yield', fxq('^TNX'), 3, '%'], ['Fed funds rate', fred('FEDFUNDS'), 2, '%'], ['Dollar index', fxq('DX-Y.NYB'), 2], ['Dollar / Canadian dollar', fxq('USDCAD=X'), 4]] },
+    { id: 'uk', side: 'L', name: 'London', lat: 51.5, lon: -0.1, cur: ['GBP'], lead: ['FTSE 100', () => ixq('^FTSE')], rows: () => [['FTSE 100', ixq('^FTSE'), 1], ['Bank Rate', glob('uk_bank_rate_pct'), 2, '%'], ['10-year gilt', glob('uk_10y_gilt_yield_pct'), 2, '%'], ['UK inflation', glob('uk_cpi_annual_pct'), 1, '%'], ['UK unemployment', glob('uk_unemployment_pct'), 1, '%'], ['Pound / dollar', fxq('GBPUSD=X'), 4]] },
+    { id: 'eu', side: 'R', name: 'Frankfurt', lat: 50.1, lon: 8.7, cur: ['EUR'], lead: ['DAX', () => ixq('^GDAXI')], rows: () => [['DAX', ixq('^GDAXI'), 1], ['ECB deposit rate', glob('euro_deposit_rate_pct'), 2, '%'], ['Euro inflation', glob('euro_inflation_annual_pct'), 1, '%'], ['Euro / dollar', fxq('EURUSD=X'), 4], ['Euro / pound', fxq('EURGBP=X'), 4]] },
+    { id: 'jp', side: 'R', name: 'Tokyo', lat: 35.7, lon: 139.7, cur: ['JPY'], lead: ['Nikkei', () => ixq('^N225')], rows: () => [['Nikkei 225', ixq('^N225'), 0], ['Dollar / yen', fxq('USDJPY=X'), 2]] },
+    { id: 'cn', side: 'L', name: 'Shanghai', lat: 31.2, lon: 121.5, cur: ['CNY'], lead: ['Copper', () => fxq('HG=F')], rows: () => [['Dollar / yuan', fxq('USDCNY=X'), 4], ['Copper (China demand)', fxq('HG=F'), 3]] },
+    { id: 'gulf', side: 'L', name: 'Gulf energy', lat: 26.2, lon: 50.5, cur: [], lead: ['Brent', () => fxq('BZ=F')], rows: () => [['Brent crude', fxq('BZ=F'), 2], ['WTI crude', fxq('CL=F'), 2], ['Natural gas', fxq('NG=F'), 3], ['Gold', fxq('GC=F'), 1]] },
+    { id: 'au', side: 'L', name: 'Sydney', lat: -33.9, lon: 151.2, cur: ['AUD', 'NZD'], lead: ['AUD', () => fxq('AUDUSD=X')], rows: () => [['Australian dollar', fxq('AUDUSD=X'), 4]] },
+  ];
+  const geo = (lat, lon) => [(lon + 180) / 360 * 1440, (78 - lat) / 136 * 540];
+  let landD = null, intelSel = 'uk';
+  function landPath() {
+    if (landD) return landD; let d = ''; const b = atob(LAND);
+    for (let y = 0; y < LROWS; y++) for (let x = 0; x < LCOLS; x++) { const i = y * LCOLS + x; if (b.charCodeAt(i >> 3) & (128 >> (i & 7))) d += 'M' + (x * 10 + 5) + ' ' + (y * 10 + 5) + 'h0'; }
+    return (landD = d);
+  }
+  const regionEvents = (r, hours) => { const now = Date.now(); return (((BR.parts.macro || {}).high_impact_events) || []).filter((e) => r.cur.includes(e.country) && new Date(e.time).getTime() > now - 3600e3 && new Date(e.time).getTime() < now + hours * 3600e3); };
+  function mapEl() {
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 1440 540'); svg.setAttribute('class', 'map'); svg.setAttribute('role', 'group'); svg.setAttribute('aria-label', 'World intelligence map: tap a point for its brief');
+    let grat = ''; for (let lon = -150; lon <= 150; lon += 30) { const x = geo(0, lon)[0]; grat += 'M' + x + ' 0V540'; } for (let lat = 60; lat >= -30; lat -= 30) { const y = geo(lat, 0)[1]; grat += 'M0 ' + y.toFixed(1) + 'H1440'; }
+    svg.innerHTML = '<path class="grat" d="' + grat + '"/><path class="land" d="' + landPath() + '"/>';
+    const buy = cv('--buy'), sell = '#c4505a', gold = '#b8975a';
+    REGIONS.forEach((r) => {
+      const [x, y] = geo(r.lat, r.lon), q = r.lead[1](), ch = qc(q), soon = regionEvents(r, 72).length;
+      const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'hs' + (r.id === intelSel ? ' sel' : '')); g.setAttribute('tabindex', '0'); g.setAttribute('role', 'button');
+      g.setAttribute('aria-label', r.name + ': ' + r.lead[0] + ' ' + (ch == null ? 'no change data' : sgn(ch)) + (soon ? ', ' + soon + ' high-impact event' + (soon === 1 ? '' : 's') + ' within 72 hours' : ''));
+      const col = ch == null ? gold : ch > 0 ? buy : ch < 0 ? sell : gold, left = r.side === 'L';
+      g.innerHTML = (soon ? '<circle class="pulse" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="9" stroke="' + col + '"/>' : '') + '<circle class="dot" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="7.5" fill="' + col + '"/>';
+      const t1 = document.createElementNS(NS, 'text'), t2 = document.createElementNS(NS, 'text');
+      [t1, t2].forEach((t, k) => { t.setAttribute('x', (x + (left ? -16 : 16)).toFixed(1)); t.setAttribute('y', (y + (k ? 18 : -3)).toFixed(1)); t.setAttribute('text-anchor', left ? 'end' : 'start'); });
+      t1.textContent = r.name; t2.setAttribute('class', 'v'); t2.textContent = r.lead[0] + ' ' + (ch == null ? '' : sgn(ch)); t2.setAttribute('fill', col); g.append(t1, t2);
+      const pick = () => { intelSel = r.id; svg.querySelectorAll('.hs').forEach((n) => n.classList.remove('sel')); g.classList.add('sel'); const d = $('#intelDetail'); if (d) d.replaceWith(regionCard()); };
+      g.addEventListener('click', pick); g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+      svg.append(g);
+    });
+    return svg;
+  }
+  function kvEl(rows) { const d = el('div', 'kv'); rows.forEach(([k, q, dp, unit]) => { const v = qv(q), ch = qc(q); d.append(el('span', '', k)); const b = el('b', '', v == null ? '—' : fmtN(v, dp) + (unit || '')); if (ch != null) { b.append(document.createTextNode(' ')); b.append(el('i', dirCls(ch), sgn(ch))); } d.append(b); }); return d; }
+  function evList(list) { const ul = el('ul', 'evs'); list.forEach((e) => { const li = el('li'); li.append(el('time', '', ukTime(e.time)), el('span', '', e.event + ' · ' + e.country)); ul.append(li); }); if (!list.length) ul.append(el('li', 'note', 'Nothing high-impact scheduled.')); return ul; }
+  function regionCard() {
+    const r = REGIONS.find((x) => x.id === intelSel) || REGIONS[1], c = card(r.name, r.cur.length ? r.cur.join(' · ') : 'energy');
+    c.id = 'intelDetail'; c.append(kvEl(r.rows()));
+    if (r.cur.length) { c.append(el('h4', '', 'Next 7 days')); c.lastChild.style.marginTop = '14px'; c.append(evList(regionEvents(r, 24 * 7).slice(0, 6))); }
+    c.append(acts([['Brief me on ' + r.name, () => askOrb('Brief me on ' + r.name + ' (' + (r.cur.join(', ') || 'energy markets') + '): markets, central bank, the next events and what they could move. Use the brain first.')]]));
+    return c;
+  }
+  const THEMES = [['Defence', /defen[cs]e|military|missile|nato|army|navy|weapon|drone|pentagon|ukraine|israel|iran|security/i], ['Energy', /\boil\b|opec|crude|natural gas|\blng\b|energy|power grid|refiner/i], ['Supply chains', /supply chain|shipping|freight|\bport\b|tariff|export|import|logistic|shortage/i], ['Central banks', /\bfed\b|federal reserve|\becb\b|bank of england|\bboe\b|\bboj\b|rate cut|rate hike|interest rate|powell|bailey|lagarde/i], ['AI and chips', /\bai\b|artificial intelligence|nvidia|\bchips?\b|semiconductor|openai|data cent/i], ['Geopolitics', /china|russia|sanction|election|trade war|summit|ceasefire|\bwar\b|tariff/i]];
+  function renderIntel() {
+    clearPanel(); setTitle('Global Intelligence', 'Markets, macro and events on one living map');
+    $('#cSub').textContent = 'Each point carries its market, its central bank and its next high-impact events; a pulsing point has one within 72 hours. Tap a point for its brief. Everything here comes from the brain; headlines are stored as title and link only.';
+    const wrap = el('div', 'mkwrap room');
+    if (!BR.parts.core) { wrap.append(el('div', 'empty', brainMissing())); cBody.append(wrap); return; }
+    const mw = el('div', 'mapwrap'), mc = el('div'); mc.style.minWidth = '0'; mc.append(mapEl()); mw.append(mc, regionCard()); wrap.append(mw);
+    const grid = el('div', 'rgrid'), nw = BR.parts.news || {}, sec = BR.parts.sec || {}, cr = BR.parts.crypto || {};
+    const cb = card('Central banks'); cb.append(kvEl([['Federal Reserve · funds rate', fred('FEDFUNDS'), 2, '%'], ['Bank of England · Bank Rate', glob('uk_bank_rate_pct'), 2, '%'], ['ECB · deposit rate', glob('euro_deposit_rate_pct'), 2, '%']]));
+    const dec = (((BR.parts.macro || {}).high_impact_events) || []).filter((e) => /rate|monetary policy|fomc|refinanc|policy statement/i.test(e.event) && new Date(e.time).getTime() > Date.now() - 3600e3).slice(0, 4);
+    cb.append(el('h4', '', 'Coming decisions')); cb.lastChild.style.marginTop = '14px'; cb.append(evList(dec)); grid.append(cb);
+    const wk = card('The week ahead', 'UK time'); wk.append(evList(upcoming(8))); grid.append(wk);
+    const th = card('Themes in the headlines', (nw.latest || []).length + ' latest'); const tl = el('div');
+    THEMES.forEach(([name, re]) => { const hits = (nw.latest || []).filter((h) => re.test(h.title || '')); const row = el('div', 'theme'); row.append(el('b', '', name), el('i', '', String(hits.length)), el('span', '', hits[0] ? hits[0].title : 'Quiet')); if (hits[0]) row.title = hits[0].title; tl.append(row); });
+    th.append(tl, el('p', 'note', 'Counted in the latest headlines the brain holds. Attention, not prediction.')); th.lastChild.style.marginTop = '8px'; grid.append(th);
+    const hd = card('Headlines', 'title and link only'); hd.classList.add('w8'); const hu = el('ul', 'news');
+    (nw.latest || []).slice(0, 8).forEach((h) => { const li = el('li'), href = safeHref(h.link); const a = el(href ? 'a' : 'span', '', h.title); if (href) { a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; } li.append(a, el('small', '', (h.source || '') + ' · ' + ago(h.time))); hu.append(li); });
+    hd.append(hu); grid.append(hd);
+    const sw = card('SEC watch', (sec.red_flags || []).length + ' warnings'); const su = el('ul');
+    (sec.red_flags || []).slice(0, 5).forEach((f) => { const li = el('li'); const means = (f.items || []).filter((x) => (f.red_flag || []).includes(x.item)).map((x) => x.meaning).join(', ') || f.form; li.append(el('b', 'mono', (f.ticker || '—') + ' '), document.createTextNode((f.company || '') + ': ' + means + ' · ' + ago(f.time))); su.append(li); });
+    sw.append(su, el('p', 'note', (sec.activist_stakes || []).length + ' activist stakes (13D) filed recently.')); sw.lastChild.style.marginTop = '8px'; grid.append(sw);
+    const us = card('US economy', 'FRED'); const F = (k, lab, dp, unit, field) => { const o = fred(k); return [lab, o ? { value: field ? o[field] : o.value } : null, dp, unit]; };
+    us.append(kvEl([F('UNRATE', 'Unemployment', 1, '%'), F('CPIAUCSL', 'Inflation, year on year', 1, '%', 'inflation_yoy_pct'), F('T10Y2Y', '10-year minus 2-year', 2, ' pts'), F('BAMLH0A0HYM2', 'High-yield spread', 2, ' pts'), F('ICSA', 'Jobless claims', 0, ''), F('SAHMREALTIME', 'Sahm recession gauge', 2, '')])); grid.append(us);
+    const cc = card('Crypto', 'market'); const gl = cr.global || {};
+    cc.append(kvEl([['Total market cap', gl.total_market_cap_usd != null ? { value: gl.total_market_cap_usd / 1e12, change_pct: gl.market_cap_change_24h_pct } : null, 2, ' tn'], ['Bitcoin dominance', gl.btc_dominance_pct != null ? { value: gl.btc_dominance_pct } : null, 1, '%'], ['Crypto Fear & Greed', cr.fear_greed ? { value: cr.fear_greed.value } : null, 0, cr.fear_greed ? ' ' + cr.fear_greed.label : '']]));
+    grid.append(cc);
+    wrap.append(grid); cBody.append(wrap);
+  }
+
+  /* ----- Wealth and Business: honest empty states until accounts are connected ----- */
+  function vault(names) { const v = el('div', 'vault'); names.forEach((n) => { const t = el('div', 'tile off'); t.append(el('span', '', n), el('b', '', '—'), el('small', '', 'Not connected')); v.append(t); }); return v; }
+  function renderWealth() {
+    clearPanel(); setTitle('Wealth', 'Private-bank view');
+    $('#cSub').textContent = 'Net worth, ISA, pension, cash and the rest in one place. No accounts are connected yet, so Caesar shows nothing he cannot verify: every figure here will come from a connected source, dated.';
+    const wrap = el('div', 'mkwrap room'); wrap.append(vault(['Net worth', 'ISA', 'Pension', 'Cash', 'Savings', 'Investments', 'Property fund', 'Liabilities']));
+    const grid = el('div', 'rgrid'), pp = BR.parts.paper;
+    const pc = card('Paper portfolio', 'virtual money'); pc.classList.add('w8');
+    if (!pp) pc.append(el('p', 'note', BR.parts.core ? 'Paper results arrive after the next US close.' : brainMissing()));
+    else {
+      const hs = el('div', 'hscroll'), t = el('table', 'lux'); t.innerHTML = '<thead><tr><th>Strategy</th><th>£100 is now</th><th>vs S&amp;P 500</th><th>Open</th><th>Closed</th></tr></thead>'; const tb = el('tbody');
+      Object.entries(pp.strategies || {}).sort((a, b) => (b[1].margin_vs_spy_pct || 0) - (a[1].margin_vs_spy_pct || 0)).forEach(([k, s]) => { const tr = el('tr'); tr.append(el('td', '', s.label || k), el('td', '', '£' + fmtN(s.gbp100_now, 2)), el('td', dirCls(s.margin_vs_spy_pct), sgn(s.margin_vs_spy_pct)), el('td', '', String(s.open == null ? 0 : s.open)), el('td', '', String(s.closed_trades == null ? 0 : s.closed_trades))); tb.append(tr); });
+      t.append(tb); hs.append(t); pc.append(hs, el('p', 'note', ((pp.goal || {}).note) || 'Virtual money only.')); pc.lastChild.style.marginTop = '8px';
+    }
+    grid.append(pc);
+    const cn = card('Connecting your money'); const ul = el('ul', 'lines');
+    ['Bank and savings: a read-only open-banking link through a connector.', 'ISA and investments: your platform’s statement or CSV export.', 'Pension: the latest statement value, dated.', 'Property fund and liabilities: entered by you, dated.'].forEach((t) => ul.append(el('li', '', t)));
+    cn.append(ul, acts([['Compare FTSE 100 and S&P 500', () => askOrb('Compare the FTSE 100 and the S&P 500 today and over the past month, from the brain.')], ['What would you track first?', () => askOrb('If I connect my accounts, what should the Wealth room track first, and why?')]]));
+    grid.append(cn); wrap.append(grid); cBody.append(wrap);
+  }
+  function renderBiz() {
+    clearPanel(); setTitle('Business Intelligence', 'For founders');
+    $('#cSub').textContent = 'Revenue, MRR, costs, cash and pipeline for the business. Nothing is connected yet, so every tile waits for a real source rather than an estimate.';
+    const wrap = el('div', 'mkwrap room'); wrap.append(vault(['Revenue', 'MRR', 'Expenses', 'Profitability', 'Cashflow', 'Growth', 'Lead pipeline', 'Forecast']));
+    const grid = el('div', 'rgrid'), need = card('What Caesar needs'); need.classList.add('w6'); const ul = el('ul', 'lines');
+    ['Payments (Stripe): revenue, MRR, churn.', 'Accounts (Xero or QuickBooks): expenses, profit, cashflow.', 'CRM (HubSpot or Pipedrive): the lead pipeline.', 'Analytics: visitors and sign-ups for growth.'].forEach((t) => ul.append(el('li', '', t)));
+    need.append(ul, el('p', 'note', 'Composio is already connected here and can link most of these when you are ready.')); need.lastChild.style.marginTop = '8px';
+    const ask2 = card('Strategy'); ask2.classList.add('w6'); ask2.append(el('p', 'note', 'Caesar can still think with you before the numbers arrive.'), acts([['What should Koochooloo measure first?', () => askOrb('Koochooloo Constellation is a zero-overhead intelligence and trading research terminal. What should we measure first as a business, and what would good look like in 90 days?')], ['Pricing ideas', () => askOrb('Suggest three honest pricing models for Koochooloo Constellation, with the risks of each, including data-licence costs.')]]));
+    grid.append(need, ask2); wrap.append(grid); cBody.append(wrap);
+  }
+  function renderSettings() {
+    clearPanel(); setTitle('Settings', 'Caesar and the data');
+    $('#cSub').textContent = 'How Caesar speaks, and how fresh every feed in the brain is.';
+    const wrap = el('div', 'mkwrap room'), grid = el('div', 'rgrid');
+    const vc = card('Caesar’s voice'); const tog = (label, on, fn) => { const b = el('button', 'tog'); b.type = 'button'; b.setAttribute('aria-pressed', String(on)); b.append(el('span', '', label), el('u', '', on ? 'ON' : 'OFF')); b.onclick = () => { fn(); renderSettings(); }; return b; };
+    vc.append(tog('Read answers aloud', voiceOn, () => cVoice.click()), tog('Speak critical alerts', alertsLoud, () => cAlerts.click()), tog('Deep mode: slower, fuller answers', deep, () => cDeep.click()));
+    const line = $('#cLine'); if (line && !CC_WEB) { const a = el('a', 'rbtn', 'Open Caesar’s voice line'); a.href = line.href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.marginTop = '12px'; a.style.display = 'inline-block'; vc.append(a); }
+    grid.append(vc);
+    const core = BR.parts.core, fd = card('Data feeds', core ? 'brain ' + ago(core.updated) : ''); fd.classList.add('w8');
+    if (!core) fd.append(el('p', 'note', brainMissing()));
+    else {
+      const t = el('table', 'lux'); t.innerHTML = '<thead><tr><th>Feed</th><th>Age</th><th>Status</th></tr></thead>'; const tb = el('tbody');
+      Object.entries((core.health || {}).feeds || {}).forEach(([k, f]) => { const tr = el('tr'); const m = f.age_min; tr.append(el('td', '', k.replace(/_/g, ' ')), el('td', '', m == null ? '—' : m < 90 ? Math.round(m) + ' min' : m < 2880 ? Math.round(m / 60) + ' h' : Math.round(m / 1440) + ' days'), el('td', f.ok ? 'up' : 'down', f.ok ? 'On time' : 'Needs attention')); tb.append(tr); });
+      t.append(tb); const hs = el('div', 'hscroll'); hs.append(t); fd.append(hs);
+      ((core.health || {}).problems || []).forEach((p) => fd.append(el('p', 'note', p)));
+    }
+    grid.append(fd);
+    const ab = card('This terminal'); ab.classList.add('w12'); const ul = el('ul', 'lines');
+    ['Caesar OS, version 13: the black swan is the home screen; every room opens from the ring or by asking Caesar.', 'Press / or Ctrl+K to talk to Caesar from anywhere; Esc closes the chat.', 'On a phone, swipe left or right to move between rooms.', 'Research, not financial advice: Caesar never tells you to buy or sell and never places trades.'].forEach((t) => ul.append(el('li', '', t)));
+    ab.append(ul); grid.append(ab); wrap.append(grid); cBody.append(wrap);
+  }
+
+  /* ----- swipe between rooms on a phone ----- */
+  let tch = null;
+  addEventListener('touchstart', (e) => {
+    tch = null; if (e.touches.length !== 1 || view.id === 'c') return;
+    const t = e.target; if (!t.closest || t.closest('#chat, input, textarea, select, #tape, .map, #bar')) return;
+    for (let n = t; n && n !== body; n = n.parentElement) { const ox = getComputedStyle(n).overflowX; if ((ox === 'auto' || ox === 'scroll') && n.scrollWidth > n.clientWidth + 4) return; }
+    tch = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+  }, { passive: true });
+  addEventListener('touchend', (e) => {
+    if (!tch) return; const p = e.changedTouches[0], dx = p.clientX - tch.x, dy = p.clientY - tch.y, dt = Date.now() - tch.t; tch = null;
+    if (dt > 800 || Math.abs(dx) < 70 || Math.abs(dx) < 1.8 * Math.abs(dy)) return;
+    const cur = ORDER.indexOf(ROOM_OF[view.id] === 'trading' ? 'markets' : view.id);
+    go(ORDER[(cur + (dx < 0 ? 1 : -1) + ORDER.length) % ORDER.length]);
+  }, { passive: true });
+  document.querySelectorAll('#rooms button').forEach((b) => { b.onclick = () => go(b.dataset.room === 'trading' ? 'markets' : b.dataset.room); });
+  setInterval(() => { if (body.classList.contains('speaking') && 'speechSynthesis' in window && !speechSynthesis.speaking) setSpeaking(false); }, 1500);
+
+  syncButtons(); buildUniverse(LIVE); paintTape(); frame(); setView('cc');
 })();
 </script>
 
@@ -1419,7 +2125,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
 <elevenlabs-convai agent-id="agent_9201m6hqwymzess883dryvc8xcs3"></elevenlabs-convai>
 <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 <script>
-  // Setareh's voice agent can change the screen: these names match her tools in ElevenLabs
+  // Caesar's voice agent can change the screen: these names match his tools in ElevenLabs
   (function () {
     var w = document.querySelector('elevenlabs-convai'); if (!w) return;
     w.addEventListener('elevenlabs-convai:call', function (event) {
