@@ -576,14 +576,28 @@ body.listening .ring .cal { fill: #b8975a; transition: fill 0.4s; }
 body.listening #vMic { background: radial-gradient(circle at 35% 30%, #a8323f, #5e1621 75%); color: #ece6d9; animation: vRing 1.1s ease-out infinite; }
 body.speaking #vMic { animation: vRing 1.8s ease-out infinite; }
 body.thinking #vMic { animation: vRing 0.9s ease-in-out infinite; }
+#vMic.pulse { animation: vRing 1.4s ease-out 6; }
+body.waking #vMic { border-color: #dcc28c; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), 0 0 0 3px rgba(184, 151, 90, 0.35); }
+#vBox { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 94px); z-index: 46; width: min(400px, calc(100vw - 32px)); max-height: min(58vh, 520px); display: flex; flex-direction: column; box-sizing: border-box; background: #0d0d11; border: 1px solid rgba(184, 151, 90, 0.6); color: #ece6d9; font: 400 14px/1.5 var(--body, system-ui, sans-serif); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); }
+#vBox[hidden] { display: none; }
+#vBox header { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border-bottom: 1px solid rgba(184, 151, 90, 0.3); }
+#vBox header b { font: 700 11px var(--mono, monospace); letter-spacing: 0.16em; text-transform: uppercase; color: #dcc28c; }
+#vSt { flex: 1; min-width: 0; font: 500 11px var(--mono, monospace); color: rgba(236, 230, 217, 0.78); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#vBox header button { background: none; border: 1px solid rgba(184, 151, 90, 0.4); color: #dcc28c; font: 600 10px var(--mono, monospace); letter-spacing: 0.06em; padding: 4px 7px; cursor: pointer; white-space: nowrap; }
+#vBox header button[aria-pressed="true"] { background: rgba(184, 151, 90, 0.2); }
+#vBox header #vX { border: 0; font-size: 18px; line-height: 1; padding: 2px 8px; }
+#vLoad { padding: 6px 12px 0; font: 500 10.5px var(--mono, monospace); color: rgba(236, 230, 217, 0.6); letter-spacing: 0.05em; }
+#vLog { flex: 1; min-height: 64px; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; overscroll-behavior: contain; }
+#vLog .vyou { align-self: flex-end; max-width: 88%; background: rgba(122, 31, 43, 0.55); border: 1px solid rgba(168, 50, 63, 0.7); padding: 6px 10px; border-radius: 12px 12px 2px 12px; overflow-wrap: anywhere; }
+#vLog .vyou.live { opacity: 0.7; font-style: italic; }
+#vLog .vhim { align-self: flex-start; max-width: 94%; background: rgba(236, 230, 217, 0.07); border: 1px solid rgba(184, 151, 90, 0.35); padding: 6px 10px; border-radius: 12px 12px 12px 2px; overflow-wrap: anywhere; }
+#vLog .vhim.think { opacity: 0.65; }
+#vLog .vnote { font: 500 11px/1.45 var(--mono, monospace); color: rgba(236, 230, 217, 0.62); text-align: center; }
+#vForm { display: flex; gap: 6px; padding: 8px; border-top: 1px solid rgba(184, 151, 90, 0.3); }
+#vIn { flex: 1; min-width: 0; background: #0b0b0e; color: #ece6d9; border: 1px solid rgba(184, 151, 90, 0.5); padding: 9px 10px; font: 400 16px var(--body, system-ui, sans-serif); }
+#vForm button { background: #7a1f2b; color: #ece6d9; border: 1px solid #b8975a; padding: 0 14px; font: 600 12px var(--mono, monospace); cursor: pointer; }
 @keyframes vRing { 0% { box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 0 rgba(184,151,90,0.55); } 100% { box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 18px rgba(184,151,90,0); } }
-#vCap { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 98px); z-index: 45; width: min(380px, calc(100vw - 32px)); max-height: 46vh; overflow: auto; box-sizing: border-box; padding: 12px 14px 12px; background: rgba(11, 11, 14, 0.97); border: 1px solid rgba(184, 151, 90, 0.6); color: #ece6d9; font: 400 14px/1.5 var(--body, system-ui, sans-serif); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); }
-#vCap .you { color: #b8975a; font-size: 12.5px; margin-bottom: 6px; }
-#vCap .you::before { content: "You  "; font: 600 10px var(--mono, monospace); letter-spacing: 0.12em; }
-#vCap .him::before { content: "CAESAR  "; font: 600 10px var(--mono, monospace); letter-spacing: 0.12em; color: #dcc28c; }
-#vCap .st { margin-top: 8px; font: 500 10.5px var(--mono, monospace); color: rgba(236, 230, 217, 0.6); letter-spacing: 0.06em; }
-#vCap button { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: rgba(236,230,217,0.6); font-size: 18px; cursor: pointer; padding: 4px 8px; }
-@media (max-width: 700px) { #vMic { width: 56px; height: 56px; } #vCap { bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 92px); font-size: 13.5px; } }
+@media (max-width: 700px) { #vMic { width: 56px; height: 56px; } }
 @media (prefers-reduced-motion: reduce) { body.listening #vMic, body.speaking #vMic, body.thinking #vMic { animation: none; outline: 2px solid #dcc28c; } }
 
 /* ---- website copy: Caesar's voice agent replaces the Claude chat ---- */
@@ -651,7 +665,7 @@ body.web.v-cc #webHint { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); 
   </div>
 </section>
 <div id="ccToast" role="status" hidden></div>
-<div id="vCap" role="log" aria-live="polite" hidden></div>
+<section id="vBox" aria-label="Conversation with Caesar" hidden><header><b>Caesar</b><span id="vSt">Microphone off</span><button type="button" id="vWake" aria-pressed="true" title="When on, I wait for you to say Caesar">Wake word on</button><button type="button" id="vX" aria-label="Close the conversation">×</button></header><div id="vLoad" hidden></div><div id="vLog" role="log" aria-live="polite"></div><form id="vForm" autocomplete="off"><input id="vIn" placeholder="Type, or say “Caesar…”" aria-label="Message to Caesar" enterkeyhint="send"><button type="submit">Send</button></form></section>
 <button id="vMic" type="button" aria-label="Talk to Caesar" title="Talk to Caesar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg><b>Speak</b></button>
 
 <div class="panel" id="bar">
@@ -1669,23 +1683,27 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
 
   async function ask(text) {
     text = text.trim(); if (!text || busy || !sampleFn) return;
-    const vt = VOICE_TURN; VOICE_TURN = false; cvHalt();
+    const vt = VOICE_TURN, say = vt === 'say'; VOICE_TURN = false; cvHalt();
+    let sp = null, ackT = 0;
+    const out = (txt) => { if (say) { if (!sp) sp = cvStream(true); sp.push(txt, true); } else speak(txt, false); };
     if (!vt) chat.classList.add('open'); $('#hints').hidden = true; if (vt) capThink();
-    addMsg('u', text); turns.push({ role: 'user', content: text + (vt ? '\n\n(Said aloud: the user will hear your answer. Two to four short spoken sentences, no lists, no symbols, numbers rounded.)' : '') });
+    if (say) ackT = setTimeout(() => { if (!sp) cvAck('moment'); }, 900); // open questions take a few seconds: acknowledge at once
+    addMsg('u', text); turns.push({ role: 'user', content: text + (say ? '\n\n(Said aloud: the user will hear your answer. Two to four short spoken sentences, no lists, no symbols, numbers rounded.)' : '') });
     const bubble = addMsg('a', 'Thinking…'); setBusy(true); ctl = new AbortController();
     const convo = [{ role: 'user', content: deep ? rules() : rulesLean() }, ...turns.slice(deep ? -8 : -4)];
     // the list must end on a user turn and not start with two user turns the model reads as one: fine per the API
     try {
       const tl = deep ? toolList.slice(0, toolCap) : leanTools().slice(0, toolCap);
-      const res = await sampleFn(convo, { ...(toolCap ? { tools: tl } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; if (vt) capSay(t, true); } });
-      if (vt) capSay(res.text);
-      bubble.textContent = res.text; turns.push({ role: 'assistant', content: res.text }); speak(res.text, vt);
+      const res = await sampleFn(convo, { ...(toolCap ? { tools: tl } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; if (vt) capSay(t, true); if (say) { clearTimeout(ackT); if (!sp) sp = cvStream(true); sp.push(t, false); } } });
+      clearTimeout(ackT); if (vt) capSay(res.text);
+      bubble.textContent = res.text; turns.push({ role: 'assistant', content: res.text }); out(res.text);
     } catch (e) {
-      if (e && e.text) { bubble.textContent = e.text; turns.push({ role: 'assistant', content: e.text }); speak(e.text, vt); }
+      clearTimeout(ackT);
+      if (e && e.text) { bubble.textContent = e.text; if (e.code !== 'busy_line') turns.push({ role: 'assistant', content: e.text }); if (vt) capSay(e.text); out(e.text); }
       else { bubble.remove(); turns.pop(); }
-      if (e && e.code !== 'cancelled') { addMsg('a err', errCopy[e.code] || errCopy.upstream_error); if (vt) capSay(errCopy[e.code] || errCopy.upstream_error); }
+      if (e && e.code !== 'cancelled' && !(e && e.text)) { const ec = Object.prototype.hasOwnProperty.call(errCopy, e.code) ? errCopy[e.code] : errCopy.upstream_error; if (ec) { addMsg('a err', ec); if (vt) capSay(ec); out(ec); } }
       if (e && (e.code === 'not_granted' || e.code === 'sampling_disabled')) { orb.disabled = true; }
-    } finally { setBusy(false); ctl = null; if (!orb.disabled && !vt) cIn.focus(); }
+    } finally { clearTimeout(ackT); if (sp && !sp.done) sp.finish(); setBusy(false); ctl = null; if (!orb.disabled && !vt) cIn.focus(); }
   }
   window.__ask = ask; // used by the hot-row click through askOrb below
   function askOrb(q) { if (!VOICE_TURN) chat.classList.add('open'); orb.classList.remove('alert'); if (!sampleFn) { return; } ask(q); }
@@ -1842,23 +1860,25 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function caesarCommand(raw, from) {
     const r = caesarRoute(raw); if (!r.text) return;
-    if (/^(?:stop|quiet|silence|enough|be quiet|shush)[.!]?$/i.test(r.text)) { VOICE_TURN = false; cvHalt(); stopVoice(); capHide(); return; }
+    const boxed = from === 'voice' || from === 'box', spoken = from === 'voice' || (from === 'box' && (VS.on || voiceOn));
+    if (/^(?:stop|quiet|silence|enough|be quiet|shush)[.!]?$/i.test(r.text)) { VOICE_TURN = false; if (ctl) ctl.abort(); cvHalt(); stopVoice(); return; }
     const qa = r.text.length < 140 ? quickAnswer(r.text) : null;
     if (qa) { quickReply(r.text, qa, from); return; }
-    if (/^(?:stop|quiet|silence|enough|be quiet)[.!]?$/i.test(r.text)) { VOICE_TURN = false; cvHalt(); stopVoice(); return; }
-    const navigate = r.dest && (r.nav || from === 'home' || from === 'voice');
+    const navigate = r.dest && (r.nav || from === 'home' || boxed);
     if (navigate && r.dest !== view.id) go(r.dest, from === 'chat');
-    if (navigate && !r.rest) { const msg = 'Opening ' + ROOM_NAME[r.dest] + '.'; VOICE_TURN = false; if (from === 'chat') { addMsg('u', r.text); addMsg('a', msg); } if (from === 'voice') { capUser(r.text); capSay(msg); } speak(msg, from === 'voice'); return; }
+    if (navigate && !r.rest) { const msg = 'Opening ' + ROOM_NAME[r.dest] + '.'; VOICE_TURN = false; if (from === 'chat') { addMsg('u', r.text); addMsg('a', msg); } if (boxed || from === 'home') { capUser(r.text); capSay(msg); } speak(msg, spoken); return; }
+    if (boxed) VOICE_TURN = spoken ? 'say' : 'show';
     askOrb(r.text);
   }
 
   /* ----- Caesar's state line under the swan ----- */
-  function setSpeaking(b) { body.classList.toggle('speaking', b); paintState(); }
+  function setSpeaking(b) { body.classList.toggle('speaking', b); if (b && VS.on && VS.state !== 'speak') vsSet('speak'); paintState(); }
   function paintState() {
     const s = document.getElementById('ccState'); if (!s) return;
     const core = BR.parts.core;
     s.className = body.classList.contains('speaking') || body.classList.contains('thinking') ? 'live' : '';
     if (body.classList.contains('listening')) { s.className = 'live'; s.textContent = 'Listening…'; return; }
+    if (body.classList.contains('waking') && !body.classList.contains('speaking') && !body.classList.contains('thinking')) { s.className = 'live'; s.textContent = 'Say “Caesar” · I am listening'; return; }
     s.textContent = body.classList.contains('speaking') ? (CV.busy && !CV.tts ? 'Preparing his voice' + (CV.pct ? ' · ' + CV.pct + '%' : '…') : 'Speaking…') : body.classList.contains('thinking') ? 'Thinking…'
       : core ? 'Chief strategist · watching ' + Object.keys((core.health || {}).feeds || {}).length + ' feeds · brain ' + ago(core.updated) : 'Chief strategist · ' + brainMissing().replace(/…$/, '…').toLowerCase();
   }
@@ -2180,7 +2200,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
      Inside Claude pages may not use the microphone: the user dictates with the keyboard's microphone instead. */
   const CV_VOICES = [['bm_george', 'George · British RP']]; // George is Caesar's only voice
   const CV = { tts: null, loading: null, ctx: null, gen: 0, busy: false, src: null, pct: 0, err: null, listening: false, rec: null, asr: null, follow: false, noSR: false,
-    voice: 'bm_george' };
+    voice: 'bm_george', cache: new Map(), rtf: 0, st: null, spoken: '', spokenEnd: 0, ack: null, ackSrc: null, slowTold: false, db: null };
+  const VS = { on: false, state: 'off', mode: 'sr', rec: null, acc: '', cur: '', skip: 0, strip: null, timer: 0, tick: 0, winUntil: 0, fast: 0, nets: 0, stateAt: 0, settling: false, bye: false, ackDone: false, told: false, live: null, him: null, wake: true };
   let VOICE_TURN = false;
   const CV_SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   function cvCtx() { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; if (!CV.ctx) CV.ctx = new AC(); if (CV.ctx.state === 'suspended') CV.ctx.resume().catch(() => { /* resumes on the next tap */ }); return CV.ctx; }
@@ -2201,9 +2222,10 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       return of(u, o);
     };
   }
-  /* the voice runs in a background worker so speaking never freezes the page; the main thread is the fallback */
+  /* the voice runs in a background worker so speaking never freezes the page; the main thread is the fallback.
+     v20: one prioritised queue. The moment he is interrupted, every sentence still waiting is dropped, so a new answer never queues behind an old one. */
   function cvWorkerMain() {
-    let tts = null, ready = null, chain = Promise.resolve();
+    let tts = null, ready = null, minGen = 0, running = false; const queue = [];
     function shim(base, PARTS) {
       const of = self.fetch.bind(self);
       const MAP = [/^https:\/\/huggingface\.co\/onnx-community\/Kokoro-82M-v1\.0-ONNX\/resolve\/main\/([^?#]+)/, /^https:\/\/cdn\.jsdelivr\.net\/npm\/@huggingface\/transformers@3\.5\.1\/dist\/(ort-wasm[^?#]+\.wasm)/];
@@ -2220,6 +2242,21 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
         return of(u, o);
       };
     }
+    function pump() {
+      if (running || !queue.length) return;
+      let k = queue.findIndex((j) => j.pri > 0); if (k < 0) k = 0; // live speech first, background preparation after
+      const job = queue.splice(k, 1)[0];
+      if (job.pri > 0 && job.gen < minGen) { self.postMessage({ type: 'audio', id: job.id, error: 'cancelled' }); pump(); return; }
+      running = true;
+      (async () => {
+        try {
+          await ready; if (!tts) throw new Error('the voice did not load');
+          const t0 = Date.now(), a = await tts.generate(job.text, { voice: 'bm_george', speed: job.speed || 0.95 });
+          const audio = a.audio; self.postMessage({ type: 'audio', id: job.id, audio, sr: a.sampling_rate, ms: Date.now() - t0 }, [audio.buffer]);
+        } catch (err) { self.postMessage({ type: 'audio', id: job.id, error: String((err && err.message) || err) }); }
+        running = false; setTimeout(pump, 5); // let a waiting cancel or new sentence arrive before the next job starts
+      })();
+    }
     self.onmessage = (e) => {
       const m = e.data || {};
       if (m.type === 'init') {
@@ -2227,16 +2264,11 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
         ready = import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js')
           .then((mod) => mod.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm', progress_callback: (p) => { if (p && p.status === 'progress') self.postMessage({ type: 'progress', file: p.file, loaded: p.loaded, total: p.total }); } }))
           .then((t) => { tts = t; self.postMessage({ type: 'ready' }); }, (err) => self.postMessage({ type: 'error', message: String((err && err.message) || err) }));
-        return;
-      }
-      if (m.type === 'say') {
-        chain = chain.then(async () => {
-          try {
-            await ready; if (!tts) throw new Error('the voice did not load');
-            const a = await tts.generate(m.text, { voice: 'bm_george', speed: m.speed || 0.95 });
-            const audio = a.audio; self.postMessage({ type: 'audio', id: m.id, audio, sr: a.sampling_rate }, [audio.buffer]);
-          } catch (err) { self.postMessage({ type: 'audio', id: m.id, error: String((err && err.message) || err) }); }
-        });
+      } else if (m.type === 'say') {
+        queue.push({ id: m.id, text: m.text, speed: m.speed, gen: m.gen || 0, pri: m.pri == null ? 1 : m.pri }); pump();
+      } else if (m.type === 'cancel') {
+        minGen = Math.max(minGen, m.gen || 0);
+        for (let k = queue.length - 1; k >= 0; k--) if (queue[k].pri > 0 && queue[k].gen < minGen) { self.postMessage({ type: 'audio', id: queue[k].id, error: 'cancelled' }); queue.splice(k, 1); }
       }
     };
   }
@@ -2250,9 +2282,15 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       w.onmessage = (e) => {
         const m = e.data || {};
         if (m.type === 'progress') { if (m.total > 1e5) { seen[m.file] = [m.loaded, m.total]; const v = Object.values(seen); CV.pct = Math.min(99, Math.round(100 * v.reduce((a2, x) => a2 + x[0], 0) / v.reduce((a2, x) => a2 + x[1], 0))); paintState(); capStatus(); } }
-        else if (m.type === 'ready') { clearTimeout(t); CV.w = w; CV.pct = 100; ok({ generate: (x, o) => new Promise((res, rej) => { const id = ++CV.seq; CV.pend[id] = [res, rej]; w.postMessage({ type: 'say', id, text: x, speed: o && o.speed }); }) }); }
+        else if (m.type === 'ready') {
+          clearTimeout(t); CV.w = w; CV.pct = 100;
+          ok({
+            generate: (x, o) => new Promise((res, rej) => { const id = ++CV.seq; CV.pend[id] = [res, rej]; w.postMessage({ type: 'say', id, text: x, speed: o && o.speed, gen: o && o.gen, pri: o && o.pri }); }),
+            cancel: (g) => { try { w.postMessage({ type: 'cancel', gen: g }); } catch (e2) { /* worker gone */ } }
+          });
+        }
         else if (m.type === 'error') { clearTimeout(t); try { w.terminate(); } catch (x) { /* gone */ } bad(new Error(m.message)); }
-        else if (m.type === 'audio') { const p = CV.pend[m.id]; delete CV.pend[m.id]; if (p) { if (m.error) p[1](new Error(m.error)); else p[0]({ audio: m.audio, sampling_rate: m.sr }); } }
+        else if (m.type === 'audio') { const p = CV.pend[m.id]; delete CV.pend[m.id]; if (p) { if (m.error) p[1](new Error(m.error)); else p[0]({ audio: m.audio, sampling_rate: m.sr, ms: m.ms }); } }
       };
       w.onerror = (e) => { clearTimeout(t); failAll('the voice worker stopped'); try { w.terminate(); } catch (x) { /* gone */ } CV.w = null; bad(new Error((e && e.message) || 'the voice worker failed')); };
       w.postMessage({ type: 'init', local: !CC_WEB, base: location.href, parts: CV_PARTS });
@@ -2262,7 +2300,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (CV.tts) return Promise.resolve(CV.tts);
     if (CV.loading) return CV.loading;
     CV.loading = cvLoadWorker().catch((e) => { CV.workerErr = (e && e.message) || String(e); return cvLoadMain(); })
-      .then((t) => { CV.tts = t; CV.err = null; CV.pct = 100; paintState(); capStatus(); try { localStorage.setItem('cv-warm', '1'); } catch (e) { /* convenience only */ } return t; });
+      .then((t) => { CV.tts = t; CV.err = null; CV.pct = 100; paintState(); capStatus(); try { localStorage.setItem('cv-warm', '1'); } catch (e) { /* convenience only */ } setTimeout(cvPrefetch, 1500); return t; });
     CV.loading.catch((e) => { CV.err = (e && e.message) || String(e); CV.loading = null; paintState(); capStatus(); });
     return CV.loading;
   }
@@ -2271,11 +2309,16 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     return (async () => {
       const mod = await import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js');
       const seen = {};
-      CV.tts = await mod.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm', progress_callback: (p) => {
+      const ins = await mod.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm', progress_callback: (p) => {
         if (!p || p.status !== 'progress' || !(p.total > 1e5)) return; seen[p.file] = [p.loaded, p.total];
         const v = Object.values(seen); CV.pct = Math.min(99, Math.round(100 * v.reduce((a, x) => a + x[0], 0) / v.reduce((a, x) => a + x[1], 0))); paintState();
       } });
-      CV.err = null; CV.pct = 100; paintState(); return CV.tts;
+      let chain = Promise.resolve();
+      CV.err = null; CV.pct = 100; paintState();
+      return {
+        generate: (x, o) => { const run = chain.then(async () => { const t0 = Date.now(), a = await ins.generate(x, { voice: 'bm_george', speed: (o && o.speed) || 0.95 }); return { audio: a.audio, sampling_rate: a.sampling_rate, ms: Date.now() - t0 }; }); chain = run.catch(() => { /* keep the chain alive */ }); return run; },
+        cancel: () => { /* the fallback cannot drop queued sentences */ }
+      };
     })();
   }
   function cvClean(t) {
@@ -2283,82 +2326,127 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       .replace(/S&P/g, 'S and P').replace(/&/g, ' and ').replace(/\be\.g\./gi, 'for example').replace(/\bi\.e\./gi, 'that is').replace(/\bvs\.?\b/gi, 'versus')
       .replace(/\s*[—–]\s*/g, ', ').replace(/\s+/g, ' ').trim();
   }
-  function cvSentences(t) {
-    const out = [];
-    t.replace(/([.!?])\s+(?=[A-Z0-9"'“£$])/g, '$1\u0001').split('\u0001').forEach((x) => {
-      x = x.trim(); if (!x) return;
-      if (out.length && out[out.length - 1].length < 50) out[out.length - 1] += ' ' + x; else out.push(x);
-    });
-    return out.flatMap((x) => (x.length > 320 ? x.match(/[^,;]{1,300}(?:[,;]|$)/g) || [x] : [x])).map((x) => x.trim()).filter(Boolean);
+  /* ----- small, quick, remembered: short phrases are kept so he never generates the same line twice ----- */
+  const CV_ACK = { yes: 'Yes?', moment: 'One moment.', sorry: 'I am afraid I did not catch that.' };
+  function idb() { return CV.db || (CV.db = new Promise((ok, no) => { try { const r = indexedDB.open('caesar-voice', 1); r.onupgradeneeded = () => r.result.createObjectStore('p'); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); } catch (e) { no(e); } })); }
+  function idbGet(k) { return idb().then((db) => new Promise((ok) => { try { const q = db.transaction('p').objectStore('p').get(k); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); } catch (e) { ok(null); } })).catch(() => null); }
+  function idbSet(k, v) { return idb().then((db) => new Promise((ok) => { try { const tx = db.transaction('p', 'readwrite'); tx.objectStore('p').put(v, k); tx.oncomplete = () => ok(); tx.onerror = () => ok(); } catch (e) { ok(); } })).catch(() => { /* convenience only */ }); }
+  async function cvAckWarm() {
+    for (const t of Object.values(CV_ACK)) { if (CV.cache.has(t)) continue; const v = await idbGet('ack:' + t); if (v && v.a) CV.cache.set(t, { audio: v.a, sampling_rate: v.sr }); }
   }
-  function cvPlay(a, my) {
-    return new Promise((done) => {
-      const ctx = cvCtx(); if (!ctx || my !== CV.gen) { done(); return; }
-      const b = ctx.createBuffer(1, a.audio.length, a.sampling_rate); b.getChannelData(0).set(a.audio);
-      const s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination);
-      s.onended = () => { if (CV.src === s) CV.src = null; done(); }; CV.src = s; s.start();
-    });
-  }
-  function cvHalt(keepGen) {
-    if (!keepGen) CV.gen++;
-    const s = CV.src; CV.src = null; if (s) { try { const f = s.onended; s.onended = null; s.stop(); if (f) f(); } catch (e) { /* already stopped */ } }
-    if (!keepGen) { CV.busy = false; CV.follow = false; setSpeaking(false); }
-  }
-  async function caesarSay(text, follow) {
-    const t = cvClean(text); if (!t) return;
-    cvHalt(); const my = CV.gen; CV.follow = !!follow && CC_WEB;
-    if (!cvCtx()) { toast('Caesar · this browser cannot play sound'); return; }
-    CV.busy = true; setSpeaking(true);
-    try {
-      const tts = await cvLoad(); if (my !== CV.gen) return;
-      const parts = cvSentences(t), opt = { voice: CV.voice, speed: 0.95 };
-      let next = tts.generate(parts[0], opt);
-      for (let k = 0; k < parts.length; k++) {
-        const a = await next; if (my !== CV.gen) return;
-        if (k + 1 < parts.length) next = tts.generate(parts[k + 1], opt);
-        await cvPlay(a, my); if (my !== CV.gen) return;
-      }
-    } catch (e) { if (my === CV.gen) { CV.err = (e && e.message) || String(e); toast('Caesar · his voice could not load here'); } }
-    finally {
-      if (my === CV.gen) { CV.busy = false; setSpeaking(false); paintState(); if (CV.follow) { CV.follow = false; setTimeout(() => { if (!CV.busy && !busy) caesarListen(true); }, 300); } }
+  async function cvPrefetch() {
+    if (!CV.tts) return;
+    await cvAckWarm();
+    for (const t of Object.values(CV_ACK)) {
+      if (CV.cache.has(t)) continue;
+      try { const a = cvTrim(await CV.tts.generate(t, { speed: 0.95, gen: 0, pri: 0 })); CV.cache.set(t, a); idbSet('ack:' + t, { a: a.audio, sr: a.sampling_rate }); } catch (e) { return; }
     }
   }
+  function cvTrim(a) {
+    const x = a.audio, sr = a.sampling_rate; let s = 0, e = x.length - 1; const th = 0.012;
+    while (s < e && Math.abs(x[s]) < th) s++; while (e > s && Math.abs(x[e]) < th) e--;
+    s = Math.max(0, s - Math.round(0.02 * sr)); e = Math.min(x.length, e + Math.round(0.06 * sr));
+    if (e - s < 480) return a; // nothing to trim, or nothing but silence
+    return { audio: x.slice(s, e), sampling_rate: sr };
+  }
+  function cvGen(text, my, pri) {
+    const hit = CV.cache.get(text); if (hit) return Promise.resolve(hit);
+    return cvLoad().then((tts) => tts.generate(text, { speed: 0.95, gen: my, pri: pri == null ? 1 : pri })).then((a) => {
+      if (a.ms && a.audio.length) { const r = (a.ms / 1000) / (a.audio.length / a.sampling_rate); CV.rtf = CV.rtf ? CV.rtf * 0.5 + r * 0.5 : r; if (CV.rtf > 2.4 && !CV.slowTold) { CV.slowTold = true; capNote('This device makes my voice slowly, so I speak briefly. The whole answer is always written here.'); } }
+      const t = cvTrim(a); if (text.length <= 48) CV.cache.set(text, t); return t;
+    });
+  }
+  function cvPlayNow(a, kind) {
+    return new Promise((done) => {
+      const ctx = cvCtx(); if (!ctx) { done(); return; }
+      const b = ctx.createBuffer(1, a.audio.length, a.sampling_rate); b.getChannelData(0).set(a.audio);
+      const s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination);
+      s.onended = () => { if (kind === 'ack') { if (CV.ackSrc === s) CV.ackSrc = null; } else if (CV.src === s) CV.src = null; done(); };
+      if (kind === 'ack') CV.ackSrc = s; else CV.src = s; s.start();
+    });
+  }
+  async function cvPlay(a, my) {
+    if (my !== CV.gen) return;
+    if (CV.ack) { try { await CV.ack; } catch (e) { /* ack gone */ } if (my !== CV.gen) return; }
+    await cvPlayNow(a, 'say');
+    if (my === CV.gen) await new Promise((r) => setTimeout(r, 70)); // a natural breath between sentences
+  }
+  function cvAck(key) { // an instant remembered phrase, or nothing; never waits on the model
+    const hit = CV.cache.get(CV_ACK[key]); if (!hit || !cvCtx()) return Promise.resolve(false);
+    const p = cvPlayNow(hit, 'ack').then(() => true); CV.ack = p; p.then(() => { if (CV.ack === p) CV.ack = null; }); return p;
+  }
+  function cvChime() {
+    const ctx = cvCtx(); if (!ctx) return; const t = ctx.currentTime;
+    [[880, 0], [1318.5, 0.1]].forEach(([f, d]) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.07, t + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.18); o.connect(g); g.connect(ctx.destination); o.start(t + d); o.stop(t + d + 0.2); });
+  }
+  function cvHalt(keepAck) {
+    CV.gen++; CV.st = null; CV.spokenEnd = Date.now();
+    const s = CV.src; CV.src = null; if (s) { try { const f = s.onended; s.onended = null; s.stop(); if (f) f(); } catch (e) { /* already stopped */ } }
+    if (!keepAck) { const a = CV.ackSrc; CV.ackSrc = null; CV.ack = null; if (a) { try { const f = a.onended; a.onended = null; a.stop(); if (f) f(); } catch (e) { /* already stopped */ } } }
+    try { if (CV.tts && CV.tts.cancel) CV.tts.cancel(CV.gen); } catch (e) { /* nothing queued */ }
+    CV.busy = false; setSpeaking(false);
+  }
+  /* ----- speaking as the answer arrives: the first clause is short, later sentences are made while he talks ----- */
+  function cvBudget() { const r = CV.rtf || 0; return r > 2.4 ? { n: 1, c: 130 } : r > 1.15 ? { n: 2, c: 230 } : { n: 3, c: 360 }; }
+  function cvClip(p, c) { if (p.length <= c) return p; const cut = p.slice(0, c), m = cut.match(/^[\s\S]*[,;:]\s/); return ((m && m[0].length > c * 0.5 ? m[0] : cut.replace(/\s+\S*$/, '')).trim().replace(/[,;:]$/, '')) + '.'; }
+  function cvClauses(s, first) {
+    const out = []; let x = s.trim();
+    if (first && x.length > 85) { const m = x.slice(30, 110).search(/[,;:]\s|\s(?:and|but|while|which|because)\s/i); if (m >= 0) { const cut = 30 + m, head = x.slice(0, cut + (/[,;:]/.test(x[cut]) ? 1 : 0)).trim(); if (head.length >= 24) { out.push(head); x = x.slice(head.length).replace(/^[,;:\s]+/, ''); } } }
+    while (x.length > 320) { const m = x.slice(0, 300).match(/^[\s\S]*[,;:]\s/), cut = m ? m[0].length : 300; out.push(x.slice(0, cut).trim()); x = x.slice(cut).trim(); }
+    if (x) out.push(x);
+    return out;
+  }
+  function cvStream(keepAck) {
+    cvHalt(keepAck); const my = CV.gen;
+    const st = { my, sent: 0, n: 0, chars: 0, done: false, q: [], wake: null, first: true, cut: false, budget: cvBudget() };
+    CV.st = st; CV.busy = true; CV.spoken = ''; setSpeaking(true); cvCtx();
+    const enqueue = (chunk) => { const item = { text: chunk, p: cvGen(chunk, my) }; item.p.catch(() => { /* reported by the runner */ }); st.q.push(item); if (st.wake) st.wake(); };
+    st.finish = () => { st.done = true; if (st.wake) st.wake(); };
+    st.push = (full, final) => {
+      if (my !== CV.gen || st.done) return;
+      const clean = cvClean(full), rest = clean.slice(st.sent), parts = []; let last = 0, m, used;
+      const re = /([.!?])\s+(?=[A-Z0-9"'“£$])/g;
+      while ((m = re.exec(rest))) { parts.push(rest.slice(last, m.index + 1)); last = m.index + m[0].length; }
+      used = last;
+      if (final && rest.slice(last).trim()) { parts.push(rest.slice(last)); used = rest.length; }
+      st.sent += used;
+      for (let p of parts) {
+        p = p.trim(); if (!p || st.cut) continue;
+        if (st.n >= st.budget.n || (st.n > 0 && st.chars + p.length > st.budget.c)) { st.cut = true; continue; }
+        if (st.n === 0 && p.length > st.budget.c) p = cvClip(p, st.budget.c);
+        st.n++; st.chars += p.length; cvClauses(p, st.first).forEach(enqueue); st.first = false;
+      }
+      if (!final && !parts.length && st.n === 0 && st.first) { // a long opening sentence: start on its first clause
+        const rem = clean.slice(st.sent), mm = rem.slice(35).search(/[,;:]\s/);
+        if (mm >= 0 && rem.length > 35 + mm + 8) { const cut = 35 + mm + 1; enqueue(rem.slice(0, cut).trim()); st.sent += cut; st.first = false; st.chars += cut; }
+      }
+      if (final) st.finish();
+    };
+    cvRun(st); return st;
+  }
+  async function cvRun(st) {
+    const my = st.my;
+    try {
+      while (my === CV.gen) {
+        if (!st.q.length) { if (st.done) break; await new Promise((r) => { st.wake = r; }); st.wake = null; continue; }
+        const it = st.q.shift(), a = await it.p; if (my !== CV.gen) return;
+        CV.spoken += ' ' + it.text; await cvPlay(a, my);
+      }
+    } catch (e) { if (my === CV.gen && !/cancel/.test(String((e && e.message) || e))) { CV.err = (e && e.message) || String(e); toast('Caesar · his voice could not load here'); capStatus(); } }
+    finally { if (my === CV.gen) { CV.busy = false; CV.spokenEnd = Date.now(); setSpeaking(false); paintState(); } }
+  }
+  function caesarSay(text) {
+    const t = cvClean(text); if (!t) return;
+    if (!cvCtx()) { toast('Caesar · this browser cannot play sound'); return; }
+    cvStream().push(t, true);
+  }
   window.__caesarSay = caesarSay;
-  function cvListening(b) {
-    CV.listening = b; body.classList.toggle('listening', b);
-    ['#ccMic', '#cMic'].forEach((q) => { const x = $(q); if (x) { x.setAttribute('aria-pressed', String(b)); x.classList.remove('pulse'); } });
-    paintState();
-  }
-  function cvStatus(t) { const s = document.getElementById('ccState'); if (s) { s.className = 'live'; s.textContent = t; } }
-  function cvHeard(text, followUp) {
-    const v = String(text || '').replace(/\s+/g, ' ').trim();
-    if (!v || /^\[?(blank_audio|silence|music)\]?$/i.test(v)) { if (!followUp) { toast('Caesar · I did not catch that'); capHide(); } paintState(); return; }
-    if (/^(?:thank you|thanks|that'?s all|that is all|goodbye|good night|cheers)\b/i.test(v) && v.length < 40) { caesarSay('Very good.'); return; }
-    capUser(v); VOICE_TURN = true; caesarCommand(v, 'voice');
-  }
-  function caesarListen(followUp) {
-    if (!CC_WEB) { cvDictate(); return; }
-    if (CV.listening) { if (CV.rec) CV.rec.stop(); return; }
-    cvHalt(); stopVoiceClips(); cvCtx(); cvLoad().catch(() => { /* reported when he speaks */ });
-    if (CV_SR && !CV.noSR) cvRecognise(followUp); else cvWhisper(followUp);
-  }
+  function cvListening(b) { CV.listening = b; if (VS.mode === 'whisper' && VS.on) body.classList.toggle('listening', b); paintState(); }
+  function cvStatus(t) { const s = $('#vSt'); if (s) s.textContent = t; const c = document.getElementById('ccState'); if (c) { c.className = 'live'; c.textContent = t; } }
   function stopVoiceClips() { try { VOICE.queue = []; const s = VOICE.src; VOICE.playing = null; VOICE.src = null; if (s) s.stop(); } catch (e) { /* none playing */ } }
   function cvDictate() {
-    chat.classList.add('open'); orb.classList.remove('alert'); setTimeout(() => cIn.focus(), 0);
-    if (!cvDictate.told) { cvDictate.told = true; addMsg('a', 'Inside Claude the microphone is closed to pages, so speak through your keyboard: tap the microphone on your phone’s keyboard, press Windows + H on a PC, or press Fn twice on a Mac. I will answer aloud. To talk hands-free, press Talk hands-free above.'); }
-    toast('Caesar · use your keyboard’s microphone');
-  }
-  function cvRecognise(followUp) {
-    let r; try { r = new CV_SR(); } catch (e) { CV.noSR = true; cvWhisper(followUp); return; }
-    let heard = '', retry = false; r.lang = 'en-GB'; r.interimResults = true; r.maxAlternatives = 1; r.continuous = false;
-    CV.rec = r; cvListening(true);
-    r.onresult = (ev) => { let t = ''; for (let k = 0; k < ev.results.length; k++) t += ev.results[k][0].transcript; heard = t; cvStatus('“' + t.slice(-70) + '”'); if (!vCap.hidden) { const y = vCap.querySelector('.you'); if (y) y.textContent = t; } };
-    r.onerror = (ev) => {
-      if (/network|service-not-allowed|language-not-supported|bad-grammar/.test(ev.error)) { CV.noSR = true; retry = true; }
-      else if (/not-allowed|audio-capture/.test(ev.error)) toast('Caesar · allow the microphone to talk to me');
-    };
-    r.onend = () => { CV.rec = null; cvListening(false); if (retry) { cvWhisper(followUp); return; } cvHeard(heard, followUp); };
-    try { r.start(); } catch (e) { CV.rec = null; cvListening(false); CV.noSR = true; cvWhisper(followUp); }
+    capOpen(); setTimeout(() => { try { vIn.focus(); } catch (e) { /* not ready */ } }, 0);
+    if (!cvDictate.told) { cvDictate.told = true; capNote('Inside Claude the microphone is closed to pages, so speak through your keyboard: tap the microphone on your phone’s keyboard, press Windows + H on a PC, or press Fn twice on a Mac, then press Send and I will answer aloud. For fully hands-free talking, open the website terminal (Talk hands-free, above).'); }
   }
   function cvAsr() {
     if (!CV.asr) {
@@ -2368,10 +2456,11 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     }
     return CV.asr;
   }
+  /* the fallback ears for browsers without speech recognition (Firefox): record, wait for a clear pause, then Whisper in the browser */
   async function cvWhisper(followUp) {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { toast('Caesar · this browser has no microphone access; type to me'); return; }
-    let stream; try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); } catch (e) { toast('Caesar · allow the microphone to talk to me'); return; }
-    const asrP = cvAsr(); let mr; try { mr = new MediaRecorder(stream); } catch (e) { stream.getTracks().forEach((t) => t.stop()); toast('Caesar · this browser cannot record'); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { vsStop('This browser has no microphone access; type to me here.'); return; }
+    let stream; try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); } catch (e) { vsStop('Allow the microphone for this site, then tap it again.'); return; }
+    const asrP = cvAsr(); let mr; try { mr = new MediaRecorder(stream); } catch (e) { stream.getTracks().forEach((t) => t.stop()); vsStop('This browser cannot record sound; type to me here.'); return; }
     const chunks = [], ctx = cvCtx(), t0 = performance.now(); let an = null, spoke = false, quiet = 0;
     CV.rec = { stop: () => { try { if (mr.state !== 'inactive') mr.stop(); } catch (e) { /* stopped */ } } };
     try { const n = ctx.createMediaStreamSource(stream); an = ctx.createAnalyser(); an.fftSize = 1024; n.connect(an); } catch (e) { an = null; }
@@ -2379,53 +2468,75 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const tick = () => {
       if (mr.state === 'inactive') return; const now = performance.now();
       if (an) { an.getFloatTimeDomainData(buf); let q = 0; for (let k = 0; k < buf.length; k++) q += buf[k] * buf[k]; const rms = Math.sqrt(q / buf.length);
-        if (rms > 0.018) { spoke = true; quiet = 0; } else if (spoke) { quiet = quiet || now; if (now - quiet > 1300) { CV.rec.stop(); return; } }
-        if (!spoke && now - t0 > (followUp ? 6000 : 9000)) { CV.rec.stop(); return; } }
-      if (now - t0 > 15000) { CV.rec.stop(); return; }
+        if (rms > 0.018) { spoke = true; quiet = 0; } else if (spoke) { quiet = quiet || now; if (now - quiet > 1700) { CV.rec.stop(); return; } }
+        if (!spoke && now - t0 > (followUp ? 7000 : 10000)) { CV.rec.stop(); return; } }
+      if (now - t0 > 20000) { CV.rec.stop(); return; }
       setTimeout(tick, 100);
     };
     mr.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = async () => {
       stream.getTracks().forEach((t) => t.stop()); CV.rec = null; cvListening(false);
-      if (an && !spoke) { if (!followUp) toast('Caesar · I did not catch that'); return; }
+      if (!VS.on) return;
+      if (an && !spoke) { vsStop(followUp ? 'Microphone off. Tap it when you want to talk.' : 'I did not hear anything. Tap the microphone and try again.'); return; }
       body.classList.add('thinking'); cvStatus(CV.asr && !CV.asrReady ? 'Preparing my ears (first time only)…' : 'Understanding…');
       try {
         const AC = window.AudioContext || window.webkitAudioContext, ac = new AC({ sampleRate: 16000 });
         const pcm = (await ac.decodeAudioData(await new Blob(chunks, { type: mr.mimeType }).arrayBuffer())).getChannelData(0); ac.close();
         const asr = await asrP; CV.asrReady = true; const out = await asr(pcm);
         body.classList.remove('thinking'); cvHeard((out && out.text) || '', followUp);
-      } catch (e) { body.classList.remove('thinking'); paintState(); toast('Caesar · I could not hear that clearly'); }
+      } catch (e) { body.classList.remove('thinking'); paintState(); vsStop('I could not hear that clearly. Tap the microphone and try again.'); }
     };
     cvListening(true); mr.start(); setTimeout(tick, 150);
+  }
+  function cvHeard(text, followUp) {
+    const v = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!v || /^\[?(blank_audio|silence|music)\]?$/i.test(v)) { vsStop(followUp ? 'Microphone off. Tap it when you want to talk.' : 'I did not catch that. Tap the microphone and try again.'); return; }
+    vsSay(v);
   }
   /* the website's thinking: a free, keyless model (Pollinations) with the same tools Caesar has inside Claude */
   function webSample() {
     const API = 'https://text.pollinations.ai/openai';
+    // the free line allows one reply every 45 seconds and thinks for several seconds, so the page fetches the facts itself and asks once
+    const adCut = (t) => { const m = String(t).match(/\n+\s*(?:[-*_]{3,}\s*\n+)?[^\n]*pollinations[^\n]*/i); return (m ? String(t).slice(0, m.index) : String(t)).trim(); };
     const f = async (input, opts = {}) => {
       const msgs = (Array.isArray(input) ? input : [{ role: 'user', content: String(input) }]).map((m, k) => ({ role: k === 0 && m.role === 'user' && /^You are Caesar/.test(m.content) ? 'system' : m.role, content: m.content }));
       const list = opts.tools || [], byName = Object.fromEntries(list.map((t) => [t.name, t]));
-      const tools = list.map((t) => ({ type: 'function', function: { name: t.name, description: String(t.description || '').slice(0, 1000), parameters: t.inputSchema || { type: 'object', properties: {} } } }));
+      const lastU = [...msgs].reverse().find((m) => m.role === 'user'), q = lastU ? String(lastU.content).replace(/\n\n\(Said aloud[\s\S]*$/, '') : '';
+      const facts = [];
+      const grab = async (name, args, cap) => { const t = byName[name]; if (!t) return; try { const o = await t.execute(args || {}); facts.push(name + ': ' + (typeof o === 'string' ? o : JSON.stringify(o)).slice(0, cap || 1500)); } catch (e) { /* not available on the website */ } };
+      await grab('brief', {}, 1300);
+      const sy = qSymbol(q); if (sy) await grab('stock', { symbol: sy }, 1800);
+      if (/\b(news|headlines?|stor(?:y|ies))\b/i.test(q)) await grab('news', { query: sy || '' }, 1200);
+      if (/\b(crypto|bitcoin|btc|ethereum|eth|solana|coins?)\b/i.test(q)) await grab('crypto', {}, 1200);
+      if (/\b(macro|inflation|fed|rates?|yields?|recession|gdp|jobs|unemployment|dollar|oil|gold)\b/i.test(q)) await grab('macro', {}, 1400);
+      if (/\b(sectors?|index|indices|nasdaq|dow|futures|commodit\w*|currenc\w*)\b/i.test(q)) await grab('markets', {}, 1400);
+      const sys = msgs.filter((m) => m.role === 'system').map((m) => m.content).join('\n') + '\nFacts just fetched from the brain (quote numbers only from these; if a fact is missing, say you do not hold it):\n' + facts.join('\n');
+      const body = { model: 'openai', stream: true, max_tokens: 700, reasoning_effort: 'low', referrer: 'koochooloo', messages: [{ role: 'system', content: sys }, ...msgs.filter((m) => m.role !== 'system' && m.role !== 'tool')] };
       try {
-        for (let step = 0; step < 6; step++) {
-          let r = null;
-          for (let a = 0; a < 3; a++) {
-            r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: opts.signal, body: JSON.stringify({ model: 'openai', messages: msgs, referrer: 'koochooloo', ...(tools.length && step < 5 ? { tools } : {}) }) });
-            if (r.status !== 429 && r.status < 500) break; await new Promise((ok) => setTimeout(ok, 1500 * (a + 1)));
-          }
-          if (!r.ok) throw Object.assign(new Error('answer service ' + r.status), { code: r.status === 429 ? 'rate_limited' : 'upstream_error' });
-          const j = await r.json(), m = (j.choices && j.choices[0] && j.choices[0].message) || {};
-          if (m.tool_calls && m.tool_calls.length) {
-            msgs.push({ role: 'assistant', content: m.content || '', tool_calls: m.tool_calls });
-            for (const c of m.tool_calls) {
-              let out; try { const t = byName[c.function.name]; out = t ? await t.execute(JSON.parse(c.function.arguments || '{}')) : 'No such tool.'; } catch (e) { out = 'This source is not available on the website: ' + ((e && e.message) || e) + '. Use the brain tools instead.'; }
-              msgs.push({ role: 'tool', tool_call_id: c.id, content: (typeof out === 'string' ? out : JSON.stringify(out)).slice(0, 7000) });
-            }
-            continue;
-          }
-          const text = String(m.content || '').trim(); if (!text) throw Object.assign(new Error('empty'), { code: 'empty_completion' });
-          if (opts.onText) opts.onText({ text, delta: text }); return { text, truncated: false };
+        const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: opts.signal, body: JSON.stringify(body) });
+        if (r.status === 402 || r.status === 429) {
+          let wait = 45; try { const j = await r.json(), m = JSON.stringify(j).match(/retry after (\d+)\s*s/i); if (m) wait = +m[1]; } catch (e) { /* default wait */ }
+          throw Object.assign(new Error('line busy'), { code: 'busy_line', text: 'My free thinking line is busy for another ' + wait + ' seconds. Ask about prices, the market, setups, crypto, the calendar or the headlines, and I can answer from the data straight away.' });
         }
-        throw Object.assign(new Error('too many steps'), { code: 'upstream_error' });
+        if (!r.ok) throw Object.assign(new Error('answer service ' + r.status), { code: 'upstream_error' });
+        let content = '';
+        if (/event-stream/.test(r.headers.get('content-type') || '') && r.body && r.body.getReader) {
+          const reader = r.body.getReader(), dec = new TextDecoder(); let buf = '';
+          for (;;) {
+            const { done, value } = await reader.read(); if (done) break;
+            buf += dec.decode(value, { stream: true }); let i;
+            while ((i = buf.indexOf('\n')) >= 0) {
+              const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+              if (line.slice(0, 5) !== 'data:') continue; const dd = line.slice(5).trim(); if (!dd || dd === '[DONE]') continue;
+              let j; try { j = JSON.parse(dd); } catch (e) { continue; }
+              const dl = j.choices && j.choices[0] && (j.choices[0].delta || j.choices[0].message);
+              if (dl && dl.content) { content += dl.content; if (opts.onText) opts.onText({ text: adCut(content), delta: dl.content }); } // the model’s private reasoning arrives separately and is never shown or spoken
+            }
+          }
+        } else { const j = await r.json(); content = String((j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || ''); }
+        const text = adCut(content); if (!text) throw Object.assign(new Error('empty'), { code: 'empty_completion' });
+        if (opts.onText) opts.onText({ text, delta: '' });
+        return { text, truncated: false };
       } catch (e) { if (e && e.name === 'AbortError') throw Object.assign(new Error('cancelled'), { code: 'cancelled' }); throw e; }
     };
     f.limits = async () => ({ tools: { maxCount: 40 } });
@@ -2554,10 +2665,10 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function quickReply(text, qa, from) {
     VOICE_TURN = false;
-    if (qa.go && (from === 'voice' || from === 'home') && qa.go !== view.id) go(qa.go, true);
-    if (qa.focus && (from === 'voice' || from === 'home')) { try { focusStock(qa.focus); } catch (e) { /* not on screen */ } }
-    if (from === 'voice') { capUser(text); capSay(qa.say); speak(qa.say, true); return; }
-    if (from === 'home') { capUser(text); capSay(qa.say); speak(qa.say); return; }
+    const boxed = from === 'voice' || from === 'box' || from === 'home', spoken = from === 'voice' || (from === 'box' && (VS.on || voiceOn));
+    if (qa.go && boxed && qa.go !== view.id) go(qa.go, true);
+    if (qa.focus && boxed) { try { focusStock(qa.focus); } catch (e) { /* not on screen */ } }
+    if (boxed) { capUser(text); capSay(qa.say); speak(qa.say, spoken); return; }
     chat.classList.add('open'); $('#hints').hidden = true; addMsg('u', text); addMsg('a', qa.say);
     turns.push({ role: 'user', content: text }, { role: 'assistant', content: qa.say }); speak(qa.say);
   }
@@ -2572,26 +2683,196 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function leanTools() {
     return toolList.filter((t) => Q_LEAN.includes(t.name)).map((t) => Object.assign({}, t, { execute: async (i) => { const o = await t.execute(i); const j = typeof o === 'string' ? o : JSON.stringify(o); return j.length > 3500 ? j.slice(0, 3500) + '… (trimmed)' : (typeof o === 'string' ? o : o); } }));
   }
-  /* ----- the voice button and its captions ----- */
-  const vCap = $('#vCap'), vMic = $('#vMic');
-  function capOpen() { vCap.hidden = false; clearTimeout(capOpen.t); }
-  function capBody() { if (!vCap.querySelector('.cb')) { vCap.replaceChildren(); const x = el('button', '', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close captions'); x.onclick = () => { capHide(); cvHalt(); }; vCap.append(x, el('div', 'cb')); } return vCap.querySelector('.cb'); }
-  function capUser(t) { capOpen(); const b = capBody(); b.replaceChildren(el('div', 'you', t)); }
-  function capThink() { capOpen(); const b = capBody(); let h = b.querySelector('.him'); if (!h) { h = el('div', 'him'); b.append(h); } h.textContent = 'Thinking…'; }
-  function capSay(t, partial) { capOpen(); const b = capBody(); let h = b.querySelector('.him'); if (!h) { h = el('div', 'him'); b.append(h); } h.textContent = t; capStatus(); if (!partial) capLater(); }
-  function capStatus() { if (vCap.hidden) return; const b = capBody(); let st = b.querySelector('.st'); const msg = CV.err ? 'Voice unavailable here: reading only.' : CV.tts ? '' : CV.loading ? 'Preparing George’s voice · ' + (CV.pct || 0) + '% (first time only)' : ''; if (!msg) { if (st) st.remove(); return; } if (!st) { st = el('div', 'st'); b.append(st); } st.textContent = msg; }
-  function capLater() { clearTimeout(capOpen.t); capOpen.t = setTimeout(function wait() { if (CV.busy || CV.listening || busy) { capOpen.t = setTimeout(wait, 1500); return; } vCap.hidden = true; }, 9000); }
-  function capHide() { clearTimeout(capOpen.t); vCap.hidden = true; }
-  vMic.onclick = () => {
-    if (CV.busy || VOICE.playing) { cvHalt(); stopVoice(); return; }
+  /* ----- the conversation box: everything said and answered, and a place to type ----- */
+  const vBox = $('#vBox'), vLog = $('#vLog'), vIn = $('#vIn'), vMic = $('#vMic');
+  function capOpen() { vBox.hidden = false; }
+  function capHide() { vBox.hidden = true; }
+  function capRow(cls, t) { const d = el('div', cls, t); vLog.append(d); while (vLog.children.length > 40) vLog.firstChild.remove(); vLog.scrollTop = vLog.scrollHeight; return d; }
+  function capNote(t) { capOpen(); capRow('vnote', t); }
+  function capLive(t) { capOpen(); if (!VS.live || !VS.live.isConnected) VS.live = capRow('vyou live', ''); VS.live.textContent = t; vLog.scrollTop = vLog.scrollHeight; }
+  function capUser(t) { capOpen(); const lc = vLog.lastElementChild; if (VS.live && VS.live.isConnected) { VS.live.textContent = t; VS.live.className = 'vyou'; } else if (lc && lc.classList.contains('vyou')) lc.textContent = t; else capRow('vyou', t); VS.live = null; VS.him = null; vLog.scrollTop = vLog.scrollHeight; }
+  function capThink() { capOpen(); VS.him = capRow('vhim think', 'Thinking…'); }
+  function capSay(t, partial) { capOpen(); if (!VS.him || !VS.him.isConnected) VS.him = capRow('vhim', ''); VS.him.className = 'vhim'; VS.him.textContent = t; vLog.scrollTop = vLog.scrollHeight; if (!partial) VS.him = null; }
+  function capStatus() { const s = $('#vLoad'); if (!s) return; const msg = CV.err ? 'My voice could not load here, so I am reading only.' : CV.tts ? '' : CV.loading ? 'Preparing George’s voice · ' + (CV.pct || 0) + '% (first time only)' : ''; s.textContent = msg; s.hidden = !msg; }
+  $('#vX').onclick = () => capHide();
+  $('#vForm').addEventListener('submit', (e) => { e.preventDefault(); const v = vIn.value.trim(); vIn.value = ''; if (v) vsTyped(v); });
+
+  /* ----- listening: say “Caesar” and speak; he waits until you have finished before he answers ----- */
+  const MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+  try { VS.wake = localStorage.getItem('cv-wake') === '1' || (localStorage.getItem('cv-wake') !== '0' && !MOBILE); } catch (e) { VS.wake = !MOBILE; }
+  const WAKE_SRC = 'caesars?|cesar|ceasar|ceaser|cesare|seizer|seezer|sizer|seasar|czar|tsar';
+  const WAKE_RE = new RegExp('\\b(?:' + WAKE_SRC + ')\\b', 'gi');
+  const LEAD_RE = new RegExp('^\\W*(?:(?:hey|hi|hello|ok|okay|right|dear)\\s+)?(?:' + WAKE_SRC + ')\\b[\\s,.:;!?-]*', 'i');
+  const STOP_RE = /^(?:(?:hey |ok |okay )?(?:caesar|cesar)[,.]? )?(?:stop|quiet|enough|silence|be quiet|shush|hold on|wait|pause|cancel)[.!]?$/i;
+  function vsWakeEnd(t) { let m, end = -1; WAKE_RE.lastIndex = 0; while ((m = WAKE_RE.exec(t))) end = m.index + m[0].length; return end; }
+  const ANDROID = /Android/i.test(navigator.userAgent || '');
+  function vsJoin(results) { // Chrome on Android repeats a growing phrase as several results: keep the longest copy only there
+    const parts = [];
+    for (let k = 0; k < results.length; k++) {
+      const t = String(results[k][0].transcript || '').trim(); if (!t) continue;
+      const p = parts[parts.length - 1];
+      if (ANDROID && p && t.length > p.length && t.toLowerCase().startsWith(p.toLowerCase())) parts[parts.length - 1] = t; else parts.push(t);
+    }
+    return parts.join(' ');
+  }
+  const vsFull = () => (VS.acc + ' ' + VS.cur).replace(/\s+/g, ' ').trim();
+  function vsCmdOf(full) {
+    let c = full.slice(Math.min(VS.skip, full.length)).replace(LEAD_RE, '').trim();
+    if (VS.strip) c = c.replace(VS.strip, '').trim();
+    return c;
+  }
+  function vsEcho(text) { // is this just his own voice coming back through the speakers?
+    const sp = new Set(String(CV.spoken || '').toLowerCase().match(/[a-z0-9']+/g) || []), w = String(text || '').toLowerCase().match(/[a-z0-9']+/g) || [];
+    if (!w.length || !sp.size) return false; return w.filter((x) => sp.has(x)).length / w.length >= 0.85;
+  }
+  function vsEndMs(cmd) { // how long to wait in silence before deciding you have finished
+    const words = cmd.trim().split(/\s+/).length;
+    if (/\b(?:and|or|but|the|a|an|of|to|for|with|about|on|in|at|is|are|was|what|how|why|that|my|your|if|then|so|because|than|between|versus|compared|like|should|would|could|can|do|does|will|whether|from|into)$/i.test(cmd)) return 2800;
+    let fast = false; try { const r = caesarRoute(cmd); fast = (cmd.length < 140 && !!quickAnswer(r.text)) || (r.dest && r.nav && !r.rest); } catch (e) { /* the engine will decide */ }
+    if (fast) return 1100;
+    return words <= 2 ? 1900 : 1600;
+  }
+  function vsPaint() {
+    const on = VS.on, s = on ? VS.state : 'off';
+    body.classList.toggle('listening', on && s === 'listen'); body.classList.toggle('waking', on && s === 'wake');
+    vMic.setAttribute('aria-pressed', String(on));
+    const lab = { off: CC_WEB ? 'Speak' : 'Dictate', wake: 'Say Caesar', listen: 'Listening', think: 'Thinking', speak: 'Speaking' }[s];
+    const b = vMic.querySelector('b'); if (b) b.textContent = lab;
+    const st = { off: 'Microphone off', wake: 'Waiting for “Caesar”', listen: VS.mode === 'whisper' ? 'Listening… tap to send' : 'Listening…', think: 'Thinking…', speak: 'Speaking…' }[s];
+    const sEl = $('#vSt'); if (sEl && !(sEl.dataset.hold && Date.now() < +sEl.dataset.hold)) sEl.textContent = st;
+    const wk = $('#vWake'); if (wk) { wk.setAttribute('aria-pressed', String(VS.wake)); wk.textContent = VS.wake ? 'Wake word on' : 'Wake word off'; wk.hidden = !CC_WEB || VS.mode === 'whisper'; }
+    ['#ccMic', '#cMic'].forEach((q) => { const x = $(q); if (x) { x.setAttribute('aria-pressed', String(on)); x.classList.remove('pulse'); } });
+    capStatus(); paintState();
+  }
+  function vsSet(state) { VS.state = state; VS.stateAt = Date.now(); vsPaint(); }
+  function vsAbort() { const r = VS.rec; VS.rec = null; if (r) { r.onresult = r.onend = r.onerror = null; try { r.abort(); } catch (e) { /* closed */ } } }
+  function vsRec() {
+    if (!VS.on || VS.mode !== 'sr' || VS.rec || document.hidden) return;
+    let r; try { r = new CV_SR(); } catch (e) { CV.noSR = true; return; }
+    r.lang = 'en-GB'; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
+    const t0 = Date.now(); let got = false; VS.rec = r;
+    r.onresult = (ev) => { got = true; VS.fast = 0; VS.nets = 0; VS.cur = vsJoin(ev.results); vsEval(ev); };
+    r.onerror = (ev) => {
+      const e = ev && ev.error;
+      if (e === 'not-allowed' || e === 'service-not-allowed') vsStop('The microphone is blocked. Allow it for this site, then tap the microphone.');
+      else if (e === 'audio-capture') vsStop('I cannot find a microphone on this device.');
+      else if (e === 'network' && ++VS.nets >= 3) { CV.noSR = true; vsAbort(); VS.on = false; capNote('This browser’s speech service is not reachable, so I will listen the other way: tap the microphone, speak, then pause.'); vsStart(true); }
+    };
+    r.onend = () => {
+      if (VS.rec === r) VS.rec = null;
+      if (VS.cur) { VS.acc = (VS.acc + ' ' + VS.cur).trim(); VS.cur = ''; }
+      if (VS.acc.length > 700) { const cut = VS.acc.length - 350; VS.acc = VS.acc.slice(cut); VS.skip = Math.max(0, VS.skip - cut); }
+      if (!VS.on || VS.mode !== 'sr') return;
+      if (!got && Date.now() - t0 < 1500) VS.fast++;
+      if (VS.fast > 10) { vsStop('The microphone keeps closing on this device. Tap it to try again, or type to me.'); return; }
+      setTimeout(vsRec, Math.min(2500, 120 + VS.fast * 250));
+    };
+    try { r.start(); } catch (e) { VS.rec = null; setTimeout(vsRec, 800); }
+  }
+  function vsEval(ev) {
+    if (!VS.on) return;
+    const s = VS.state, full = vsFull(), region = full.slice(Math.min(VS.skip, full.length));
+    if (s === 'think' || s === 'speak') { // you can still cut in: “stop”, or “Caesar, …” and a new question
+      const last = ev && ev.results && ev.results[ev.results.length - 1], seg = String((last && last[0] && last[0].transcript) || '').trim();
+      if (STOP_RE.test(seg)) { vsInterrupt(); return; }
+      const we = vsWakeEnd(region);
+      if (we < 0) return;
+      const a = region.slice(we).replace(/^[\s,.:;!?-]+/, '');
+      if (a.split(/\s+/).filter(Boolean).length < 2 || vsEcho(a)) return;
+      vsInterrupt(); VS.skip += we; VS.strip = null; vsSet('listen');
+    } else if (s === 'wake') {
+      const we = vsWakeEnd(region); if (we < 0) return;
+      VS.skip += we; VS.strip = null; VS.ackDone = false; cvChime(); vsSet('listen'); capOpen();
+    }
+    VS.winUntil = Date.now() + 14000;
+    const cmd = vsCmdOf(full); clearTimeout(VS.timer);
+    if (!cmd) { VS.timer = setTimeout(vsWakeOnly, 900); return; }
+    capLive(cmd); VS.timer = setTimeout(vsCommit, vsEndMs(cmd));
+  }
+  function vsWakeOnly() { // you said only “Caesar”: answer with a remembered “Yes?”
+    if (!VS.on || VS.state !== 'listen' || VS.ackDone || vsCmdOf(vsFull())) return;
+    VS.ackDone = true; if (CV.cache.has(CV_ACK.yes)) { VS.strip = /^(?:yes)\b[\s,.?!-]*/i; cvAck('yes'); }
+  }
+  function vsCommit() {
+    clearTimeout(VS.timer); if (!VS.on || (VS.state !== 'listen')) return;
+    const full = vsFull(), cmd = vsCmdOf(full).replace(/\s+/g, ' ');
+    if (cmd.length < 2) return;
+    if (Date.now() - CV.spokenEnd < 5000 && vsEcho(cmd)) { VS.skip = full.length; return; } // only his own voice
+    VS.skip = full.length; VS.strip = null; vsSay(cmd);
+  }
+  function vsSay(cmd) {
+    vsSet('think');
+    if (/^(?:thank you|thanks|that'?s all|that is all|goodbye|good night|good bye|cheers)\b/i.test(cmd) && cmd.length < 40) { VS.bye = /goodbye|good bye|good night|that'?s all|that is all/i.test(cmd); capUser(cmd); capSay('Very good.'); caesarSay('Very good.'); return; }
+    capUser(cmd); VOICE_TURN = 'say'; caesarCommand(cmd, 'voice');
+  }
+  function vsTyped(v) { clearTimeout(VS.timer); if (VS.on) { VS.skip = vsFull().length; VS.strip = null; } caesarCommand(v, 'box'); if (VS.on && VS.state !== 'think') vsSet('think'); }
+  function vsInterrupt() {
+    clearTimeout(VS.timer); if (ctl) { try { ctl.abort(); } catch (e) { /* done */ } }
+    cvHalt(); stopVoice(); VS.settling = false; VS.skip = vsFull().length; VS.strip = null; VS.winUntil = Date.now() + 14000; VOICE_TURN = false;
+    if (VS.on) vsSet('listen');
+  }
+  function vsIdle() { // he has finished: after a short pause for the last echoes to fade, he listens again
+    if (VS.settling) return; VS.settling = true; const bye = VS.bye; VS.bye = false;
+    setTimeout(() => {
+      VS.settling = false; if (!VS.on || (VS.state !== 'think' && VS.state !== 'speak')) return;
+      if (CV.busy || busy) return;
+      VS.skip = vsFull().length; VS.strip = null; VS.winUntil = Date.now() + 16000;
+      if (VS.mode === 'whisper') { vsSet('listen'); cvWhisper(true); return; }
+      vsSet(bye && VS.wake ? 'wake' : 'listen');
+    }, 450);
+  }
+  function vsTick() {
+    if (!VS.on) return;
+    const now = Date.now(), s = VS.state;
+    if ((s === 'think' || s === 'speak') && !VS.settling && !busy && !CV.busy && !CV.ack && now - VS.stateAt > 500) vsIdle();
+    if (s === 'listen' && VS.mode === 'sr' && now > VS.winUntil && !vsCmdOf(vsFull())) {
+      if (VS.wake) vsSet('wake'); else vsStop('Microphone off. Tap it when you want to talk.');
+    }
+    if (VS.mode === 'sr' && !VS.rec && !document.hidden) vsRec();
+  }
+  function vsStart(active) {
     if (!CC_WEB) { cvDictate(); return; }
-    capOpen(); const b = capBody(); b.replaceChildren(el('div', 'you', 'Listening…')); capStatus();
-    caesarListen(false);
+    cvCtx(); cvLoad().catch(() => { /* reported when he speaks */ }); cvAckWarm();
+    capOpen(); stopVoiceClips(); cvHalt();
+    VS.on = true; VS.fast = 0; VS.nets = 0; VS.acc = ''; VS.cur = ''; VS.skip = 0; VS.strip = null; VS.settling = false; VS.bye = false; VS.winUntil = Date.now() + (active ? 14000 : 0);
+    try { localStorage.setItem('cv-hands', '1'); } catch (e) { /* convenience only */ }
+    if (!VS.told) { VS.told = true; capNote('I am listening. Say “Caesar”, then ask, and pause when you have finished. Chrome and Edge send what the microphone hears to their speech service while it is on; tap the microphone to switch it off. You can also type below.'); }
+    if (!CV_SR || CV.noSR) { VS.mode = 'whisper'; vsSet('listen'); cvWhisper(false); }
+    else { VS.mode = 'sr'; vsSet(active ? 'listen' : 'wake'); vsRec(); }
+    clearInterval(VS.tick); VS.tick = setInterval(vsTick, 250);
+  }
+  function vsStop(msg) {
+    VS.on = false; clearTimeout(VS.timer); clearInterval(VS.tick); vsAbort(); VS.acc = VS.cur = ''; VS.skip = 0; VS.live = null;
+    try { localStorage.setItem('cv-hands', '0'); } catch (e) { /* convenience only */ }
+    if (CV.rec && CV.rec.stop) { const r = CV.rec; CV.rec = null; r.stop(); }
+    vsSet('off'); if (msg) capNote(msg);
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) vsAbort(); else if (VS.on) vsRec(); });
+  /* the microphone button: start, interrupt, or switch off */
+  vMic.onclick = () => {
+    if (!CC_WEB) { cvDictate(); return; }
+    if (VOICE.playing) { stopVoice(); return; }
+    if (VS.on && VS.mode === 'whisper' && VS.state === 'listen' && CV.rec) { CV.rec.stop(); return; }
+    if (VS.on && (VS.state === 'think' || VS.state === 'speak' || CV.busy || busy)) { vsInterrupt(); return; }
+    if (VS.on) { vsStop('Microphone off. Tap it, or type, to carry on.'); return; }
+    vsStart(true);
   };
+  $('#vWake').onclick = () => { VS.wake = !VS.wake; try { localStorage.setItem('cv-wake', VS.wake ? '1' : '0'); } catch (e) { /* convenience only */ } if (VS.on && VS.state === 'wake' && !VS.wake) { VS.winUntil = Date.now() + 14000; vsSet('listen'); } vsPaint(); };
+  function caesarListen() { vMic.onclick(); }
   vMic.onpointerenter = () => { if (CC_WEB && !CV.tts && !CV.loading && !(navigator.connection && navigator.connection.saveData)) cvLoad().catch(() => { /* reported on use */ }); };
-  if (!CC_WEB) { vMic.title = 'Dictate to Caesar with your keyboard microphone'; vMic.querySelector('b').textContent = 'Dictate'; }
-  // after the first successful use the voice is cached: warm it quietly in the background
-  try { if (localStorage.getItem('cv-warm') === '1') setTimeout(() => { (window.requestIdleCallback || setTimeout)(() => cvLoad().catch(() => { /* reported on use */ }), 2000); }, 2500); } catch (e) { /* convenience only */ }
+  if (!CC_WEB) { vMic.title = 'Dictate to Caesar with your keyboard microphone'; vsPaint(); }
+  // the first touch of the page unlocks sound; after the first successful use the voice is cached and warmed quietly
+  ['pointerdown', 'keydown', 'touchend'].forEach((n) => addEventListener(n, () => cvCtx(), { once: true, passive: true }));
+  try { if (localStorage.getItem('cv-warm') === '1') setTimeout(() => { const go2 = () => { cvAckWarm(); cvLoad().catch(() => { /* reported on use */ }); }; if (window.requestIdleCallback) window.requestIdleCallback(go2, { timeout: 4000 }); else setTimeout(go2, 1500); }, 2500); } catch (e) { /* convenience only */ }
+  // the website remembers that hands-free was on, and starts listening for “Caesar” again once the browser already trusts the microphone
+  (async function vsAuto() {
+    if (!CC_WEB || !CV_SR) return;
+    let granted = false, was = false;
+    try { const p = await navigator.permissions.query({ name: 'microphone' }); granted = p.state === 'granted'; } catch (e) { /* not supported */ }
+    try { was = localStorage.getItem('cv-hands') === '1'; } catch (e) { /* convenience only */ }
+    if (granted && (was || /talk/.test(location.hash)) && !VS.on) { capOpen(); vsStart(false); }
+    else if (/talk/.test(location.hash)) { vMic.classList.add('pulse'); setTimeout(() => toast('Caesar · tap the microphone, then say “Caesar”'), 900); }
+  })();
 
   /* ----- Caesar's only voice: Jerry B. (British RP). The data repo records the briefing and critical alerts (data/voice/);
      this page plays them with Web Audio. Live conversation goes through Caesar's ElevenLabs agent. ----- */
