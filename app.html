@@ -2692,8 +2692,12 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (price == null) no.push('I hold no price for ' + sy);
     if (core) {
       if (!r || r.rsi14 == null) no.push('its RSI is unknown, so the default is no trade');
-      else if (r.rsi14 > 70) no.push('RSI ' + Math.round(r.rsi14) + ' is above 70, overbought, and I have no strong contrarian reason');
-      else if (r.rsi14 < 30) no.push('RSI ' + Math.round(r.rsi14) + ' is below 30, oversold, and I have no strong contrarian reason');
+      else if (r.rsi14 > 70) no.push('RSI ' + qNum(r.rsi14, 1) + ' is above 70, overbought, and I have no strong contrarian reason');
+      else if (r.rsi14 < 30) {
+        // the one contrarian reason our rules accept: a tested edge, insiders at a smaller company buying their own stock
+        if (r.size === 'smaller' && (r.evidence_types || []).includes('insider_cluster')) notes.push('RSI ' + qNum(r.rsi14, 1) + ' is below 30, but insiders at a smaller company are buying their own stock, the one contrarian reason our rules accept');
+        else no.push('RSI ' + qNum(r.rsi14, 1) + ' is below 30, oversold, and I have no strong contrarian reason');
+      }
       if (rg.stress_switch) no.push('the stress switch is on');
       else if (rg.level === 'risk-off') no.push('the market is risk-off, with the S&P 500 below its 200-day average');
       else if (rg.level === 'caution') notes.push('the market is in caution');
