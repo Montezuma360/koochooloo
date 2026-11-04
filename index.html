@@ -527,33 +527,25 @@ h1, .title { letter-spacing: 0.02em; }
   new IntersectionObserver((en) => { visible = en[0].isIntersecting; loop(visible); }).observe(sky);
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layout, 150); });
 
-  /* ---------- Caesar's voice ---------- */
-  const PREF = ['Ryan', 'Thomas', 'George', 'Arthur', 'Oliver', 'Daniel', 'Google UK English Male', 'Alfie', 'Elliot'];
-  const greet = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning.' : h < 18 ? 'Good afternoon.' : 'Good evening.'; };
-  let voice = null, voiceOn = false, speaking = false;
-  function pickVoice() {
-    if (!('speechSynthesis' in window)) return; const vs = speechSynthesis.getVoices(); if (!vs.length) return;
-    const gb = vs.filter((v) => /en[-_]GB/i.test(v.lang)), pool = gb.length ? gb : vs.filter((v) => /^en/i.test(v.lang));
-    voice = PREF.map((p) => pool.find((v) => v.name.includes(p) && /natural|online|enhanced|premium/i.test(v.name)) || pool.find((v) => v.name.includes(p))).find(Boolean) || pool.find((v) => /\bmale\b|\bman\b/i.test(v.name)) || pool[0] || null;
-  }
-  if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  /* ---------- Caesar's voice: Jerry B. (British RP) is the only voice; his briefing is recorded by the data repo ---------- */
+  const VRAW = 'https://raw.githubusercontent.com/Montezuma360/koochooloo-data/main/data/voice/';
   const speakBtns = [...document.querySelectorAll('[data-speak]')];
   const labels = speakBtns.map((b) => b.querySelector('[data-label]').textContent);
+  let player = null, speaking = false;
   function setSpeaking(on) { speaking = on; speakBtns.forEach((b, i) => { b.classList.toggle('speaking', on); b.querySelector('[data-label]').textContent = on ? 'Stop' : labels[i]; }); }
-  function say(text, done) {
-    if (!('speechSynthesis' in window)) return false;
-    try {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text.replace(/koochooloo/gi, 'koo-choo-loo').replace(/Silav/g, 'Silaav'));
-      if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = 'en-GB';
-      u.rate = 0.95; u.pitch = 0.92; u.onend = u.onerror = () => { setSpeaking(false); if (done) done(); };
-      setSpeaking(true); speechSynthesis.speak(u); return true;
-    } catch (e) { setSpeaking(false); return false; }
+  async function briefingClip() {
+    const r = await fetch(VRAW + 'index.json?v=' + Math.floor(Date.now() / 60000), { cache: 'no-store' }); if (!r.ok) return null;
+    const ix = await r.json(), b = ix && ix.briefing; if (!b || !b.chunks || !b.chunks.length) return null;
+    const parts = await Promise.all(b.chunks.map((c) => fetch(VRAW + c).then((x) => { if (!x.ok) throw new Error('missing piece'); return x.arrayBuffer(); })));
+    return URL.createObjectURL(new Blob(parts, { type: 'audio/mpeg' }));
   }
-  speakBtns.forEach((b) => b.addEventListener('click', () => {
-    if (speaking) { try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } setSpeaking(false); return; }
-    voiceOn = true; const br = briefing();
-    if (!say(greet() + ' Caesar here. ' + br.said.join(' ') + ' That is the picture.')) { $('#briefing').scrollIntoView(); b.querySelector('[data-label]').textContent = 'Voice is not available on this device'; }
+  speakBtns.forEach((b) => b.addEventListener('click', async () => {
+    if (speaking && player) { player.pause(); setSpeaking(false); return; }
+    const lab = b.querySelector('[data-label]'); lab.textContent = 'One moment\u2026';
+    let url = null; try { url = await briefingClip(); } catch (e) { url = null; }
+    if (!url) { lab.textContent = 'Speak to Caesar in the terminal'; setTimeout(() => { location.href = 'app.html'; }, 1200); return; }
+    player = new Audio(url); player.onended = player.onerror = () => setSpeaking(false); setSpeaking(true);
+    try { await player.play(); } catch (e) { setSpeaking(false); }
   }));
 
   /* ---------- share ---------- */

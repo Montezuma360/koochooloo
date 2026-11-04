@@ -664,7 +664,7 @@ body.web.v-cc #webHint { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); 
 
 <button id="orb" aria-label="Ask Caesar" title="Ask Caesar"><span>Caesar</span></button>
 <section class="panel" id="chat" aria-label="Chat with Caesar">
-  <div class="top"><b>Caesar</b><div class="t"><a id="cLine" class="line" href="https://elevenlabs.io/app/talk-to?agent_id=agent_9201m6hqwymzess883dryvc8xcs3" target="_blank" rel="noopener noreferrer" title="Talk to Caesar hands-free in his own voice (opens his voice line)">Voice line</a><button id="cAlerts" aria-pressed="true" title="Caesar speaks critical alerts aloud">Alerts</button><button id="cDeep" aria-pressed="false" title="Slower, more thorough answers">Deep</button><button id="cVoice" aria-pressed="false">Voice</button><label class="sr" for="cVoiceSel">Caesar's voice</label><select id="cVoiceSel" title="Choose Caesar's voice"></select><button id="cClose">Close</button></div></div>
+  <div class="top"><b>Caesar</b><div class="t"><a id="cLine" class="line" href="https://elevenlabs.io/app/talk-to?agent_id=agent_9201m6hqwymzess883dryvc8xcs3" target="_blank" rel="noopener noreferrer" title="Talk to Caesar in his own voice (Jerry B.), on any device">Speak to Caesar</a><button id="cAlerts" aria-pressed="true" title="Caesar reads critical alerts aloud in his own voice">Alerts</button><button id="cDeep" aria-pressed="false" title="Slower, more thorough answers">Deep</button><button id="cVoice" aria-pressed="false" hidden style="display:none">Voice</button><button id="cClose">Close</button></div></div>
   <div id="msgs"></div>
   <div class="hints" id="hints"></div>
   <form id="cForm"><input id="cIn" autocomplete="off" placeholder="Ask Caesar: a stock, the macro week, crypto, the £100 race" aria-label="Message"><button id="cMic" type="button" aria-pressed="false" hidden title="Speak to Caesar">Mic</button><button class="go" id="cSend" type="submit">Send</button><button id="cStop" type="button" hidden>Stop</button></form>
@@ -1405,7 +1405,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   let alertsLoud = true, heldSay = null;
   try { alertsLoud = localStorage.getItem('setareh-alerts') !== 'off'; } catch (e) { /* convenience only */ }
   function sayAlerts(list) {
-    if (!alertsLoud || !list.length) return;
+    return; // Caesar speaks alerts from his recorded clips (pollVoice), never with a browser voice
     const text = list.length === 1 ? list[0].text : list.length + ' updates. ' + list.slice(0, 2).map((a) => a.text).join(' ') + (list.length > 2 ? ' The rest are in the chat.' : '');
     const tapped = !navigator.userActivation || navigator.userActivation.hasBeenActive;
     if (tapped) speakNow(text); else heldSay = text;
@@ -1427,7 +1427,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const rp = el('span', 'pill ' + (lv === 'risk-on' ? 'ok' : lv === 'caution' ? 'warn' : 'bad'), lv.toUpperCase()); rp.title = ((core.regime || {}).why || []).join('; '); hd.append(rp);
     const hp = el('span', 'pill ' + (h.healthy ? 'ok' : 'warn'), h.healthy ? 'Feeds OK' : np + ' feed issue' + (np === 1 ? '' : 's')); hp.title = (h.problems || []).concat(h.warnings || []).join('\n') || 'Every feed is on time'; hd.append(hp);
     hd.append(el('small', '', 'Updated ' + ago(core.updated)));
-    if (WEBMODE) { const lb = el('button', 'pill ok', alertsLoud ? 'Spoken alerts: on' : 'Spoken alerts: off'); lb.id = 'bLoud'; lb.type = 'button'; lb.style.cursor = 'pointer'; lb.style.background = 'none'; lb.title = 'Caesar reads critical alerts aloud'; lb.onclick = toggleAlertsLoud; hd.append(lb); }
+    if (WEBMODE) { const lb = el('button', 'pill ok', alertsLoud ? 'Spoken alerts: on' : 'Spoken alerts: off'); lb.id = 'bLoud'; lb.type = 'button'; lb.style.cursor = 'pointer'; lb.style.background = 'none'; lb.title = 'Caesar reads critical alerts aloud in his own voice'; lb.onclick = toggleAlertsLoud; hd.append(lb); }
     const g = el('div', 'bgrid'), l = el('div'), r = el('div');
     const ul = el('ul', 'bsum'); (core.summary || []).filter((t) => !/^(One condition short|Research-backed setups)/.test(t)).forEach((t) => ul.append(el('li', '', t))); l.append(ul);
     const btns = el('div', 'heroBtns');
@@ -1532,6 +1532,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     MCP = mcp;
     $('#liveGo').onclick = () => { showConnect(false); pollOnce(mcp); pollBrain(); };
     await Promise.all([pollOnce(mcp), pollBrain()]);
+    pollVoice(); setInterval(() => { if (!document.hidden) pollVoice(); }, (mcp.web ? 60 : 120) * 1000);
     // the brain changes every minute or two while markets are open; each poll reads one small index and only the parts that changed
     setInterval(() => { if (!document.hidden && !STOP.includes(lastCode) && lastCode !== 'approval_required') pollBrain(); }, (mcp.web ? 60 : 120) * 1000);
     // poll every 5 minutes while visible; stop polling on errors only the viewer can fix (the button retries)
@@ -1555,7 +1556,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     clearTimeout(webHint.t); webHint.t = setTimeout(() => { t.hidden = true; }, 7000);
   }
   function toggleAlertsLoud() {
-    alertsLoud = !alertsLoud; if (!alertsLoud) { heldSay = null; try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } }
+    alertsLoud = !alertsLoud; if (!alertsLoud) { heldSay = null; stopVoice(); }
     try { localStorage.setItem('setareh-alerts', alertsLoud ? 'on' : 'off'); } catch (e) { /* convenience only */ }
     const c = document.getElementById('cAlerts'); if (c) c.setAttribute('aria-pressed', String(alertsLoud));
     const b = document.getElementById('bLoud'); if (b) b.textContent = alertsLoud ? 'Spoken alerts: on' : 'Spoken alerts: off';
@@ -1577,7 +1578,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       'Your tools: brief (start here for any general question), stock (one company, everything), scan (screen the ranked list), markets, macro (with the economic calendar), crypto, news, sec_watch, paper (the £100 race), options, sentiment and data_health; the live connectors live_quote and company_news (Twelve Data) and crypto_live (CoinGecko) for anything the brain lacks or when fresher prices matter; the Congress and insider tools (ticker_detail, hot_buys, congress_recent, trader_detail, insider_activity, signals); and show, which changes the screen: home (the Command Centre with the swan), the trading terminal (deck, universe, hot, timeline), opportunities (the evidence-ranked Opportunity Engine), intelligence (the global map, macro, headlines, SEC watch), wealth, business or settings. Call a tool before quoting any number and mention how fresh it is when that matters. If a connector is not connected, say so in one sentence and use the brain.',
       'What the research found, which you must respect: every piece of stock evidence carries a tested label. Insider clusters had an edge only in smaller companies trading $1M to $20M a day; copying Congress and $250k+ insider buys showed no edge; everything else is untested attention. The research setup (a smaller company where 2 or more officers or directors each bought $25k+ within 30 days and operating cash flow beats reported profit) is the only setup with tested support, and it is still a clue to research, not a trade. A warning in a company\'s own SEC filing outranks any signal.',
       'The paper engine rules: at most 2% of capital at risk per trade, RSI between 30 and 70 unless there is a strong contrarian reason, US market hours only, no trade by default, and a plain-language reason for every decision. The goal is to beat the S&P 500 by the widest margin after costs; the long aim is turning £100 into £10,000, on paper for at least 90 days before any real money. Congress filings arrive a median of ' + M.medLag + ' days late and amounts are ranges.',
-      'Be proactive like a good chief of staff: when something in the data clearly matters to the question (a warning sign, extreme fear, a central-bank decision this week), mention it once. This is research, not financial advice: never promise returns, never tell the user to buy or sell, never place trades. Use show when the user asks to see something. For hands-free voice commands the user can press Voice line at the top of this chat, which opens your voice in a new tab; critical alerts are spoken aloud here unless the Alerts button is off. The Wealth and Business rooms have no accounts connected yet: say so plainly and never invent balances, returns or revenue; the only portfolio figures that exist are the paper strategies.'
+      'Be proactive like a good chief of staff: when something in the data clearly matters to the question (a warning sign, extreme fear, a central-bank decision this week), mention it once. This is research, not financial advice: never promise returns, never tell the user to buy or sell, never place trades. Use show when the user asks to see something. Your only voice is Jerry B., a refined British RP voice: for a spoken conversation the user presses Speak to Caesar (top of this chat, or under the swan), which opens your voice on any device; here your answers are text, and critical alerts and the briefing play as your recorded voice unless the Alerts button is off. The Wealth and Business rooms have no accounts connected yet: say so plainly and never invent balances, returns or revenue; the only portfolio figures that exist are the paper strategies.'
     ].join('\n\n');
   }
   const HINTS = ['Brief me', 'Any research setups today?', "What's on the macro calendar this week?", 'How is crypto doing?', 'How is the £100 race going?'];
@@ -1627,10 +1628,10 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     pool.concat(voices.filter((v) => v.lang && /^fa|^ku/i.test(v.lang))).forEach((v) => { const o = document.createElement('option'); o.value = v.name; o.textContent = v.name.replace(/Microsoft |Google |\(.*?\)| - .*$/g, '').trim() + ' · ' + v.lang; if (chosen && v.name === chosen.name) o.selected = true; sel.append(o); });
     sel.onchange = () => { chosen = voices.find((v) => v.name === sel.value) || chosen; try { localStorage.setItem('caesar-voice', chosen.name); } catch (e) { /* convenience only */ } voiceOn = true; cVoice.setAttribute('aria-pressed', 'true'); speakNow(greet() + ' Caesar here. This is my voice.'); };
   }
-  if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-  function speakNow(t) { if (!('speechSynthesis' in window)) return; try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(String(t).replace(/koochooloo/gi, 'koo-choo-loo').replace(/Silav/g, 'Silaav').slice(0, 900)); if (chosen) { u.voice = chosen; u.lang = chosen.lang; } u.rate = 0.95; u.pitch = 0.92; u.onstart = () => setSpeaking(true); u.onend = u.onerror = () => setSpeaking(false); speechSynthesis.speak(u); } catch (e) { /* voice optional */ } }
+  // Caesar has one voice, Jerry B.: browser voices are never used
+  function speakNow(t) { caesarBriefing(); } // every "hear it" button plays Caesar's recorded briefing
   window.__speakCaesar = speakNow;
-  function speak(t) { if (!voiceOn || !('speechSynthesis' in window)) return; try { speakNow(t); } catch (e) { /* voice is optional */ } }
+  function speak(t) { /* chat answers stay text: Caesar speaks live only through his own voice line */ }
 
   async function ask(text) {
     text = text.trim(); if (!text || busy || !sampleFn) return;
@@ -1672,7 +1673,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   cDeep.onclick = () => { deep = !deep; cDeep.setAttribute('aria-pressed', String(deep)); try { localStorage.setItem('setareh-deep', deep ? '1' : '0'); } catch (e) { /* convenience only */ } };
   // speak to Caesar where the browser and this view allow the microphone; typing always works
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition, cMic = $('#cMic'); let rec = null;
-  if (SR) cMic.hidden = false;
+  // browser speech recognition is off: Caesar's own voice line is the only voice channel
   cMic.onclick = () => {
     if (rec) { try { rec.stop(); } catch (e) { /* already stopped */ } return; }
     try { rec = new SR(); } catch (e) { cMic.hidden = true; return; }
@@ -1747,6 +1748,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     sb.onclick = () => {
       if (CC_WEB) { if (!startVoiceWidget()) toast('Caesar · press Speak to Caesar, bottom right'); return; }
       if (orb.disabled) { toast('Caesar answers inside Claude'); return; }
+      if (VOICE.playing) { stopVoice(); return; }
       chat.classList.add('open'); orb.classList.remove('alert'); setTimeout(() => cIn.focus(), 0);
     };
     STATIONS.forEach(([id, name, a]) => {
@@ -1755,9 +1757,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     });
     const f = $('#ccCmd'), inp = $('#ccIn');
     f.addEventListener('submit', (e) => { e.preventDefault(); const v = inp.value; inp.value = ''; caesarCommand(v, 'home'); });
-    const mic = $('#ccMic');
-    if (SR) mic.hidden = false;
-    mic.onclick = () => listenOnce(mic, (heard) => caesarCommand(heard, 'home'));
+    const mic = $('#ccMic'); mic.hidden = false; mic.textContent = 'Speak'; mic.title = 'Talk to Caesar in his own voice';
+    mic.onclick = () => speakToCaesar();
   }
   function startVoiceWidget() {
     try {
@@ -2083,8 +2084,12 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     $('#cSub').textContent = 'How Caesar speaks, and how fresh every feed in the brain is.';
     const wrap = el('div', 'mkwrap room'), grid = el('div', 'rgrid');
     const vc = card('Caesar’s voice'); const tog = (label, on, fn) => { const b = el('button', 'tog'); b.type = 'button'; b.setAttribute('aria-pressed', String(on)); b.append(el('span', '', label), el('u', '', on ? 'ON' : 'OFF')); b.onclick = () => { fn(); renderSettings(); }; return b; };
-    vc.append(tog('Read answers aloud', voiceOn, () => cVoice.click()), tog('Speak critical alerts', alertsLoud, () => cAlerts.click()), tog('Deep mode: slower, fuller answers', deep, () => cDeep.click()));
-    const line = $('#cLine'); if (line && !CC_WEB) { const a = el('a', 'rbtn', 'Open Caesar’s voice line'); a.href = line.href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.style.marginTop = '12px'; a.style.display = 'inline-block'; vc.append(a); }
+    const vx = VOICE.ix, vb = vx && vx.briefing; const vs = el('div', 'kv');
+    vs.append(el('span', '', 'Voice'), el('b', '', 'Jerry B. \u00b7 British RP'), el('span', '', 'Latest recorded briefing'), el('b', '', vb ? ukTime(vb.at) : 'none yet'), el('span', '', 'Characters this month'), el('b', '', vx && vx.budget ? vx.budget.used + ' of ' + vx.budget.cap : '\u2014'));
+    vc.append(vs); if (vx && vx.error) vc.append(el('p', 'note', vx.error)); else if (!vx) vc.append(el('p', 'note', 'Caesar\u2019s recordings appear once the data repo has its ElevenLabs key.'));
+    vc.lastChild.style.margin = '8px 0';
+    vc.append(tog('Speak critical alerts', alertsLoud, () => cAlerts.click()), tog('Deep mode: slower, fuller answers', deep, () => cDeep.click()));
+    vc.append(acts([['Play the latest briefing', () => caesarBriefing()], ['Speak to Caesar', () => speakToCaesar()]]));
     grid.append(vc);
     const core = BR.parts.core, fd = card('Data feeds', core ? 'brain ' + ago(core.updated) : ''); fd.classList.add('w8');
     if (!core) fd.append(el('p', 'note', brainMissing()));
@@ -2115,7 +2120,63 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     go(ORDER[(cur + (dx < 0 ? 1 : -1) + ORDER.length) % ORDER.length]);
   }, { passive: true });
   document.querySelectorAll('#rooms button').forEach((b) => { b.onclick = () => go(b.dataset.room === 'trading' ? 'markets' : b.dataset.room); });
-  setInterval(() => { if (body.classList.contains('speaking') && 'speechSynthesis' in window && !speechSynthesis.speaking) setSpeaking(false); }, 1500);
+  setInterval(() => { if (body.classList.contains('speaking') && !VOICE.playing) setSpeaking(false); }, 1500);
+
+  /* ----- Caesar's only voice: Jerry B. (British RP). The data repo records the briefing and critical alerts (data/voice/);
+     this page plays them with Web Audio. Live conversation goes through Caesar's ElevenLabs agent. ----- */
+  const VRAW = 'https://raw.githubusercontent.com/Montezuma360/koochooloo-data/main/';
+  const VOICE = { ix: null, heard: [], queue: [], playing: null, src: null, ctx: null, error: null };
+  try { VOICE.heard = JSON.parse(localStorage.getItem('caesar-heard') || '[]'); if (!Array.isArray(VOICE.heard)) VOICE.heard = []; } catch (e) { VOICE.heard = []; }
+  async function readBin(path) {
+    if (MCP && MCP.web) { const r = await fetch(VRAW + path); if (!r.ok) throw new Error('GitHub answered ' + r.status); return new Uint8Array(await r.arrayBuffer()); }
+    const res = await MCP.callTool('Composio', 'COMPOSIO_MULTI_EXECUTE_TOOL', readInput(path), { cache: false });
+    let p = res && res.payload; if (typeof p === 'string') { try { p = JSON.parse(p); } catch (e) { /* keep text */ } }
+    const b64 = findB64(p, 0) || findB64(res, 0); if (!b64) throw new Error('the recording came back empty');
+    const bin = atob(b64.replace(/\s+/g, '')), out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out;
+  }
+  async function pollVoice() {
+    if (!MCP) return;
+    try { VOICE.ix = await readFile(MCP, 'data/voice/index.json'); VOICE.error = null; }
+    catch (e) { VOICE.error = (e && e.message) || 'unknown'; return; }
+    const fresh = (VOICE.ix.alerts || []).filter((a) => !VOICE.heard.includes(a.id)).reverse();
+    fresh.forEach((a) => { VOICE.heard.push(a.id); if (Date.now() - Date.parse(a.at) < 90 * 60e3 && alertsLoud) VOICE.queue.push(a); });
+    try { VOICE.heard = VOICE.heard.slice(-100); localStorage.setItem('caesar-heard', JSON.stringify(VOICE.heard)); } catch (e) { /* convenience only */ }
+    if (fresh.length) pumpVoice();
+    if (view.id === 'settings') renderSettings();
+  }
+  function pumpVoice() {
+    if (VOICE.playing || !VOICE.queue.length || !alertsLoud) return;
+    if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return; // browsers allow sound after one tap: held until then
+    const c = VOICE.queue.shift(); playClip(c).then(() => pumpVoice());
+  }
+  addEventListener('pointerdown', () => setTimeout(pumpVoice, 60), true);
+  addEventListener('keydown', () => setTimeout(pumpVoice, 60), true);
+  async function playClip(clip) {
+    if (!clip || !clip.chunks || !clip.chunks.length) return;
+    VOICE.playing = clip; setSpeaking(true);
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) throw new Error('no audio here');
+      if (!VOICE.ctx) VOICE.ctx = new AC();
+      if (VOICE.ctx.state === 'suspended') await VOICE.ctx.resume();
+      const parts = await Promise.all(clip.chunks.map((c) => readBin('data/voice/' + c)));
+      const buf = new Uint8Array(parts.reduce((n, p) => n + p.length, 0)); let o = 0; parts.forEach((p) => { buf.set(p, o); o += p.length; });
+      const audio = await VOICE.ctx.decodeAudioData(buf.buffer);
+      if (VOICE.playing !== clip) return;
+      await new Promise((done) => { const src = VOICE.ctx.createBufferSource(); src.buffer = audio; src.connect(VOICE.ctx.destination); src.onended = done; VOICE.src = src; src.start(); });
+    } catch (e) { toast('Caesar · the recording could not play'); }
+    finally { if (VOICE.playing === clip) { VOICE.playing = null; VOICE.src = null; setSpeaking(false); } }
+  }
+  function stopVoice() { VOICE.queue = []; const s = VOICE.src; VOICE.playing = null; VOICE.src = null; try { if (s) s.stop(); } catch (e) { /* already stopped */ } setSpeaking(false); }
+  function caesarBriefing() {
+    if (VOICE.playing) { stopVoice(); return; }
+    const b = VOICE.ix && VOICE.ix.briefing;
+    if (b && b.chunks && b.chunks.length) { toast('Caesar · briefing recorded ' + ukTime(b.at)); playClip(b); return; }
+    toast(VOICE.ix && VOICE.ix.error ? 'Caesar · ' + VOICE.ix.error : 'Caesar · his recorded briefing is not ready yet');
+  }
+  function speakToCaesar() {
+    if (CC_WEB) { if (!startVoiceWidget()) toast('Caesar · press Speak to Caesar, bottom right'); return; }
+    const a = $('#cLine'); if (a) a.click();
+  }
 
   syncButtons(); buildUniverse(LIVE); paintTape(); frame(); setView('cc');
 })();
