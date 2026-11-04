@@ -567,6 +567,25 @@ body.listening .ring .cal { fill: #b8975a; transition: fill 0.4s; }
 .vpick button[aria-pressed="true"] { background: rgba(184, 151, 90, 0.18); border-color: #dcc28c; }
 @media (prefers-reduced-motion: reduce) { #ccMic.pulse { animation: none; outline: 2px solid #b8975a; } }
 
+/* ---- v19 voice button and captions ---- */
+#vMic { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 18px); z-index: 45; width: 60px; height: 60px; border-radius: 50%; border: 1px solid #b8975a; background: radial-gradient(circle at 35% 30%, #2a1418, #0b0b0e 70%); color: #dcc28c; cursor: pointer; display: grid; place-items: center; padding: 0; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), 0 0 0 0 rgba(184, 151, 90, 0.5); transition: transform 0.15s, background 0.2s; }
+#vMic svg { width: 26px; height: 26px; }
+#vMic b { position: absolute; top: 100%; margin-top: 4px; font: 600 9px/1 var(--mono, monospace); letter-spacing: 0.14em; text-transform: uppercase; color: #b8975a; white-space: nowrap; }
+#vMic:active { transform: scale(0.95); }
+#vMic:focus-visible { outline: 2px solid #dcc28c; outline-offset: 4px; }
+body.listening #vMic { background: radial-gradient(circle at 35% 30%, #a8323f, #5e1621 75%); color: #ece6d9; animation: vRing 1.1s ease-out infinite; }
+body.speaking #vMic { animation: vRing 1.8s ease-out infinite; }
+body.thinking #vMic { animation: vRing 0.9s ease-in-out infinite; }
+@keyframes vRing { 0% { box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 0 rgba(184,151,90,0.55); } 100% { box-shadow: 0 6px 24px rgba(0,0,0,0.55), 0 0 0 18px rgba(184,151,90,0); } }
+#vCap { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 98px); z-index: 45; width: min(380px, calc(100vw - 32px)); max-height: 46vh; overflow: auto; box-sizing: border-box; padding: 12px 14px 12px; background: rgba(11, 11, 14, 0.97); border: 1px solid rgba(184, 151, 90, 0.6); color: #ece6d9; font: 400 14px/1.5 var(--body, system-ui, sans-serif); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); }
+#vCap .you { color: #b8975a; font-size: 12.5px; margin-bottom: 6px; }
+#vCap .you::before { content: "You  "; font: 600 10px var(--mono, monospace); letter-spacing: 0.12em; }
+#vCap .him::before { content: "CAESAR  "; font: 600 10px var(--mono, monospace); letter-spacing: 0.12em; color: #dcc28c; }
+#vCap .st { margin-top: 8px; font: 500 10.5px var(--mono, monospace); color: rgba(236, 230, 217, 0.6); letter-spacing: 0.06em; }
+#vCap button { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: rgba(236,230,217,0.6); font-size: 18px; cursor: pointer; padding: 4px 8px; }
+@media (max-width: 700px) { #vMic { width: 56px; height: 56px; } #vCap { bottom: calc(var(--barh) + max(16px, env(safe-area-inset-bottom, 0px)) + 92px); font-size: 13.5px; } }
+@media (prefers-reduced-motion: reduce) { body.listening #vMic, body.speaking #vMic, body.thinking #vMic { animation: none; outline: 2px solid #dcc28c; } }
+
 /* ---- website copy: Caesar's voice agent replaces the Claude chat ---- */
 .hero .heroSwans { display: flex; justify-content: center; align-items: flex-end; position: relative; z-index: 1; filter: drop-shadow(0 0 16px rgba(122, 31, 43, 0.65)); }
 .hero .heroSwans .swans { margin: 0; }
@@ -632,6 +651,8 @@ body.web.v-cc #webHint { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); 
   </div>
 </section>
 <div id="ccToast" role="status" hidden></div>
+<div id="vCap" role="log" aria-live="polite" hidden></div>
+<button id="vMic" type="button" aria-label="Talk to Caesar" title="Talk to Caesar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg><b>Speak</b></button>
 
 <div class="panel" id="bar">
   <div class="rooms" id="rooms" role="group" aria-label="Rooms">
@@ -675,7 +696,7 @@ body.web.v-cc #webHint { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); 
   <div class="legend2" id="cLeg"></div>
 </section>
 
-<button id="orb" aria-label="Ask Caesar" title="Ask Caesar"><span>Caesar</span></button>
+<button id="orb" aria-label="Type to Caesar" title="Type to Caesar"><span>Chat</span></button>
 <section class="panel" id="chat" aria-label="Chat with Caesar">
   <div class="top"><b>Caesar</b><div class="t"><a id="cLine" class="line" href="https://montezuma360.github.io/koochooloo/app.html#talk" target="_blank" rel="noopener noreferrer" title="Talk to Caesar hands-free on the website, on any device">Talk hands-free</a><button id="cAlerts" aria-pressed="true" title="Caesar reads critical alerts aloud in his own voice">Alerts</button><button id="cDeep" aria-pressed="false" title="Slower, more thorough answers">Deep</button><button id="cVoice" aria-pressed="true" title="Caesar reads his answers aloud">Voice</button><button id="cClose">Close</button></div></div>
   <div id="msgs"></div>
@@ -1648,26 +1669,28 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
 
   async function ask(text) {
     text = text.trim(); if (!text || busy || !sampleFn) return;
-    chat.classList.add('open'); $('#hints').hidden = true;
     const vt = VOICE_TURN; VOICE_TURN = false; cvHalt();
+    if (!vt) chat.classList.add('open'); $('#hints').hidden = true; if (vt) capThink();
     addMsg('u', text); turns.push({ role: 'user', content: text + (vt ? '\n\n(Said aloud: the user will hear your answer. Two to four short spoken sentences, no lists, no symbols, numbers rounded.)' : '') });
     const bubble = addMsg('a', 'Thinking…'); setBusy(true); ctl = new AbortController();
-    const convo = [{ role: 'user', content: rules() }, ...turns.slice(-8)];
+    const convo = [{ role: 'user', content: deep ? rules() : rulesLean() }, ...turns.slice(deep ? -8 : -4)];
     // the list must end on a user turn and not start with two user turns the model reads as one: fine per the API
     try {
-      const res = await sampleFn(convo, { ...(toolCap ? { tools: toolList.slice(0, toolCap) } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; } });
+      const tl = deep ? toolList.slice(0, toolCap) : leanTools().slice(0, toolCap);
+      const res = await sampleFn(convo, { ...(toolCap ? { tools: tl } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; if (vt) capSay(t, true); } });
+      if (vt) capSay(res.text);
       bubble.textContent = res.text; turns.push({ role: 'assistant', content: res.text }); speak(res.text, vt);
     } catch (e) {
       if (e && e.text) { bubble.textContent = e.text; turns.push({ role: 'assistant', content: e.text }); speak(e.text, vt); }
       else { bubble.remove(); turns.pop(); }
-      if (e && e.code !== 'cancelled') addMsg('a err', errCopy[e.code] || errCopy.upstream_error);
+      if (e && e.code !== 'cancelled') { addMsg('a err', errCopy[e.code] || errCopy.upstream_error); if (vt) capSay(errCopy[e.code] || errCopy.upstream_error); }
       if (e && (e.code === 'not_granted' || e.code === 'sampling_disabled')) { orb.disabled = true; }
-    } finally { setBusy(false); ctl = null; if (!orb.disabled) cIn.focus(); }
+    } finally { setBusy(false); ctl = null; if (!orb.disabled && !vt) cIn.focus(); }
   }
   window.__ask = ask; // used by the hot-row click through askOrb below
-  function askOrb(q) { if (WEBMODE && !sampleFn) { webHint(q); return; } chat.classList.add('open'); orb.classList.remove('alert'); if (!sampleFn) { return; } ask(q); }
+  function askOrb(q) { if (!VOICE_TURN) chat.classList.add('open'); orb.classList.remove('alert'); if (!sampleFn) { return; } ask(q); }
 
-  HINTS.forEach((h) => { const b = el('button', '', h); b.type = 'button'; b.onclick = () => ask(h); $('#hints').append(b); });
+  HINTS.forEach((h) => { const b = el('button', '', h); b.type = 'button'; b.onclick = () => caesarCommand(h, 'chat'); $('#hints').append(b); });
   $('#cForm').addEventListener('submit', (e) => { e.preventDefault(); const v = cIn.value; cIn.value = ''; caesarCommand(v, 'chat'); });
   cStop.onclick = () => ctl && ctl.abort();
   $('#cClose').onclick = () => chat.classList.remove('open');
@@ -1819,11 +1842,13 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function caesarCommand(raw, from) {
     const r = caesarRoute(raw); if (!r.text) return;
-    if (/^brief(?: me)?[.!]?$/i.test(r.text)) { askOrb('Brief me.'); return; }
+    if (/^(?:stop|quiet|silence|enough|be quiet|shush)[.!]?$/i.test(r.text)) { VOICE_TURN = false; cvHalt(); stopVoice(); capHide(); return; }
+    const qa = r.text.length < 140 ? quickAnswer(r.text) : null;
+    if (qa) { quickReply(r.text, qa, from); return; }
     if (/^(?:stop|quiet|silence|enough|be quiet)[.!]?$/i.test(r.text)) { VOICE_TURN = false; cvHalt(); stopVoice(); return; }
     const navigate = r.dest && (r.nav || from === 'home' || from === 'voice');
     if (navigate && r.dest !== view.id) go(r.dest, from === 'chat');
-    if (navigate && !r.rest) { const msg = 'Opening ' + ROOM_NAME[r.dest] + '.'; VOICE_TURN = false; if (from === 'chat') { addMsg('u', r.text); addMsg('a', msg); } speak(msg, from === 'voice'); return; }
+    if (navigate && !r.rest) { const msg = 'Opening ' + ROOM_NAME[r.dest] + '.'; VOICE_TURN = false; if (from === 'chat') { addMsg('u', r.text); addMsg('a', msg); } if (from === 'voice') { capUser(r.text); capSay(msg); } speak(msg, from === 'voice'); return; }
     askOrb(r.text);
   }
 
@@ -2176,11 +2201,74 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       return of(u, o);
     };
   }
+  /* the voice runs in a background worker so speaking never freezes the page; the main thread is the fallback */
+  function cvWorkerMain() {
+    let tts = null, ready = null, chain = Promise.resolve();
+    function shim(base, PARTS) {
+      const of = self.fetch.bind(self);
+      const MAP = [/^https:\/\/huggingface\.co\/onnx-community\/Kokoro-82M-v1\.0-ONNX\/resolve\/main\/([^?#]+)/, /^https:\/\/cdn\.jsdelivr\.net\/npm\/@huggingface\/transformers@3\.5\.1\/dist\/(ort-wasm[^?#]+\.wasm)/];
+      self.fetch = async (u, o) => {
+        const s = typeof u === 'string' ? u : (u && u.url) || String(u);
+        for (const re of MAP) {
+          const m = s.match(re); if (!m) continue;
+          const name = 'kk/' + m[1].replace(/\//g, '__'), n = PARTS[m[1]], ct = /\.wasm$/.test(m[1]) ? 'application/wasm' : /\.json$/.test(m[1]) ? 'application/json' : 'application/octet-stream';
+          const list = n ? Array.from({ length: n }, (_, k) => name + '.' + k + '.wasm') : [/\.json$/.test(name) ? name : name + '.wasm'];
+          const bufs = await Promise.all(list.map((p) => of(new URL(p, base).href).then((r) => { if (!r.ok) throw new Error('voice file ' + p + ' answered ' + r.status); return r.arrayBuffer(); })));
+          const blob = new Blob(bufs, { type: ct });
+          return new Response(blob, { status: 200, headers: { 'Content-Type': ct, 'Content-Length': String(blob.size) } });
+        }
+        return of(u, o);
+      };
+    }
+    self.onmessage = (e) => {
+      const m = e.data || {};
+      if (m.type === 'init') {
+        if (m.local) shim(m.base, m.parts || {});
+        ready = import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js')
+          .then((mod) => mod.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm', progress_callback: (p) => { if (p && p.status === 'progress') self.postMessage({ type: 'progress', file: p.file, loaded: p.loaded, total: p.total }); } }))
+          .then((t) => { tts = t; self.postMessage({ type: 'ready' }); }, (err) => self.postMessage({ type: 'error', message: String((err && err.message) || err) }));
+        return;
+      }
+      if (m.type === 'say') {
+        chain = chain.then(async () => {
+          try {
+            await ready; if (!tts) throw new Error('the voice did not load');
+            const a = await tts.generate(m.text, { voice: 'bm_george', speed: m.speed || 0.95 });
+            const audio = a.audio; self.postMessage({ type: 'audio', id: m.id, audio, sr: a.sampling_rate }, [audio.buffer]);
+          } catch (err) { self.postMessage({ type: 'audio', id: m.id, error: String((err && err.message) || err) }); }
+        });
+      }
+    };
+  }
+  const CV_PARTS = { 'onnx/model_quantized.onnx': 7, 'ort-wasm-simd-threaded.jsep.wasm': 2 };
+  function cvLoadWorker() {
+    return new Promise((ok, bad) => {
+      let w; try { w = new Worker(URL.createObjectURL(new Blob(['(' + cvWorkerMain.toString() + ')()'], { type: 'text/javascript' }))); } catch (e) { bad(e); return; }
+      const seen = {}, t = setTimeout(() => { try { w.terminate(); } catch (x) { /* gone */ } bad(new Error('the voice took too long to load')); }, 300000);
+      CV.pend = {}; CV.seq = 0;
+      const failAll = (why) => { Object.values(CV.pend).forEach((p) => p[1](new Error(why))); CV.pend = {}; };
+      w.onmessage = (e) => {
+        const m = e.data || {};
+        if (m.type === 'progress') { if (m.total > 1e5) { seen[m.file] = [m.loaded, m.total]; const v = Object.values(seen); CV.pct = Math.min(99, Math.round(100 * v.reduce((a2, x) => a2 + x[0], 0) / v.reduce((a2, x) => a2 + x[1], 0))); paintState(); capStatus(); } }
+        else if (m.type === 'ready') { clearTimeout(t); CV.w = w; CV.pct = 100; ok({ generate: (x, o) => new Promise((res, rej) => { const id = ++CV.seq; CV.pend[id] = [res, rej]; w.postMessage({ type: 'say', id, text: x, speed: o && o.speed }); }) }); }
+        else if (m.type === 'error') { clearTimeout(t); try { w.terminate(); } catch (x) { /* gone */ } bad(new Error(m.message)); }
+        else if (m.type === 'audio') { const p = CV.pend[m.id]; delete CV.pend[m.id]; if (p) { if (m.error) p[1](new Error(m.error)); else p[0]({ audio: m.audio, sampling_rate: m.sr }); } }
+      };
+      w.onerror = (e) => { clearTimeout(t); failAll('the voice worker stopped'); try { w.terminate(); } catch (x) { /* gone */ } CV.w = null; bad(new Error((e && e.message) || 'the voice worker failed')); };
+      w.postMessage({ type: 'init', local: !CC_WEB, base: location.href, parts: CV_PARTS });
+    });
+  }
   function cvLoad() {
     if (CV.tts) return Promise.resolve(CV.tts);
     if (CV.loading) return CV.loading;
+    CV.loading = cvLoadWorker().catch((e) => { CV.workerErr = (e && e.message) || String(e); return cvLoadMain(); })
+      .then((t) => { CV.tts = t; CV.err = null; CV.pct = 100; paintState(); capStatus(); try { localStorage.setItem('cv-warm', '1'); } catch (e) { /* convenience only */ } return t; });
+    CV.loading.catch((e) => { CV.err = (e && e.message) || String(e); CV.loading = null; paintState(); capStatus(); });
+    return CV.loading;
+  }
+  function cvLoadMain() {
     if (!CC_WEB) cvLocalFiles();
-    CV.loading = (async () => {
+    return (async () => {
       const mod = await import('https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/dist/kokoro.web.js');
       const seen = {};
       CV.tts = await mod.KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'wasm', progress_callback: (p) => {
@@ -2189,8 +2277,6 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       } });
       CV.err = null; CV.pct = 100; paintState(); return CV.tts;
     })();
-    CV.loading.catch((e) => { CV.err = (e && e.message) || String(e); CV.loading = null; paintState(); });
-    return CV.loading;
   }
   function cvClean(t) {
     return String(t || '').replace(/```[\s\S]*?```/g, ' ').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/https?:\/\/\S+/g, ' ').replace(/[*_#>`|~]/g, '')
@@ -2246,9 +2332,9 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function cvStatus(t) { const s = document.getElementById('ccState'); if (s) { s.className = 'live'; s.textContent = t; } }
   function cvHeard(text, followUp) {
     const v = String(text || '').replace(/\s+/g, ' ').trim();
-    if (!v || /^\[?(blank_audio|silence|music)\]?$/i.test(v)) { if (!followUp) toast('Caesar · I did not catch that'); paintState(); return; }
+    if (!v || /^\[?(blank_audio|silence|music)\]?$/i.test(v)) { if (!followUp) { toast('Caesar · I did not catch that'); capHide(); } paintState(); return; }
     if (/^(?:thank you|thanks|that'?s all|that is all|goodbye|good night|cheers)\b/i.test(v) && v.length < 40) { caesarSay('Very good.'); return; }
-    VOICE_TURN = true; caesarCommand(v, 'voice');
+    capUser(v); VOICE_TURN = true; caesarCommand(v, 'voice');
   }
   function caesarListen(followUp) {
     if (!CC_WEB) { cvDictate(); return; }
@@ -2266,7 +2352,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     let r; try { r = new CV_SR(); } catch (e) { CV.noSR = true; cvWhisper(followUp); return; }
     let heard = '', retry = false; r.lang = 'en-GB'; r.interimResults = true; r.maxAlternatives = 1; r.continuous = false;
     CV.rec = r; cvListening(true);
-    r.onresult = (ev) => { let t = ''; for (let k = 0; k < ev.results.length; k++) t += ev.results[k][0].transcript; heard = t; cvStatus('“' + t.slice(-70) + '”'); };
+    r.onresult = (ev) => { let t = ''; for (let k = 0; k < ev.results.length; k++) t += ev.results[k][0].transcript; heard = t; cvStatus('“' + t.slice(-70) + '”'); if (!vCap.hidden) { const y = vCap.querySelector('.you'); if (y) y.textContent = t; } };
     r.onerror = (ev) => {
       if (/network|service-not-allowed|language-not-supported|bad-grammar/.test(ev.error)) { CV.noSR = true; retry = true; }
       else if (/not-allowed|audio-capture/.test(ev.error)) toast('Caesar · allow the microphone to talk to me');
@@ -2345,6 +2431,167 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     f.limits = async () => ({ tools: { maxCount: 40 } });
     return f;
   }
+
+  /* ===== v19 instant answers: read straight from the brain, no AI call, no tokens ===== */
+  const Q_NAMES = { apple: 'AAPL', microsoft: 'MSFT', nvidia: 'NVDA', tesla: 'TSLA', amazon: 'AMZN', google: 'GOOGL', alphabet: 'GOOGL', meta: 'META', facebook: 'META', netflix: 'NFLX', amd: 'AMD', intel: 'INTC', palantir: 'PLTR', 'jp morgan': 'JPM', jpmorgan: 'JPM', coinbase: 'COIN', microstrategy: 'MSTR', strategy: 'MSTR', disney: 'DIS', boeing: 'BA', nike: 'NKE', 'coca cola': 'KO', 'coca-cola': 'KO', pepsi: 'PEP', walmart: 'WMT', costco: 'COST', broadcom: 'AVGO', oracle: 'ORCL', salesforce: 'CRM', uber: 'UBER', shopify: 'SHOP', spotify: 'SPOT', starz: 'STRZ', berkshire: 'BRK-B', visa: 'V', mastercard: 'MA', 'exxon': 'XOM', chevron: 'CVX', pfizer: 'PFE', 'eli lilly': 'LLY', lilly: 'LLY', 'novo nordisk': 'NVO', arm: 'ARM', 'super micro': 'SMCI', snowflake: 'SNOW', robinhood: 'HOOD', 'gamestop': 'GME', 'rolls royce': 'RR.L', bp: 'BP', shell: 'SHEL', hsbc: 'HSBC' };
+  const Q_GLOSS = [
+    [/\brsi\b|relative strength/, 'RSI, the relative strength index, scores recent price moves from 0 to 100. Above 70 means a stock has risen fast and may be stretched; below 30 means it has fallen fast. Our paper rules only act between 30 and 70.'],
+    [/\bvix\b|volatility index|fear gauge/, 'The VIX is the market’s fear gauge: how much movement traders expect in the S&P 500 over the next month. Around 12 to 15 is calm, above 20 is nervous, above 30 is real stress.'],
+    [/fear (?:and|&) greed/, 'Fear and Greed is a 0 to 100 score built from momentum, breadth, volatility, safe-haven demand and junk-bond demand. Under 25 is extreme fear, over 75 extreme greed. Extremes tend to pass.'],
+    [/\bp\/?e\b|price[- ]to[- ]earnings|earnings multiple/, 'The P/E ratio is the share price divided by a year’s earnings per share: how many pounds you pay for each pound of profit. A high P/E means investors expect growth; a low one can mean value or trouble.'],
+    [/insider cluster|insiders? buy/, 'An insider cluster is two or more officers or directors buying their own company’s shares within 30 days, with their own money. Our tests found an edge only in smaller companies.'],
+    [/research setup|the setup/, 'The research setup is our one tested pattern: a smaller company where two or more officers or directors each bought $25,000 or more within 30 days, and operating cash flow beats reported profit. It is a clue to research, not a trade.'],
+    [/200[- ]day|moving average/, 'The 200-day average is the mean closing price over roughly ten months. Above it, the long trend is up; below it, down. We use the S&P 500 against its 200-day average to judge the market’s regime.'],
+    [/\bregime\b|risk[- ]on|risk[- ]off/, 'The regime is our read of the whole market: risk-on when the S&P 500 is above its 200-day average and credit is calm, caution in between, risk-off when the S&P is below that average or stress spikes.'],
+    [/\betfs?\b|index fund/, 'An ETF is a fund that trades like a share and usually tracks an index. SPY tracks the S&P 500, QQQ the Nasdaq 100, IWM smaller US companies.'],
+    [/market cap/, 'Market cap is the company’s total value on the stock market: share price times the number of shares.'],
+    [/short interest|short selling|\bshort\b/, 'Short selling is betting a price will fall: borrowing shares, selling them, and hoping to buy back cheaper. Short interest is how many shares are sold short; a high level shows doubt, and can cause sharp squeezes upward.'],
+    [/put[- \/]?call/, 'The put to call ratio compares bets on falling prices (puts) with bets on rising prices (calls). Above about 1 shows caution; well below shows optimism.'],
+    [/yield curve|inverted/, 'The yield curve compares long-term and short-term government borrowing rates. When short rates are above long rates, the curve is inverted, which has often come before recessions.'],
+    [/high[- ]yield|credit spread|junk bond/, 'The high-yield spread is the extra interest risky companies pay over the government. When it widens quickly, lenders are nervous, and stocks often struggle.'],
+    [/\b13d\b|activist/, 'A Schedule 13D is filed when an investor buys over 5% of a company and may push for change. It shows intent, not a guaranteed result.'],
+    [/\b13f\b/, 'A 13F is the quarterly list of US shares held by big funds. It is up to 45 days old when published, so it shows positioning, not timing.'],
+    [/\b8-?k\b/, 'An 8-K is a company’s filing of a major event: results, a new auditor, a warning that past accounts can’t be relied on, and so on. Warnings in these filings outrank any signal.'],
+    [/form 4/, 'Form 4 is the filing an insider must make within two business days of buying or selling their company’s shares. It is where our insider data comes from.'],
+    [/drawdown/, 'Drawdown is the fall from a peak to a low, in percent. It shows how painful a strategy can be to hold.'],
+    [/stop[- ]loss/, 'A stop-loss is an order to sell if the price falls to a set level, to cap the loss. Our paper rules risk at most 2% of capital on any trade.'],
+    [/dividend/, 'A dividend is cash a company pays its shareholders, usually quarterly. The yield is the year’s dividends divided by the share price.'],
+    [/\bbull|\bbear/, 'A bull market is a long rise, usually 20% or more from a low; a bear market is a fall of 20% or more from a high.'],
+    [/congress/, 'Members of Congress must disclose their share trades, but up to 45 days late, and only in value ranges. Our tests found copying them showed no edge.'],
+    [/funding rate|perpetual/, 'In crypto, perpetual futures pay a funding rate between buyers and sellers to keep the price near spot. High positive funding means traders are crowded on the bullish side.'],
+    [/\bspread\b/, 'A spread is a gap between two prices or rates, like buy and sell prices, or two interest rates.']
+  ];
+  const qNum = (v, d = 2) => (v == null || !isFinite(v) ? '?' : Number(v).toLocaleString('en-GB', { maximumFractionDigits: d, minimumFractionDigits: v >= 1000 ? 0 : Math.min(d, 2) }));
+  const qPct = (v) => (v == null || !isFinite(v) ? '' : (v >= 0 ? 'up ' : 'down ') + Math.abs(v).toFixed(1) + '%');
+  const qMoney = (v) => (v == null || !isFinite(v) ? '?' : '$' + (v >= 1e12 ? (v / 1e12).toFixed(2) + ' trillion' : v >= 1e9 ? (v / 1e9).toFixed(1) + ' billion' : qNum(v, v < 1 ? 4 : 2)));
+  function qSymbol(t) {
+    const low = t.toLowerCase();
+    for (const [n, sy] of Object.entries(Q_NAMES)) if (new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(low)) return sy;
+    const caps = (t.match(/\$?\b[A-Z]{1,5}(?:\.[A-Z])?\b/g) || []).map((x) => x.replace('$', '')).filter((x) => !/^(I|A|AN|THE|AND|OR|OF|IS|IT|TO|US|UK|ETF|CEO|RSI|VIX|SEC|AI|PE|GDP|CPI|FED|BOE|ECB|OK)$/.test(x));
+    if (caps.length) return caps[0];
+    const m = low.match(/\b(?:price of|quote for|about|on|is|for|how is|how's|look up|check)\s+([a-z]{1,5})\b(?:\s+(?:doing|trading|stock|shares|today))?/);
+    if (m) { const sy = m[1].toUpperCase(); if (brainRows().some((r) => r.symbol === sy) || ((LIVE && LIVE.quotes) || []).some((q) => q.symbol === sy)) return sy; }
+    return null;
+  }
+  function quickAnswer(raw) {
+    const t = String(raw || '').trim(), low = t.toLowerCase().replace(/[?.!]+$/, '');
+    const core = BR.parts.core, rg = (core && core.regime) || {}, fg = (core && core.fear_greed) || {};
+    if (/^(?:help|what can (?:you|i) (?:do|ask|say)|how do (?:i|you) (?:use|work)|commands)\b/.test(low))
+      return { say: 'Ask me anything about the markets. Try: brief me; how is the market; what is Fear and Greed; price of Nvidia; any setups today; biggest movers; how is Bitcoin; what is on the calendar; latest headlines; or what does RSI mean. Say open wealth, or opportunities, to change rooms, and stop to quiet me.' };
+    const gq = low.match(/^(?:what(?:'s| is| are| does)|explain|define|tell me what|meaning of)\b/);
+    if (gq) { for (const [re, txt] of Q_GLOSS) if (re.test(low) && !/\b(?:today|now|price|current|reading|level|at|at the moment)\b/.test(low)) return { say: txt }; }
+    if (!core) return null; // everything below reads the brain
+    const lv = (rg.level || 'unknown').replace(/-/g, ' ');
+    const mood = () => 'Fear and Greed reads ' + Math.round(fg.value != null ? fg.value : rg.fear_greed) + ', ' + String(fg.label || rg.fear_greed_label || '').toLowerCase() + (fg.week_ago != null ? ', from ' + Math.round(fg.week_ago) + ' a week ago' : '') + '.';
+    if (/\b(?:brief(?:ing)?|overview|summary|what(?:'s| is) happening|catch me up|morning update|state of play)\b/.test(low)) {
+      const ops = rankOpps().slice(0, 2), ev = upcoming(1)[0];
+      return { go: 'cc', say: 'The market is in ' + lv + ': the S&P 500 is ' + qNum(Math.abs(rg.spy_vs_200d_pct), 1) + '% ' + (rg.spy_vs_200d_pct >= 0 ? 'above' : 'below') + ' its 200-day average, and the VIX is ' + qNum(rg.vix, 1) + '. ' + mood() + ' '
+        + ((core.setups || []).length ? 'Research setup today: ' + core.setups.slice(0, 3).join(', ') + '. A clue, not a trade. ' : 'No stock meets the research setup today. ')
+        + (ops.length ? 'Top of the Opportunity Engine: ' + ops.map((o) => o.symbol).join(' and ') + '. ' : '') + (ev ? 'Next big event: ' + ev.event + ', ' + ukTime(ev.time) + '.' : '') };
+    }
+    if (/\b(?:regime|risk[- ]?on|risk[- ]?off|how(?:'s| is) the market|market (?:today|doing|mood|look)|how are markets|stock market)\b/.test(low))
+      return { go: 'markets', say: 'We are in ' + lv + '. ' + String((rg.why || [])[0] || '').replace(/[;.]\s*$/, '') + '. The VIX is ' + qNum(rg.vix, 1) + ', and ' + mood().charAt(0).toLowerCase() + mood().slice(1) };
+    if (/fear (?:and|&) greed|market sentiment|how scared|greedy/.test(low)) return { say: mood() + (fg.value < 25 ? ' Extreme fear like this has often been followed by rebounds, but it can persist. We keep to the rules.' : fg.value > 75 ? ' Extreme greed often means stretched prices. Patience.' : '') };
+    if (/\b(?:setups?|opportunit\w*|ideas|what should (?:we|i) (?:look at|research|watch)|best stocks?|top picks?|conviction)\b/.test(low)) {
+      const ops = rankOpps().slice(0, 3);
+      return { go: 'opps', say: ((core.setups || []).length ? 'Meeting every condition of the research setup: ' + core.setups.join(', ') + '. ' : 'No stock meets the research setup today. ') + (ops.length ? 'The Opportunity Engine ranks ' + ops.map((o) => o.symbol + ' at ' + o.conv + ' conviction').join(', ') + '. ' : '') + 'These are clues to research, never a promise.' };
+    }
+    if (/\b(?:gainers?|losers?|movers?|biggest (?:moves?|risers?|fallers?|winners?)|top (?:gaining|falling)|what(?:'s| is) (?:up|down) today|most active)\b/.test(low)) {
+      const M3 = BR.parts.markets || {}, g = (M3.gainers || []).slice(0, 3), l = (M3.losers || []).slice(0, 3);
+      if (!g.length && !l.length) return null;
+      return { go: 'markets', say: 'Biggest risers: ' + g.map((x) => x.symbol + ' ' + qPct(x.change_pct)).join(', ') + '. Biggest fallers: ' + l.map((x) => x.symbol + ' ' + qPct(x.change_pct)).join(', ') + '. Big daily moves are attention, not evidence.' };
+    }
+    const C = BR.parts.crypto || {};
+    const coin = low.match(/\b(bitcoin|btc|ethereum|ether|eth|solana|sol|xrp|ripple|dogecoin|doge|cardano|ada|bnb)\b/);
+    if (coin || /\bcrypto\b/.test(low)) {
+      const map = { bitcoin: 'BTC', btc: 'BTC', ethereum: 'ETH', ether: 'ETH', eth: 'ETH', solana: 'SOL', sol: 'SOL', xrp: 'XRP', ripple: 'XRP', dogecoin: 'DOGE', doge: 'DOGE', cardano: 'ADA', ada: 'ADA', bnb: 'BNB' };
+      const top = C.top || [], gl = C.global || {};
+      if (coin) { const c = top.find((x) => String(x.symbol).toUpperCase() === map[coin[1]]); if (c) return { say: c.name + ' is at ' + qMoney(c.price) + ', ' + qPct(c.change_24h_pct) + ' in 24 hours and ' + qPct(c.change_7d_pct) + ' over the week.' + (map[coin[1]] === 'BTC' && gl.btc_dominance_pct ? ' Bitcoin is ' + qNum(gl.btc_dominance_pct, 1) + '% of the whole crypto market.' : '') }; }
+      if (gl.total_market_cap_usd) { const b = top.find((x) => String(x.symbol).toUpperCase() === 'BTC'), e = top.find((x) => String(x.symbol).toUpperCase() === 'ETH');
+        return { say: 'The crypto market is worth ' + qMoney(gl.total_market_cap_usd) + ', ' + qPct(gl.market_cap_change_24h_pct) + ' in 24 hours. ' + (b ? 'Bitcoin ' + qMoney(b.price) + ', ' + qPct(b.change_24h_pct) + '. ' : '') + (e ? 'Ether ' + qMoney(e.price) + ', ' + qPct(e.change_24h_pct) + '. ' : '') + (C.fear_greed ? 'Crypto Fear and Greed: ' + C.fear_greed.value + ', ' + String(C.fear_greed.label).toLowerCase() + '.' : '') }; }
+    }
+    const IDX = { 's&p': 'SPY', 's and p': 'SPY', 'spy': 'SPY', nasdaq: 'QQQ', qqq: 'QQQ', dow: 'DIA', russell: 'IWM', 'small caps': 'IWM', vix: '^VIX', ftse: '^FTSE', dax: '^GDAXI', nikkei: '^N225' };
+    const ix = Object.keys(IDX).find((k) => low.includes(k));
+    if (ix && !gq) { const q = ((BR.parts.markets || {}).indices || {})[IDX[ix]]; if (q) return { go: 'markets', say: (LABEL[IDX[ix]] || ({ SPY: 'The S&P 500 fund, SPY,', QQQ: 'The Nasdaq 100 fund, QQQ,', DIA: 'The Dow fund, DIA,', IWM: 'The small-company fund, IWM,' })[IDX[ix]] || IDX[ix]) + ' is at ' + qNum(q.price) + ', ' + qPct(q.change_pct) + ' on the day.' }; }
+    if (/\b(?:calendar|events?|this week|central bank|fed meeting|bank of england|\bboe\b|\becb\b|cpi|inflation report|jobs report|payrolls)\b/.test(low)) {
+      const ev = upcoming(3); if (!ev.length) return null;
+      return { go: 'intel', say: 'Next high-impact events: ' + ev.map((e) => e.event + (e.country ? ' (' + e.country + ')' : '') + ', ' + ukTime(e.time)).join('; ') + '.' };
+    }
+    if (/\b(?:yields?|treasur(?:y|ies)|gilts?|interest rates?|bond market)\b/.test(low)) {
+      const tr = (BR.parts.markets || {}).treasury; if (!tr) return null;
+      return { say: 'US government yields: 2-year ' + qNum(tr.DGS2) + '%, 10-year ' + qNum(tr.DGS10) + '%, 30-year ' + qNum(tr.DGS30) + '%. ' + (tr.DGS10 > tr.DGS2 ? 'Long rates are above short rates, a normal curve.' : 'Short rates are above long rates: an inverted curve.') };
+    }
+    if (/\bsectors?\b/.test(low)) {
+      const ss = ((BR.parts.markets || {}).sectors || []).slice().sort((a2, b2) => (b2['1d'] || 0) - (a2['1d'] || 0)); if (!ss.length) return null;
+      return { go: 'markets', say: 'Leading today: ' + ss.slice(0, 2).map((x) => x.sector + ' ' + qPct(x['1d'])).join(', ') + '. Lagging: ' + ss.slice(-2).reverse().map((x) => x.sector + ' ' + qPct(x['1d'])).join(', ') + '.' };
+    }
+    if (/\b(?:news|headlines?)\b/.test(low) && !qSymbol(t)) {
+      const n = (BR.parts.news || {}).latest || []; if (!n.length) return null;
+      return { go: 'intel', say: 'Latest headlines: ' + n.slice(0, 3).map((x) => x.title.replace(/\s+-\s+[^-]+$/, '')).join('. ') + '. Headlines are attention, not evidence.' };
+    }
+    if (/\b(?:paper|£100|hundred pounds|the race|strategies)\b/.test(low)) {
+      const g = (BR.parts.paper || {}).goal || {}, lb = g.leaderboard || []; if (!lb.length) return null;
+      return { say: 'On paper, ' + lb[0].strategy.replace(/_/g, ' ') + ' leads: £100 is now £' + qNum(lb[0].gbp100_now) + ', ' + qNum(lb[0].margin_vs_spy_pct, 2) + ' points against the S&P 500, after ' + lb[0].days_live + ' days. Too early to mean anything yet.' };
+    }
+    if (/\b(?:wealth|net worth|my portfolio|my accounts?|business revenue)\b/.test(low) && !/\bopen|show|go to\b/.test(low))
+      return { say: 'No accounts are connected yet, so I hold no balances for you. The only portfolio figures are the paper strategies. Ask about the paper race.' };
+    const sy = qSymbol(t);
+    if (sy && /\b(?:price|trading|doing|quote|how|about|tell me|look up|check|stock|shares|worth|up|down)\b/.test(low)) {
+      const row = brainRows().find((r) => r.symbol === sy), q = ((LIVE && LIVE.quotes) || []).find((x) => x.symbol === sy);
+      if (!row && !q) return null; // not in the data: the AI looks further
+      const price = row && row.price != null ? row.price : q && q.price, ch = row && row.change_1d_pct != null ? row.change_1d_pct : q && q.change_pct;
+      let say = sy + ' is at $' + qNum(price) + (ch != null ? ', ' + qPct(ch) + ' today' : '') + '.';
+      if (row) {
+        const op = rankOpps().find((o) => o.symbol === sy);
+        if (row.research_setup) say += ' It meets every condition of the research setup.'; else if (row.setup_missing) say += ' It is ' + (row.conditions_missing === 1 ? 'one condition short of' : 'not') + ' the research setup: ' + row.setup_missing + '.';
+        if (row.rsi14 != null) say += ' RSI ' + Math.round(row.rsi14) + (row.rsi14 > 70 ? ', stretched.' : row.rsi14 < 30 ? ', oversold.' : '.');
+        if (row.warnings) say += ' Careful: it has a warning in its own SEC filing.';
+        if (op) say += ' Conviction ' + op.conv + ', risk ' + op.risk + '.';
+      }
+      return { focus: sy, say: say + ' A clue, not a promise.' };
+    }
+    return null;
+  }
+  function quickReply(text, qa, from) {
+    VOICE_TURN = false;
+    if (qa.go && (from === 'voice' || from === 'home') && qa.go !== view.id) go(qa.go, true);
+    if (qa.focus && (from === 'voice' || from === 'home')) { try { focusStock(qa.focus); } catch (e) { /* not on screen */ } }
+    if (from === 'voice') { capUser(text); capSay(qa.say); speak(qa.say, true); return; }
+    if (from === 'home') { capUser(text); capSay(qa.say); speak(qa.say); return; }
+    chat.classList.add('open'); $('#hints').hidden = true; addMsg('u', text); addMsg('a', qa.say);
+    turns.push({ role: 'user', content: text }, { role: 'assistant', content: qa.say }); speak(qa.say);
+  }
+  /* ----- lean AI for everything else ----- */
+  function rulesLean() {
+    const core = BR.parts.core;
+    return 'You are Caesar, chief strategist of Koochooloo Constellation, a market intelligence terminal. Speak refined, calm British English. At most three short sentences; plain words for new traders, explaining any jargon in a few words. Today is ' + new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) + ' UK. '
+      + (core ? 'Brain updated ' + core.updated + '; regime ' + ((core.regime || {}).level || '?') + '. ' : 'The brain is still loading. ')
+      + 'Call a tool before quoting any number. Use show to change the screen when asked. Evidence rules: only the research setup (smaller company, 2+ insiders each buying $25k+ in 30 days, cash flow above profit) and insider clusters in smaller companies have tested support; Congress copying and big insider buys showed no edge; everything else is attention. A warning in a company’s SEC filing outranks any signal. This is research, not financial advice: never say buy or sell, never promise returns. Wealth and Business have no accounts connected: never invent balances. No tables, no lists over three items, no exclamation marks.';
+  }
+  const Q_LEAN = ['brief', 'stock', 'scan', 'markets', 'macro', 'crypto', 'news', 'show'].concat(window.claude ? ['live_quote'] : []); // the live quote connector exists only inside Claude
+  function leanTools() {
+    return toolList.filter((t) => Q_LEAN.includes(t.name)).map((t) => Object.assign({}, t, { execute: async (i) => { const o = await t.execute(i); const j = typeof o === 'string' ? o : JSON.stringify(o); return j.length > 3500 ? j.slice(0, 3500) + '… (trimmed)' : (typeof o === 'string' ? o : o); } }));
+  }
+  /* ----- the voice button and its captions ----- */
+  const vCap = $('#vCap'), vMic = $('#vMic');
+  function capOpen() { vCap.hidden = false; clearTimeout(capOpen.t); }
+  function capBody() { if (!vCap.querySelector('.cb')) { vCap.replaceChildren(); const x = el('button', '', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close captions'); x.onclick = () => { capHide(); cvHalt(); }; vCap.append(x, el('div', 'cb')); } return vCap.querySelector('.cb'); }
+  function capUser(t) { capOpen(); const b = capBody(); b.replaceChildren(el('div', 'you', t)); }
+  function capThink() { capOpen(); const b = capBody(); let h = b.querySelector('.him'); if (!h) { h = el('div', 'him'); b.append(h); } h.textContent = 'Thinking…'; }
+  function capSay(t, partial) { capOpen(); const b = capBody(); let h = b.querySelector('.him'); if (!h) { h = el('div', 'him'); b.append(h); } h.textContent = t; capStatus(); if (!partial) capLater(); }
+  function capStatus() { if (vCap.hidden) return; const b = capBody(); let st = b.querySelector('.st'); const msg = CV.err ? 'Voice unavailable here: reading only.' : CV.tts ? '' : CV.loading ? 'Preparing George’s voice · ' + (CV.pct || 0) + '% (first time only)' : ''; if (!msg) { if (st) st.remove(); return; } if (!st) { st = el('div', 'st'); b.append(st); } st.textContent = msg; }
+  function capLater() { clearTimeout(capOpen.t); capOpen.t = setTimeout(function wait() { if (CV.busy || CV.listening || busy) { capOpen.t = setTimeout(wait, 1500); return; } vCap.hidden = true; }, 9000); }
+  function capHide() { clearTimeout(capOpen.t); vCap.hidden = true; }
+  vMic.onclick = () => {
+    if (CV.busy || VOICE.playing) { cvHalt(); stopVoice(); return; }
+    if (!CC_WEB) { cvDictate(); return; }
+    capOpen(); const b = capBody(); b.replaceChildren(el('div', 'you', 'Listening…')); capStatus();
+    caesarListen(false);
+  };
+  vMic.onpointerenter = () => { if (CC_WEB && !CV.tts && !CV.loading && !(navigator.connection && navigator.connection.saveData)) cvLoad().catch(() => { /* reported on use */ }); };
+  if (!CC_WEB) { vMic.title = 'Dictate to Caesar with your keyboard microphone'; vMic.querySelector('b').textContent = 'Dictate'; }
+  // after the first successful use the voice is cached: warm it quietly in the background
+  try { if (localStorage.getItem('cv-warm') === '1') setTimeout(() => { (window.requestIdleCallback || setTimeout)(() => cvLoad().catch(() => { /* reported on use */ }), 2000); }, 2500); } catch (e) { /* convenience only */ }
 
   /* ----- Caesar's only voice: Jerry B. (British RP). The data repo records the briefing and critical alerts (data/voice/);
      this page plays them with Web Audio. Live conversation goes through Caesar's ElevenLabs agent. ----- */
