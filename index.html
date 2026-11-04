@@ -543,7 +543,7 @@ h1, .title { letter-spacing: 0.02em; }
     if (speaking && player) { player.pause(); setSpeaking(false); return; }
     const lab = b.querySelector('[data-label]'); lab.textContent = 'One moment\u2026';
     let url = null; try { url = await briefingClip(); } catch (e) { url = null; }
-    if (!url) { lab.textContent = 'Speak to Caesar in the terminal'; setTimeout(() => { location.href = 'app.html'; }, 1200); return; }
+    if (!url) { lab.textContent = 'Opening the terminal to talk'; setTimeout(() => { location.href = 'app.html#talk'; }, 1200); return; }
     player = new Audio(url); player.onended = player.onerror = () => setSpeaking(false); setSpeaking(true);
     try { await player.play(); } catch (e) { setSpeaking(false); }
   }));

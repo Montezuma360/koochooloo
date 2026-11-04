@@ -2113,7 +2113,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     vc.append(vs); if (CV.err) vc.append(el('p', 'note', 'Voice: ' + CV.err)); else if (vx && vx.error) vc.append(el('p', 'note', vx.error));
     else vc.append(el('p', 'note', 'Free and open source (Kokoro): about 90 MB downloads once, then it is cached. No account, no tokens.'));
     const vp = el('div', 'vpick'); CV_VOICES.forEach(([id, name]) => { const b = el('button', '', name); b.type = 'button'; b.setAttribute('aria-pressed', String(id === CV.voice)); b.onclick = () => { CV.voice = id; try { localStorage.setItem('caesar-kvoice', id); } catch (e) { /* convenience only */ } caesarSay(greet() + ' Caesar here. This is how I sound.'); renderSettings(); }; vp.append(b); });
-    vc.append(vp);
+    // one voice only: no picker
     vc.lastChild.style.margin = '8px 0';
     vc.append(tog('Read answers aloud', voiceOn, () => cVoice.click()), tog('Speak critical alerts', alertsLoud, () => cAlerts.click()), tog('Deep mode: slower, fuller answers', deep, () => cDeep.click()));
     vc.append(acts([['Speak to Caesar', () => speakToCaesar()], ['Play the latest briefing', () => caesarBriefing()]]));
@@ -2153,9 +2153,9 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
      Speaking: Kokoro-82M (Apache 2.0) runs in the browser with WebAssembly; about 90 MB, downloaded once and cached.
      Listening (website): the browser's speech recognition, or Whisper in the browser where there is none.
      Inside Claude pages may not use the microphone: the user dictates with the keyboard's microphone instead. */
-  const CV_VOICES = [['bm_george', 'George · RP, measured'], ['bm_fable', 'Fable · RP, storyteller'], ['bm_lewis', 'Lewis · deep'], ['bm_daniel', 'Daniel · crisp']];
+  const CV_VOICES = [['bm_george', 'George · British RP']]; // George is Caesar's only voice
   const CV = { tts: null, loading: null, ctx: null, gen: 0, busy: false, src: null, pct: 0, err: null, listening: false, rec: null, asr: null, follow: false, noSR: false,
-    voice: (() => { try { const v = localStorage.getItem('caesar-kvoice'); return CV_VOICES.some((x) => x[0] === v) ? v : 'bm_george'; } catch (e) { return 'bm_george'; } })() };
+    voice: 'bm_george' };
   let VOICE_TURN = false;
   const CV_SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   function cvCtx() { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; if (!CV.ctx) CV.ctx = new AC(); if (CV.ctx.state === 'suspended') CV.ctx.resume().catch(() => { /* resumes on the next tap */ }); return CV.ctx; }
@@ -2169,7 +2169,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       for (const re of MAP) {
         const m = s.match(re); if (!m) continue;
         const name = 'kk/' + m[1].replace(/\//g, '__'), n = PARTS[m[1]], ct = /\.wasm$/.test(m[1]) ? 'application/wasm' : /\.json$/.test(m[1]) ? 'application/json' : 'application/octet-stream';
-        const bufs = await Promise.all((n ? Array.from({ length: n }, (_, k) => name + '.' + k) : [name]).map((p) => of(p).then((r) => { if (!r.ok) throw new Error('voice file ' + p + ' answered ' + r.status); return r.arrayBuffer(); })));
+        const bufs = await Promise.all((n ? Array.from({ length: n }, (_, k) => name + '.' + k + '.wasm') : [/\.json$/.test(name) ? name : name + '.wasm']).map((p) => of(p).then((r) => { if (!r.ok) throw new Error('voice file ' + p + ' answered ' + r.status); return r.arrayBuffer(); })));
         const blob = new Blob(bufs, { type: ct });
         return new Response(blob, { status: 200, headers: { 'Content-Type': ct, 'Content-Length': String(blob.size) } });
       }
