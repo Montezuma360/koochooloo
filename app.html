@@ -1629,7 +1629,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       'Be proactive like a good chief of staff: when something in the data clearly matters to the question (a warning sign, extreme fear, a central-bank decision this week), mention it once. This is research, not financial advice: never promise returns, never tell the user to buy or sell, never place trades. Use show when the user asks to see something. Your voice is a refined British male voice that reads your answers aloud on every device. On the website the user talks to you by pressing Speak or tapping the swan; inside Claude they dictate with their keyboard’s microphone. When a message was said aloud, answer in two to four short spoken sentences. Critical alerts and the morning briefing play as your recorded voice unless the Alerts button is off. The Wealth and Business rooms have no accounts connected yet: say so plainly and never invent balances, returns or revenue; the only portfolio figures that exist are the paper strategies.'
     ].join('\n\n');
   }
-  const HINTS = ['Brief me', 'Any research setups today?', "What's on the macro calendar this week?", 'How is crypto doing?', 'How is the £100 race going?'];
+  const HINTS = ['Brief me', 'Any research setups today?', "What's on the macro calendar this week?", 'How is crypto doing?', 'How is the £100 race going?', 'Order ticket for Nvidia'];
 
   const findTrader = (q) => { q = String(q || '').toLowerCase(); return filers.find((f) => f.d.name.toLowerCase().includes(q) || shortName(f.d.name).toLowerCase() === q); };
   const baseTools = [
@@ -2584,13 +2584,192 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (m) { const sy = m[1].toUpperCase(); if (brainRows().some((r) => r.symbol === sy) || ((LIVE && LIVE.quotes) || []).some((q) => q.symbol === sy)) return sy; }
     return null;
   }
+  /* ----- v21: portfolio value, watchlist and the 2% order ticket. Kept in this browser only. A rules check on paper, never advice: nothing is sent to a broker. ----- */
+  const PF = { value: null, cur: 'GBP', watch: [] };
+  try {
+    const sv = JSON.parse(localStorage.getItem('caesar-pf') || 'null');
+    if (sv && typeof sv === 'object') {
+      if (isFinite(sv.value) && sv.value > 0) { PF.value = Number(sv.value); PF.cur = sv.cur === 'USD' ? 'USD' : 'GBP'; }
+      if (Array.isArray(sv.watch)) PF.watch = sv.watch.filter((x) => /^[A-Z][A-Z0-9.\-]{0,9}$/.test(x)).slice(0, 30);
+    }
+  } catch (e) { /* convenience only */ }
+  const pfSave = () => { try { localStorage.setItem('caesar-pf', JSON.stringify({ value: PF.value, cur: PF.cur, watch: PF.watch })); } catch (e) { /* convenience only */ } };
+  const pfMoney = (v, cur) => (cur === 'USD' ? '$' : '£') + Number(v).toLocaleString('en-GB', { minimumFractionDigits: v < 1000 ? 2 : 0, maximumFractionDigits: 2 });
+  const rowFor = (sy) => brainRows().find((r) => r.symbol === sy) || null;
+  const liveQ = (sy) => ((LIVE && LIVE.quotes) || []).find((x) => x.symbol === sy) || null;
+  const andList = (a) => (a.length < 2 ? a.join('') : a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1]);
+
+  /* US regular hours, 9:30 to 16:00 New York time, weekdays, minus the full-day NYSE closures */
+  const US_SHUT = ['2026-01-01', '2026-01-19', '2026-02-16', '2026-04-03', '2026-05-25', '2026-06-19', '2026-07-03', '2026-09-07', '2026-11-26', '2026-12-25',
+    '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24'];
+  function usSession(now) {
+    const f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+    const p = {}; f.formatToParts(now).forEach((x) => { p[x.type] = x.value; });
+    const wd = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), mins = (Number(p.hour) % 24) * 60 + Number(p.minute), ymd = p.year + '-' + p.month + '-' + p.day;
+    return { wd, mins, ymd, open: wd >= 1 && wd <= 5 && !US_SHUT.includes(ymd) && mins >= 570 && mins < 960 };
+  }
+  function usNextOpen(now) {
+    const base = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    for (let d = 0; d < 10; d++) for (const h of [13, 14]) {
+      const c = new Date(base + d * 864e5 + h * 36e5 + 30 * 6e4);
+      if (c > now) { const s = usSession(c); if (s.open && s.mins === 570) return c; }
+    }
+    return null;
+  }
+  /* how old the stored prices are right now: the age when the brain last checked, plus the time since */
+  function priceAgeMin() {
+    const h = ((BR.parts.core || {}).health) || {}, a = ((h.feeds || {}).prices || {}).age_min, ck = Date.parse(h.checked);
+    if (a == null || isNaN(ck)) return null;
+    return Math.max(0, Math.round(a + (Date.now() - ck) / 60000));
+  }
+  const ageText = (m) => (m < 2 ? 'under 2 minutes old' : m < 90 ? m + ' minutes old' : m < 36 * 60 ? Math.round(m / 60) + ' hours old' : Math.round(m / 1440) + ' days old');
+  function priceNote(plural) {
+    let s; try { s = usSession(new Date()); } catch (e) { return ''; }
+    if (!s.open) return plural ? ' The US market is shut, so these are last closes.' : ' The US market is shut, so that is the last close.';
+    const m = priceAgeMin();
+    return m == null ? '' : (plural ? ' These prices are ' : ' The price is ') + ageText(m) + (m > 60 ? ', older than usual, so check a live quote first.' : '.');
+  }
+
+  /* stock names or tickers in what was said */
+  const Q_SKIP = /^(?:I|A|AN|THE|AND|OR|OF|IS|IT|TO|US|UK|ETF|CEO|RSI|VIX|SEC|AI|PE|GDP|CPI|FED|BOE|ECB|OK|ADD|MY|ON|IN|AT|FOR|ME|NO|YES|PUT|NEW|ALL|ANY|CAN|SET|GBP|USD|TICKET|ORDER|WATCH|LIST|BUY|SELL|SIZE|HOW|MUCH|WHAT|TRADE|STAKE|PAPER|DROP|STOP|FROM|NOT|OFF|ONE|TWO)$/;
+  function qSymbols(t) {
+    const low = t.toLowerCase(), out = [], push = (s) => { if (s && !out.includes(s)) out.push(s); };
+    for (const [n, sy] of Object.entries(Q_NAMES)) if (new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b').test(low)) push(sy);
+    (t.match(/\$?\b[A-Z]{1,5}(?:\.[A-Z])?\b/g) || []).map((x) => x.replace('$', '')).filter((x) => !Q_SKIP.test(x)).forEach(push);
+    if (!out.length) { const known = brainRows(); (low.match(/\b[a-z]{2,5}\b/g) || []).forEach((w) => { const sy = w.toUpperCase(); if (!Q_SKIP.test(sy) && known.some((r) => r.symbol === sy)) push(sy); }); }
+    return out.slice(0, 6);
+  }
+
+  /* an amount said as digits ("£250", "1.5k") or in words ("two hundred and fifty") */
+  const NUMW = '(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand|grand)';
+  function wordsToNum(s) {
+    const U = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90 };
+    let tot = 0, cur = 0, seen = false;
+    for (const w of s.replace(/-/g, ' ').split(/\s+/)) {
+      if (w in U) { cur += U[w]; seen = true; } else if (w === 'a' && !seen) { cur = 1; seen = true; }
+      else if (w === 'hundred') { cur = (cur || 1) * 100; seen = true; } else if (w === 'thousand' || w === 'grand') { tot += (cur || 1) * 1000; cur = 0; seen = true; }
+    }
+    return seen ? tot + cur : null;
+  }
+  function pfNumber(low) {
+    const d = [...low.matchAll(/(\d[\d,]*(?:\.\d+)?)\s*(k\b|thousand|grand|m\b|million)?(\s*(?:%|percent|per cent))?/g)].find((m) => !m[3]);
+    if (d) { const u = d[2] || ''; return parseFloat(d[1].replace(/,/g, '')) * (/^(?:k|thousand|grand)/.test(u) ? 1e3 : /^m/.test(u) ? 1e6 : 1); }
+    const w = low.match(new RegExp('\\b(?:(?:a|and|' + NUMW.slice(3, -1) + ')[\\s-]+)*' + NUMW + '\\b'));
+    return w ? wordsToNum(w[0]) : null;
+  }
+  const PF_WORD = /\b(?:portfolio|pot|account|capital|bankroll|trading budget|starting (?:money|balance|capital))\b/;
+  function pfSetIntent(low) {
+    const have = /\b(?:i|we)(?:'ve| have)? (?:got|have)\b.*\b(?:invest|trade|trading|start(?:ing)? with|to play with)\b/.test(low) && /[£$]|\b(?:pounds?|quid|dollars?|gbp|usd|bucks|grand)\b|\dk\b/.test(low);
+    if (!PF_WORD.test(low) && !have) return false;
+    return have || /\b(?:set|change|update|make|record|note|save|store|reset)\b/.test(low) || /\b(?:my|our|the) (?:portfolio|pot|account|capital|bankroll)(?: value)?\s+(?:is|are|stands at|equals|of|at)\b/.test(low) || /\bportfolio value\b/.test(low);
+  }
+
+  function wlLine(sy) {
+    const r = rowFor(sy), q = liveQ(sy), p = r && r.price != null ? r.price : q && q.price, ch = r && r.change_1d_pct != null ? r.change_1d_pct : q && q.change_pct;
+    if (p == null) return sy + ', no stored figures';
+    return sy + ' $' + qNum(p) + (ch != null ? ' ' + qPct(ch) : '') + (r && r.research_setup ? ', meets the research setup' : '') + (r && r.warnings ? ', warning in its SEC filing' : '')
+      + (r && r.rsi14 != null && (r.rsi14 > 70 || r.rsi14 < 30) ? ', RSI ' + Math.round(r.rsi14) + (r.rsi14 > 70 ? ' stretched' : ' oversold') : '');
+  }
+  function wlBrief() {
+    if (!PF.watch.length) return '';
+    const hits = PF.watch.map((s) => {
+      const r = rowFor(s); if (!r) return null;
+      const why = r.research_setup ? 'meets the research setup' : r.warnings ? 'has an SEC filing warning' : Math.abs(r.change_1d_pct || 0) >= 5 ? qPct(r.change_1d_pct) : r.rsi14 != null && (r.rsi14 > 70 || r.rsi14 < 30) ? 'RSI ' + Math.round(r.rsi14) : null;
+      return why ? s + ' ' + why : null;
+    }).filter(Boolean).slice(0, 3);
+    return hits.length ? 'On your watchlist: ' + hits.join('; ') + '. ' : 'Nothing unusual on your watchlist. ';
+  }
+
+  /* the 2% order ticket: the project rules applied in order; any doubt means NO_TRADE */
+  function pfTicket(sy) {
+    const core = BR.parts.core, rg = (core && core.regime) || {}, r = rowFor(sy), q = liveQ(sy);
+    const assumed = PF.value == null, val = assumed ? 100 : PF.value, cur = assumed ? 'GBP' : PF.cur;
+    const fx = fxq('GBPUSD=X'), rate = fx && fx.last > 0 ? fx.last : null;
+    const cap = val * 0.02, capUsd = cur === 'USD' ? cap : rate ? cap * rate : null;
+    const price = r && r.price != null ? r.price : q && q.price;
+    const no = [], notes = []; let wait = null;
+    if (!core) no.push('the brain is not connected in this view, so I cannot check the rules and the default is no trade');
+    if (price == null) no.push('I hold no price for ' + sy);
+    if (core) {
+      if (!r || r.rsi14 == null) no.push('its RSI is unknown, so the default is no trade');
+      else if (r.rsi14 > 70) no.push('RSI ' + Math.round(r.rsi14) + ' is above 70, overbought, and I have no strong contrarian reason');
+      else if (r.rsi14 < 30) no.push('RSI ' + Math.round(r.rsi14) + ' is below 30, oversold, and I have no strong contrarian reason');
+      if (rg.stress_switch) no.push('the stress switch is on');
+      else if (rg.level === 'risk-off') no.push('the market is risk-off, with the S&P 500 below its 200-day average');
+      else if (rg.level === 'caution') notes.push('the market is in caution');
+    }
+    if (r && r.warnings) no.push('its own SEC filing carries a warning');
+    if (r && r.size === 'micro') no.push('it trades under $1 million a day, too thin to enter and leave at a fair price');
+    let sess = null; try { sess = usSession(new Date()); } catch (e) { sess = null; }
+    if (!sess) no.push('I cannot read the New York clock, so the default is no trade');
+    else if (!sess.open) { const nx = usNextOpen(new Date()); wait = 'the US market is shut' + (nx ? ' until ' + ukTime(nx.toISOString()) + ' UK time' : ''); }
+    else {
+      const age = priceAgeMin();
+      if (age != null && age > 180) no.push('the price is ' + ageText(age) + ', too old to size from');
+      else if (age != null && age > 60) notes.push('the price is ' + ageText(age));
+    }
+    const head = 'Paper ticket for ' + sy + '. ';
+    const tail = ' This is a rules check, not advice, and nothing is sent to a broker.';
+    if (no.length) return { focus: sy, say: head + 'NO_TRADE, no stake. ' + no.concat(wait ? [wait] : []).map((x) => x.replace(/^[a-z]/, (c) => c.toUpperCase()) + '.').join(' ') + tail };
+    const usd = capUsd != null && price ? capUsd : null, sh = usd != null ? usd / price : null;
+    const stake = 'The 2% rule caps one stake at ' + pfMoney(cap, cur) + ' of ' + pfMoney(val, cur) + (assumed ? ' (assuming the £100 goal; say set my portfolio to change it)' : '')
+      + (usd != null ? ', about $' + qNum(usd) + ', which is ' + qNum(sh, sh < 1 ? 4 : 2) + ' shares at $' + qNum(price) : ', but I cannot convert pounds to dollars without the pound-dollar rate') + '.';
+    const cost = ' Modelled costs are about ' + (price < 10 ? '0.8%' : '0.3%') + ' in and out.';
+    const edge = r && r.research_setup ? ' It meets the research setup, the only edge we have tested.' : ' It is not on the research setup list, so no tested edge stands behind it.';
+    const nt = notes.length ? ' Note: ' + andList(notes) + '.' : '';
+    if (wait) return { focus: sy, say: head + 'NO_TRADE for now, because ' + wait + '. Everything else passes. ' + stake + cost + edge + nt + tail };
+    return { focus: sy, say: head + 'The rules pass for a paper entry at the next open. ' + stake + cost + edge + nt + tail };
+  }
+
+  const TICKET_RE = /\b(?:order ticket|trade ticket|ticket|position siz\w*|size (?:a |the |my )?(?:trade|position|stake)|stake (?:for|in|on)|how much (?:\w+ ){0,4}(?:buy|stake|invest|put|risk)|(?:can|could|should|shall|may|would) (?:i|we) (?:buy|trade|invest in|enter|go long)|(?:want|wanna|like|going) to buy|rules (?:allow|let|permit)|allowed to (?:buy|trade))\b/;
+  const WL_WORD = /\bwatch ?lists?\b/;
+  function pfCommand(t, low) {
+    if (pfSetIntent(low)) {
+      const v = pfNumber(low);
+      if (v != null && isFinite(v) && v >= 1 && v <= 1e9) {
+        PF.value = Math.round(v * 100) / 100; PF.cur = /\$|\bdollars?\b|\busd\b|\bbucks\b/.test(low) ? 'USD' : 'GBP'; pfSave();
+        return { say: 'Noted: your portfolio is ' + pfMoney(PF.value, PF.cur) + '. The 2% rule caps any one stake at ' + pfMoney(PF.value * 0.02, PF.cur) + '.'
+          + (PF.value < 1000 ? ' At that size fees matter more than picks, so only a broker with fractional shares and no minimum charge would make sense.' : '') + ' I keep this in this browser only, and I never see a real balance.' };
+      }
+      if (/\b(?:set|change|update|reset)\b/.test(low)) return { say: 'What amount? Say, set my portfolio to 100 pounds.' };
+    }
+    const rm = (WL_WORD.test(low) && /\b(?:remove|delete|drop|take|clear|get rid of)\b/.test(low)) || /\b(?:unwatch|stop (?:watching|tracking|following)|no longer (?:watch|track))\b/.test(low);
+    const ad = !rm && ((WL_WORD.test(low) && /\b(?:add|put|include|pop|stick|append|save)\b/.test(low)) || /^(?:please )?(?:watch|track|follow)\s+(?!lists?\b)\S/.test(low) || /\b(?:start (?:watching|tracking|following)|keep an eye on|keep watching)\b/.test(low));
+    if (rm) {
+      if (WL_WORD.test(low) && /\bclear\b/.test(low)) { const n = PF.watch.length; PF.watch = []; pfSave(); return { say: n ? 'Cleared your watchlist, ' + n + (n === 1 ? ' name.' : ' names.') : 'Your watchlist was already empty.' }; }
+      const syms = qSymbols(t); if (!syms.length) return { say: 'Which stock should I take off? Say, remove Nvidia from my watchlist.' };
+      const gone = syms.filter((s) => PF.watch.includes(s)), miss = syms.filter((s) => !PF.watch.includes(s));
+      PF.watch = PF.watch.filter((s) => !syms.includes(s)); if (gone.length) pfSave();
+      return { say: (gone.length ? 'Removed ' + andList(gone) + '. ' : '') + (miss.length ? andList(miss) + (miss.length === 1 ? ' was' : ' were') + ' not on it. ' : '') + (PF.watch.length ? 'Still watching ' + PF.watch.length + '.' : 'Your watchlist is now empty.') };
+    }
+    if (ad) {
+      const syms = qSymbols(t);
+      if (!syms.length) return WL_WORD.test(low) ? { say: 'Which stock should I add? Say, add Nvidia to my watchlist.' } : null;
+      const fresh = syms.filter((s) => !PF.watch.includes(s)).slice(0, Math.max(30 - PF.watch.length, 0)), dup = syms.filter((s) => PF.watch.includes(s));
+      PF.watch = PF.watch.concat(fresh); if (fresh.length) pfSave();
+      const nodata = fresh.filter((s) => !rowFor(s) && !liveQ(s));
+      return { say: (fresh.length ? 'Added ' + andList(fresh) + '. ' : PF.watch.length >= 30 && !dup.length ? 'The watchlist is full at 30. ' : '') + (dup.length ? andList(dup) + (dup.length === 1 ? ' was' : ' were') + ' already there. ' : '')
+        + (nodata.length ? 'I hold no stored figures on ' + andList(nodata) + ' yet, so ask me for a live quote. ' : '') + 'You are watching ' + PF.watch.length + ', kept in this browser. Brief me, and I will flag anything unusual on them.' };
+    }
+    if (WL_WORD.test(low) || /\bwhat (?:am i|are we) (?:watching|tracking|following)\b/.test(low)) {
+      if (!PF.watch.length) return { say: 'Your watchlist is empty. Say, add Nvidia to my watchlist.' };
+      return { say: 'Watching ' + PF.watch.length + ': ' + PF.watch.slice(0, 6).map(wlLine).join('; ') + '.' + (PF.watch.length > 6 ? ' And ' + (PF.watch.length - 6) + ' more.' : '') + priceNote(true) };
+    }
+    if (TICKET_RE.test(low)) {
+      const syms = qSymbols(t);
+      if (!syms.length) return /\bticket\b/.test(low) ? { say: 'Which stock? Say, order ticket for Nvidia.' } : null;
+      return pfTicket(syms[0]);
+    }
+    return null;
+  }
   function quickAnswer(raw) {
     const t = String(raw || '').trim(), low = t.toLowerCase().replace(/[?.!]+$/, '');
     const core = BR.parts.core, rg = (core && core.regime) || {}, fg = (core && core.fear_greed) || {};
     if (/^(?:help|what can (?:you|i) (?:do|ask|say)|how do (?:i|you) (?:use|work)|commands)\b/.test(low))
-      return { say: 'Ask me anything about the markets. Try: brief me; how is the market; what is Fear and Greed; price of Nvidia; any setups today; biggest movers; how is Bitcoin; what is on the calendar; latest headlines; or what does RSI mean. Say open wealth, or opportunities, to change rooms, and stop to quiet me.' };
+      return { say: 'Ask me anything about the markets. Try: brief me; how is the market; what is Fear and Greed; price of Nvidia; any setups today; biggest movers; how is Bitcoin; what is on the calendar; latest headlines; or what does RSI mean. I also keep a watchlist and check our rules: say add Nvidia to my watchlist, what is on my watchlist, set my portfolio to 100 pounds, or order ticket for Nvidia. Say open wealth, or opportunities, to change rooms, and stop to quiet me.' };
     const gq = low.match(/^(?:what(?:'s| is| are| does)|explain|define|tell me what|meaning of)\b/);
     if (gq) { for (const [re, txt] of Q_GLOSS) if (re.test(low) && !/\b(?:today|now|price|current|reading|level|at|at the moment)\b/.test(low)) return { say: txt }; }
+    const pfa = pfCommand(t, low); if (pfa) return pfa; // watchlist, portfolio value, order ticket (these work even before the brain loads)
     if (!core) return null; // everything below reads the brain
     const lv = (rg.level || 'unknown').replace(/-/g, ' ');
     const mood = () => 'Fear and Greed reads ' + Math.round(fg.value != null ? fg.value : rg.fear_greed) + ', ' + String(fg.label || rg.fear_greed_label || '').toLowerCase() + (fg.week_ago != null ? ', from ' + Math.round(fg.week_ago) + ' a week ago' : '') + '.';
@@ -2598,7 +2777,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       const ops = rankOpps().slice(0, 2), ev = upcoming(1)[0];
       return { go: 'cc', say: 'The market is in ' + lv + ': the S&P 500 is ' + qNum(Math.abs(rg.spy_vs_200d_pct), 1) + '% ' + (rg.spy_vs_200d_pct >= 0 ? 'above' : 'below') + ' its 200-day average, and the VIX is ' + qNum(rg.vix, 1) + '. ' + mood() + ' '
         + ((core.setups || []).length ? 'Research setup today: ' + core.setups.slice(0, 3).join(', ') + '. A clue, not a trade. ' : 'No stock meets the research setup today. ')
-        + (ops.length ? 'Top of the Opportunity Engine: ' + ops.map((o) => o.symbol).join(' and ') + '. ' : '') + (ev ? 'Next big event: ' + ev.event + ', ' + ukTime(ev.time) + '.' : '') };
+        + (ops.length ? 'Top of the Opportunity Engine: ' + ops.map((o) => o.symbol).join(' and ') + '. ' : '') + wlBrief() + (ev ? 'Next big event: ' + ev.event + ', ' + ukTime(ev.time) + '.' : '') };
     }
     if (/\b(?:regime|risk[- ]?on|risk[- ]?off|how(?:'s| is) the market|market (?:today|doing|mood|look)|how are markets|stock market)\b/.test(low))
       return { go: 'markets', say: 'We are in ' + lv + '. ' + String((rg.why || [])[0] || '').replace(/[;.]\s*$/, '') + '. The VIX is ' + qNum(rg.vix, 1) + ', and ' + mood().charAt(0).toLowerCase() + mood().slice(1) };
@@ -2645,7 +2824,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       return { say: 'On paper, ' + lb[0].strategy.replace(/_/g, ' ') + ' leads: £100 is now £' + qNum(lb[0].gbp100_now) + ', ' + qNum(lb[0].margin_vs_spy_pct, 2) + ' points against the S&P 500, after ' + lb[0].days_live + ' days. Too early to mean anything yet.' };
     }
     if (/\b(?:wealth|net worth|my portfolio|my accounts?|business revenue)\b/.test(low) && !/\bopen|show|go to\b/.test(low))
-      return { say: 'No accounts are connected yet, so I hold no balances for you. The only portfolio figures are the paper strategies. Ask about the paper race.' };
+      return { say: (PF.value != null ? 'You told me your portfolio is ' + pfMoney(PF.value, PF.cur) + ', so the 2% cap is ' + pfMoney(PF.value * 0.02, PF.cur) + ' a trade. ' : '') + 'No accounts are connected yet, so I hold no balances for you. The only portfolio figures are the paper strategies. Ask about the paper race.' };
     const sy = qSymbol(t);
     if (sy && /\b(?:price|trading|doing|quote|how|about|tell me|look up|check|stock|shares|worth|up|down)\b/.test(low)) {
       const row = brainRows().find((r) => r.symbol === sy), q = ((LIVE && LIVE.quotes) || []).find((x) => x.symbol === sy);
@@ -2659,7 +2838,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
         if (row.warnings) say += ' Careful: it has a warning in its own SEC filing.';
         if (op) say += ' Conviction ' + op.conv + ', risk ' + op.risk + '.';
       }
-      return { focus: sy, say: say + ' A clue, not a promise.' };
+      return { focus: sy, say: say + (row && row.price != null ? priceNote() : '') + ' A clue, not a promise.' };
     }
     return null;
   }
