@@ -527,7 +527,7 @@ h1, .title { letter-spacing: 0.02em; }
   new IntersectionObserver((en) => { visible = en[0].isIntersecting; loop(visible); }).observe(sky);
   let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(layout, 150); });
 
-  /* ---------- Caesar's voice: Jerry B. (British RP) is the only voice; his briefing is recorded by the data repo ---------- */
+  /* ---------- Caesar's voice: one free British voice (Kokoro); his briefing is recorded by the data repo ---------- */
   const VRAW = 'https://raw.githubusercontent.com/Montezuma360/koochooloo-data/main/data/voice/';
   const speakBtns = [...document.querySelectorAll('[data-speak]')];
   const labels = speakBtns.map((b) => b.querySelector('[data-label]').textContent);

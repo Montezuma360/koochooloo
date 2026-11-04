@@ -561,6 +561,7 @@ body.listening .ring .cal { fill: #b8975a; transition: fill 0.4s; }
 #ccMic[aria-pressed="true"], #cMic[aria-pressed="true"] { background: #7a1f2b; color: #ece6d9; border-color: #b8975a; }
 #ccMic.pulse { animation: cvPulse 1.4s ease-in-out 6; }
 @keyframes cvPulse { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 0 4px rgba(184, 151, 90, 0.55); } }
+.room .kv b { white-space: normal; overflow-wrap: anywhere; }
 .vpick { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .vpick button { font: 600 11px/1.2 var(--mono, monospace); padding: 7px 10px; background: transparent; color: inherit; border: 1px solid rgba(184, 151, 90, 0.45); cursor: pointer; }
 .vpick button[aria-pressed="true"] { background: rgba(184, 151, 90, 0.18); border-color: #dcc28c; }
@@ -2107,7 +2108,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const vx = VOICE.ix, vb = vx && vx.briefing; const vs = el('div', 'kv');
     const cvName = (CV_VOICES.find((v) => v[0] === CV.voice) || CV_VOICES[0])[1];
     vs.append(el('span', '', 'Live voice'), el('b', '', cvName + ' \u00b7 ' + (CV.tts ? 'ready' : CV.loading ? 'loading ' + CV.pct + '%' : CV.err ? 'could not load' : 'loads on first use')),
-      el('span', '', 'Listening'), el('b', '', !CC_WEB ? 'keyboard dictation (Claude closes the microphone to pages)' : SR && !CV.noSR ? 'this browser\u2019s speech recognition' : 'Whisper, in this browser'),
+      el('span', '', 'Listening'), el('b', '', !CC_WEB ? 'keyboard dictation' : SR && !CV.noSR ? 'browser speech' : 'Whisper, in this browser'),
       el('span', '', 'Latest recorded briefing'), el('b', '', vb ? ukTime(vb.at) : 'none yet'));
     vc.append(vs); if (CV.err) vc.append(el('p', 'note', 'Voice: ' + CV.err)); else if (vx && vx.error) vc.append(el('p', 'note', vx.error));
     else vc.append(el('p', 'note', 'Free and open source (Kokoro): about 90 MB downloads once, then it is cached. No account, no tokens.'));
@@ -2161,7 +2162,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function cvLocalFiles() {
     // inside Claude the page may only fetch its own files: the voice model is published with the page and served from here
     if (window.__cvShim) return; window.__cvShim = true;
-    const of = window.fetch.bind(window), PARTS = window.__cvParts || {};
+    const of = window.fetch.bind(window), PARTS = window.__cvParts || { 'onnx/model_quantized.onnx': 7, 'ort-wasm-simd-threaded.jsep.wasm': 2 };
     const MAP = [/^https:\/\/huggingface\.co\/onnx-community\/Kokoro-82M-v1\.0-ONNX\/resolve\/main\/([^?#]+)/, /^https:\/\/cdn\.jsdelivr\.net\/npm\/@huggingface\/transformers@3\.5\.1\/dist\/(ort-wasm[^?#]+\.wasm)/];
     window.fetch = async (u, o) => {
       const s = typeof u === 'string' ? u : (u && u.url) || String(u);
