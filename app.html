@@ -1584,7 +1584,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     // the brain changes every minute or two while markets are open; each poll reads one small index and only the parts that changed
     setInterval(() => { if (!document.hidden && !STOP.includes(lastCode) && lastCode !== 'approval_required') pollBrain(); }, (mcp.web ? 60 : 120) * 1000);
     // poll every 5 minutes while visible; stop polling on errors only the viewer can fix (the button retries)
-    setInterval(() => { if (!document.hidden && !STOP.includes(lastCode) && lastCode !== 'approval_required') pollOnce(mcp); }, (mcp.web ? 2 : 5) * 60 * 1000);
+    setInterval(() => { if (!document.hidden && !STOP.includes(lastCode) && lastCode !== 'approval_required') pollOnce(mcp); }, (mcp.web ? 1 : 5) * 60 * 1000);
     document.addEventListener('visibilitychange', () => { if (document.hidden || STOP.includes(lastCode)) return; if (live.fetchedAt && Date.now() - live.fetchedAt > 5 * 60 * 1000) pollOnce(mcp); if (!BR.fetchedAt || Date.now() - BR.fetchedAt > 2 * 60 * 1000) pollBrain(); });
   })();
 
