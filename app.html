@@ -2903,6 +2903,29 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     }
     return null;
   }
+  const PAPER_NM = { insider_cluster3: 'insiders buying together', insider_big_250k: 'big insider buys', congress_cluster3: 'Congress buying together', congress_big_100k: 'big Congress buys',
+    terminal_top_signals: "the terminal's top signals", insider_cluster2_smallcap: 'small-company insider buying', research_setup: 'the research setup', research_setup_trend: 'the research setup with the trend brake' };
+  const paperName = (k) => PAPER_NM[k] || String(k).replace(/_/g, ' ');
+  /* v23 decision log: why the paper engine bought or skipped something */
+  function decisionAnswer(t, low) {
+    if (!/\b(?:why did (?:you|we|it)|why didn'?t (?:you|we|it)|why (?:was|were) .{0,30}(?:skipped|bought)|decisions?|decision log|skip(?:ped)?|trades? (?:today|taken|made)|what did (?:you|we) (?:buy|trade))\b/.test(low)) return null;
+    const ds = ((BR.parts.paper || {}).latest_decisions || []).slice().reverse();
+    if (!ds.length) return { say: 'The decision log is empty in this refresh. The paper engine runs after each US close and logs every trade and skip with its reason.' };
+    const syms = new Set(ds.map((d) => d.symbol));
+    let sy = qSymbol(t);
+    if (!sy) { // a ticker said aloud ("a c n") or typed in lower case
+      const w = (low.replace(/\b([a-z]) (?=[a-z]\b)/g, '$1').match(/\b[a-z]{1,5}\b/g) || []).map((x) => x.toUpperCase());
+      sy = w.find((x) => syms.has(x) && !/^(?:WHY|DID|YOU|WE|IT|SKIP|BUY|THE|A|I|ON|FOR|WAS|WHAT|MAKE|TRADE|TODAY)$/.test(x)) || null;
+    }
+    const why = (d) => (d.decision === 'TRADE' ? 'bought' : 'skipped') + ' ' + d.symbol + ' for ' + paperName(d.strategy) + ' on ' + d.date + ': ' + String(d.reason || '').replace(/\s+/g, ' ').slice(0, 170) + '.';
+    if (sy) {
+      const hit = ds.filter((d) => d.symbol === sy);
+      if (!hit.length) return { say: 'No paper decision on ' + sy + ' in the recent log. A stock is only considered when one of the strategies flags it.' };
+      return { say: 'It ' + hit.slice(0, 2).map(why).join(' Also ') };
+    }
+    const day = ds[0].date, today = ds.filter((d) => d.date === day), n = today.filter((d) => d.decision === 'TRADE').length;
+    return { go: 'wealth', say: 'Latest paper decisions, ' + day + ': ' + n + ' bought, ' + (today.length - n) + ' skipped. For example, it ' + today.slice(0, 2).map(why).join(' And it ') + ' Ask why it skipped or bought a stock by name.' };
+  }
   function quickAnswer(raw) {
     const t = String(raw || '').trim(), low = t.toLowerCase().replace(/[?.!]+$/, '');
     const core = BR.parts.core, rg = (core && core.regime) || {}, fg = (core && core.fear_greed) || {};
@@ -2911,6 +2934,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const gq = low.match(/^(?:what(?:'s| is| are| does)|explain|define|tell me what|meaning of)\b/);
     if (gq) { for (const [re, txt] of Q_GLOSS) if (re.test(low) && !/\b(?:today|now|price|current|reading|level|at|at the moment)\b/.test(low)) return { say: txt }; }
     const vca = vcCommand(low); if (vca) return vca; // use George / use the instant voice
+    const dca = decisionAnswer(t, low); if (dca) return dca; // why did you buy or skip X
     const pfa = pfCommand(t, low); if (pfa) return pfa; // watchlist, portfolio value, order ticket (these work even before the brain loads)
     if (!core) return null; // everything below reads the brain
     const lv = (rg.level || 'unknown').replace(/-/g, ' ');
@@ -2961,9 +2985,16 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       const n = (BR.parts.news || {}).latest || []; if (!n.length) return null;
       return { go: 'intel', say: 'Latest headlines: ' + n.slice(0, 3).map((x) => x.title.replace(/\s+-\s+[^-]+$/, '')).join('. ') + '. Headlines are attention, not evidence.' };
     }
-    if (/\b(?:paper|£100|hundred pounds|the race|strategies)\b/.test(low)) {
-      const g = (BR.parts.paper || {}).goal || {}, lb = g.leaderboard || []; if (!lb.length) return null;
-      return { say: 'On paper, ' + lb[0].strategy.replace(/_/g, ' ') + ' leads: £100 is now £' + qNum(lb[0].gbp100_now) + ', ' + qNum(lb[0].margin_vs_spy_pct, 2) + ' points against the S&P 500, after ' + lb[0].days_live + ' days. Too early to mean anything yet.' };
+    if (/\b(?:how have you done|how did you do|how are you performing|score ?card|track record|your (?:record|performance|results)|paper|£100|hundred pounds|the race|strategies)\b/.test(low)) {
+      // v23 scorecard: every paper strategy against the S&P 500, in one breath
+      const P = BR.parts.paper || {}, g = P.goal || {}, lb = (g.leaderboard || []).filter((r) => r.strategy !== 'spy_benchmark'); if (!lb.length) return null;
+      const nm = paperName, st = P.strategies || {};
+      const ahead = lb.filter((r) => (r.margin_vs_spy_pct || 0) > 0).length, best = lb[0], worst = lb[lb.length - 1];
+      let open = 0, closed = 0, wins = 0; Object.entries(st).forEach(([k, s]) => { if (k === 'spy_benchmark') return; open += s.open || 0; closed += s.closed_trades || 0; if (s.win_pct != null && s.closed_trades) wins += Math.round(s.win_pct * s.closed_trades / 100); });
+      const days = Math.max(...lb.map((r) => r.days_live || 0)), spy = P.spy_since_start_pct;
+      return { go: 'wealth', say: 'Scorecard after ' + days + ' days, in virtual money. ' + (spy != null ? 'The S&P 500 is ' + (spy >= 0 ? 'up ' : 'down ') + qNum(Math.abs(spy), 1) + '% since we started. ' : '')
+        + ahead + ' of ' + lb.length + ' strategies are ahead of it. Best: ' + nm(best.strategy) + ', £100 is now £' + qNum(best.gbp100_now) + '. Weakest: ' + nm(worst.strategy) + ', £' + qNum(worst.gbp100_now) + '. '
+        + open + ' positions open, ' + (closed ? closed + ' closed, ' + wins + ' of them winners. ' : 'none closed yet. ') + 'Too early to judge: rankings mean little before 90 days.' };
     }
     if (/\b(?:wealth|net worth|my portfolio|my accounts?|business revenue)\b/.test(low) && !/\bopen|show|go to\b/.test(low))
       return { say: (PF.value != null ? 'You told me your portfolio is ' + pfMoney(PF.value, PF.cur) + ', so the 2% cap is ' + pfMoney(PF.value * 0.02, PF.cur) + ' a trade. ' : '') + 'No accounts are connected yet, so I hold no balances for you. The only portfolio figures are the paper strategies. Ask about the paper race.' };
