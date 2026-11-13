@@ -1687,8 +1687,10 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     let sp = null, ackT = 0;
     const out = (txt) => { if (say) { if (!sp) sp = cvStream(true); sp.push(txt, true); } else speak(txt, false); };
     if (!vt) chat.classList.add('open'); $('#hints').hidden = true; if (vt) capThink();
-    if (say) ackT = setTimeout(() => { if (!sp) cvAck('moment'); }, 900); // open questions take a few seconds: acknowledge at once
-    addMsg('u', text); turns.push({ role: 'user', content: text + (say ? '\n\n(Said aloud: the user will hear your answer. Two to four short spoken sentences, no lists, no symbols, numbers rounded.)' : '') });
+    let fastLine = false; try { fastLine = !!localStorage.getItem('caesar-groq'); } catch (e) { /* no storage */ }
+    const tAsk = Date.now();
+    if (say && !fastLine) ackT = setTimeout(() => { if (!sp) cvAck('moment'); }, 450); // open questions take a few seconds: acknowledge at once
+    addMsg('u', text); turns.push({ role: 'user', content: text + (say ? '\n\n(Said aloud in a live conversation: talk like a person, not a report. Answer in the first few words, use contractions, one to three short sentences, no lists or symbols, round the numbers. If it helps, end with one short question back.)' : '') });
     const bubble = addMsg('a', 'Thinking…'); setBusy(true); ctl = new AbortController();
     const convo = [{ role: 'user', content: deep ? rules() : rulesLean() }, ...turns.slice(deep ? -8 : -4)];
     // the list must end on a user turn and not start with two user turns the model reads as one: fine per the API
@@ -1696,6 +1698,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       const tl = deep ? toolList.slice(0, toolCap) : leanTools().slice(0, toolCap);
       const res = await sampleFn(convo, { ...(toolCap ? { tools: tl } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; if (vt) capSay(t, true); if (say) { clearTimeout(ackT); if (!sp) sp = cvStream(true); sp.push(t, false); } } });
       clearTimeout(ackT); if (vt) capSay(res.text);
+      if (say && !fastLine && Date.now() - tAsk > 6000) { let told = false; try { told = !!localStorage.getItem('cv-tip-fast'); localStorage.setItem('cv-tip-fast', '1'); } catch (e) { /* no storage */ } if (!told) capNote('That took ' + Math.round((Date.now() - tAsk) / 1000) + ' seconds because my free thinking line is slow. A free key from console.groq.com, pasted in Settings under Caesar\u2019s voice, brings open questions down to about a second.'); }
       bubble.textContent = res.text; turns.push({ role: 'assistant', content: res.text }); out(res.text);
     } catch (e) {
       clearTimeout(ackT);
@@ -2260,7 +2263,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
           try {
             const u = new SpeechSynthesisUtterance(String(text)), v = DEV.voice || DEV.pick();
             if (v) { u.voice = v; u.lang = v.lang; } else u.lang = 'en-GB';
-            u.rate = 0.98; u.pitch = 0.92; u.volume = 1;
+            const nat = /natural|neural|premium|enhanced|online|siri/i.test(String((v && v.name) || '')); u.rate = nat ? 1.04 : 1.0; u.pitch = nat ? 1 : 0.95; u.volume = 1; // v25: neural voices keep their own pitch
             u.onstart = () => { if (onstart) onstart(); }; u.onend = end; u.onerror = (ev) => { if (ev && ev.error === 'not-allowed') toast('Caesar · tap the page once, then I am allowed to speak'); end(); };
             wd = setTimeout(end, 6000 + String(text).length * 110); // some browsers never report the end
             if (speechSynthesis.paused) speechSynthesis.resume();
@@ -2283,6 +2286,11 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     return CV.tts && CV.rtf && CV.rtf <= GEORGE_MAX_RTF ? 'george' : 'device';
   }
   const cvWantGeorge = () => CV.mode === 'george' || !DEV.ok() || (CV.mode === 'auto' && !(CV.rtf > GEORGE_MAX_RTF));
+  function cvVoiceTip() { // once: say plainly when this browser only offers a basic, robotic British voice
+    const v = DEV.voice; if (!v || /natural|neural|premium|enhanced|online|siri/i.test(v.name)) return;
+    let told = false; try { told = !!localStorage.getItem('cv-tip-voice'); localStorage.setItem('cv-tip-voice', '1'); } catch (e) { return; }
+    if (!told) capNote('This browser only offers a basic British voice (' + v.name + '). For the most human voice, open the terminal in Microsoft Edge, which has Ryan, a natural British voice; on an iPhone, add an Enhanced British voice in Settings, Accessibility, Spoken Content, Voices.');
+  }
   function cvStarted() { // the first sound of an answer: only now does the screen say he is speaking
     if (!CV.prep) return; CV.prep = false; if (CV.st && CV.st.ackT) clearTimeout(CV.st.ackT); vsPaint(); paintState();
   }
@@ -2533,7 +2541,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function cvStream(keepAck) {
     cvHalt(keepAck); const my = CV.gen, eng = cvEngine();
     const st = { my, eng, sent: 0, n: 0, chars: 0, done: false, q: [], wake: null, first: true, cut: false, budget: cvBudget(eng), ackT: 0 };
-    CV.st = st; CV.busy = true; CV.prep = true; CV.spoken = ''; setSpeaking(true); cvCtx(); if (eng === 'device') DEV.prime();
+    CV.st = st; CV.busy = true; CV.prep = true; CV.spoken = ''; setSpeaking(true); cvCtx(); if (eng === 'device') { DEV.prime(); cvVoiceTip(); }
     if (eng === 'george') st.ackT = setTimeout(() => { if (CV.st === st && CV.prep && !CV.ack) cvAck('moment'); }, 650); // George is still being made: a short remembered phrase fills the gap
     const enqueue = (chunk) => { const item = { text: chunk, p: st.eng === 'device' ? Promise.resolve(null) : cvGen(chunk, my) }; item.p.catch(() => { /* reported by the runner */ }); st.q.push(item); if (st.wake) st.wake(); };
     st.finish = () => { st.done = true; if (st.wake) st.wake(); };
