@@ -1654,6 +1654,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     return [
       'You are Caesar, the chief strategist of Koochooloo Constellation, a personal intelligence and trading terminal, and its always-on assistant in the spirit of JARVIS: you know every data feed, you watch them for the user, you change the screen when asked, and you answer fast and precisely. You speak like an Oxford-educated chief strategist at a private bank: refined British English, calm, concise, warm but authoritative, never robotic, never a salesman. You are the black swan at the centre of the screen. Values: family first, truth before comfort, capital is sacred, patience, small steps.',
       'How you speak: ' + (deep ? 'Deep mode is on, so use up to six sentences, weigh the evidence for and against, and say what would change your mind.' : 'one idea per sentence and at most three short sentences, then offer one next step.') + ' Plain words; explain jargon the first time. Say "we", not "you should". Never say buy or sell; say research, watch, or "a clue, not a promise". No flattery and no exclamation marks; a dry aside now and then is fine. Answers may be read aloud: no tables, no lists longer than three items, no symbols spelled out.',
+      TOPICS,
       'Today is ' + new Date().toLocaleString('en-GB', { dateStyle: 'full', timeStyle: 'short' }) + ' (UK). ' + brainLine + ' Dashboard copy: ' + (live.mode === 'live' ? 'live' : live.mode === 'error' ? 'last good copy' : 'built-in snapshot') + ', built ' + ((LIVE && LIVE.generated) || '?') + '; prices ' + (ly.prices || '?') + '.' + noTools,
       'Your tools: brief (start here for any general question), stock (one company, everything), scan (screen the ranked list), markets, macro (with the economic calendar), crypto, news, sec_watch, paper (the £100 race), options, sentiment and data_health; the live connectors live_quote and company_news (Twelve Data) and crypto_live (CoinGecko) for anything the brain lacks or when fresher prices matter; the Congress and insider tools (ticker_detail, hot_buys, congress_recent, trader_detail, insider_activity, signals); and show, which changes the screen: home (the Command Centre with the swan), the trading terminal (deck, universe, hot, timeline), opportunities (the evidence-ranked Opportunity Engine), intelligence (the global map, macro, headlines, SEC watch), wealth, business or settings. Call a tool before quoting any number and mention how fresh it is when that matters. If a connector is not connected, say so in one sentence and use the brain.',
       'What the research found, which you must respect: every piece of stock evidence carries a tested label. Insider clusters had an edge only in smaller companies trading $1M to $20M a day; copying Congress and $250k+ insider buys showed no edge; everything else is untested attention. The research setup (a smaller company where 2 or more officers or directors each bought $25k+ within 30 days and operating cash flow beats reported profit) is the only setup with tested support, and it is still a clue to research, not a trade. A warning in a company\'s own SEC filing outranks any signal.',
@@ -1719,12 +1720,12 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     let sp = null, ackT = 0;
     const out = (txt) => { if (say) { if (!sp) sp = cvStream(true); sp.push(txt, true); } else speak(txt, false); };
     if (!vt) chat.classList.add('open'); $('#hints').hidden = true; if (vt) capThink();
-    let fastLine = false; try { fastLine = !!localStorage.getItem('caesar-groq'); } catch (e) { /* no storage */ }
-    const tAsk = Date.now();
-    if (say && !fastLine) ackT = setTimeout(() => { if (!sp) cvAck('moment'); }, 450); // open questions take a few seconds: acknowledge at once
-    addMsg('u', text); turns.push({ role: 'user', content: text + (say ? '\n\n(Said aloud in a live conversation: talk like a person, not a report. Answer in the first few words, use contractions, one to three short sentences, no lists or symbols, round the numbers. If it helps, end with one short question back.)' : '') });
+    let fastLine = !!lineUrl(); try { fastLine = fastLine || !!localStorage.getItem('caesar-groq'); } catch (e) { /* no storage */ }
+    const tAsk = Date.now(); // v27: no filler phrase while he thinks; he simply answers
+    addMsg('u', text); turns.push({ role: 'user', content: text });
     const bubble = addMsg('a', 'Thinking…'); setBusy(true); ctl = new AbortController();
-    const convo = [{ role: 'user', content: deep ? rules() : rulesLean() }, ...turns.slice(deep ? -8 : -4)];
+    const convo = [{ role: 'user', content: deep ? rules() : rulesLean() }, ...turns.slice(-8)];
+    if (say) convo[convo.length - 1] = { role: 'user', content: text + '\n\n(Said aloud in a live conversation: talk like a person, not a report. Answer in the first few words, use contractions, one to three short sentences, no lists or symbols, round the numbers. If it helps, end with one short question back.)' }; // only the newest turn carries the spoken-style note
     // the list must end on a user turn and not start with two user turns the model reads as one: fine per the API
     try {
       const tl = deep ? toolList.slice(0, toolCap) : leanTools().slice(0, toolCap);
@@ -2200,7 +2201,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const cvName = (CV_VOICES.find((v) => v[0] === CV.voice) || CV_VOICES[0])[1];
     vs.append(el('span', '', 'Speaking voice'), el('b', '', cvEngine() === 'device' ? 'Device British voice' + (DEV.voice ? ' · ' + DEV.voice.name.replace(/Microsoft |Google |\(.*?\)| - .*$/g, '').trim() : '') : cvName + ' · ' + (CV.tts ? 'ready' : CV.loading ? 'loading ' + CV.pct + '%' : CV.err ? 'could not load' : 'loads on first use')),
       el('span', '', 'George’s speed here'), el('b', '', CV.rtf ? CV.rtf.toFixed(1) + ' s to make 1 s of speech' + (CV.rtf > GEORGE_MAX_RTF ? ' · too slow to answer live' : ' · fast enough') : 'not measured yet'),
-      el('span', '', 'Listening'), el('b', '', !CC_WEB ? 'keyboard dictation' : SR && !CV.noSR ? 'browser speech' : 'Whisper, in this browser'),
+      el('span', '', 'Listening'), el('b', '', !CC_WEB ? 'keyboard dictation' : !vsRecFirst() ? 'browser speech' : lineUrl() ? 'recorder · Caesar’s line (fast)' : 'recorder · Whisper in this browser'),
+      el('span', '', 'Thinking'), el('b', '', !CC_WEB ? 'Claude' : (() => { let k = false; try { k = !!localStorage.getItem('caesar-groq'); } catch (e) { /* none */ } return k ? 'your own Groq key' : lineUrl() ? 'Caesar’s line (fast)' : 'free public line (slow)'; })()),
       el('span', '', 'Latest recorded briefing'), el('b', '', vb ? ukTime(vb.at) : 'none yet'));
     vc.append(vs); if (CV.err) vc.append(el('p', 'note', 'Voice: ' + CV.err)); else if (vx && vx.error) vc.append(el('p', 'note', vx.error));
     else vc.append(el('p', 'note', 'Free and open source (Kokoro): about 90 MB downloads once, then it is cached. No account, no tokens.'));
@@ -2212,7 +2214,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const kb = el('button', '', 'Save key'); kb.type = 'button'; kb.onclick = () => { const v = ki.value.trim(); if (!/^gsk_\w{20,}$/.test(v)) { toast('Caesar \u00b7 that does not look like a Groq key (it starts gsk_)'); return; } try { localStorage.setItem('caesar-groq', v); } catch (e) { /* no storage */ } toast('Caesar \u00b7 fast thinking on for this device'); renderSettings(); };
     const kx = el('button', '', 'Remove'); kx.type = 'button'; kx.onclick = () => { try { localStorage.removeItem('caesar-groq'); } catch (e) { /* none */ } renderSettings(); };
     kr.append(ki, kb); if (gkHas) kr.append(kx);
-    vc.append(el('p', 'note', 'Open questions: the free thinking line takes 20 to 50 seconds. A free key from console.groq.com makes it about a second. The key stays in this browser only and is never put in the page.'), kr);
+    vc.append(el('p', 'note', lineUrl() ? 'Open questions go through Caesar’s line and take about a second for everyone. A personal Groq key, if you add one, is used first on this device only.' : 'Open questions: until Caesar’s line is set up, the free public line takes 20 to 50 seconds. A free key from console.groq.com makes it about a second on this device. The key stays in this browser only and is never put in the page.'), kr);
     // two voices: George, and the device's own
     vc.lastChild.style.margin = '8px 0';
     vc.append(tog('Read answers aloud', voiceOn, () => cVoice.click()), tog('Speak critical alerts', alertsLoud, () => cAlerts.click()), tog('Deep mode: slower, fuller answers', deep, () => cDeep.click()));
@@ -2259,6 +2261,11 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   const VS = { on: false, state: 'off', mode: 'sr', rec: null, acc: '', cur: '', skip: 0, strip: null, timer: 0, tick: 0, winUntil: 0, fast: 0, nets: 0, stateAt: 0, settling: false, bye: false, ackDone: false, told: false, live: null, him: null, wake: true };
   let VOICE_TURN = false;
   const CV_SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const PL = (() => { // v27: the kind of device, for the right ears and the right help
+    const u = navigator.userAgent || '', ios = /iPhone|iPad|iPod/i.test(u) || (/Macintosh/.test(u) && (navigator.maxTouchPoints || 0) > 1);
+    return { ios, android: /Android/i.test(u), iosOther: ios && /CriOS|FxiOS|EdgiOS|OPiOS|OPT\/|YaBrowser|DuckDuckGo|GSA\//i.test(u),
+      inapp: /FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|Snapchat|TikTok|musical_ly|BytedanceWebview|Line\/|Twitter|Pinterest|KAKAOTALK|MicroMessenger|WhatsApp/i.test(u) || (/Android/i.test(u) && /;\s*wv\)/.test(u)) };
+  })();
   /* ===== v22: two voices, chosen by speed =====
      George (Kokoro) is made on the device. A modest processor needs about 2.5 seconds to make each second of his speech, so a live
      answer starts 10 to 20 seconds late there and the user hears dead air. Auto measures the device once and remembers it:
@@ -2515,7 +2522,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   async function cvPrefetch() {
     if (!CV.tts || !cvWantGeorge()) return;
     await cvAckWarm();
-    for (const t of [CV_ACK.moment, CV_ACK.sorry, CV_ACK.yes]) {
+    for (const t of [CV_ACK.yes, CV_ACK.sorry]) {
       if (CV.cache.has(t)) continue;
       if (!CV.tts) return; // retired meanwhile
       try { const raw = await CV.tts.generate(t, { speed: 0.95, gen: 0, pri: 0 }); cvNoteSpeed(raw); const a = cvTrim(raw); CV.cache.set(t, a); idbSet('ack:' + t, { a: a.audio, sr: a.sampling_rate }); } catch (e) { return; }
@@ -2585,7 +2592,6 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     cvHalt(keepAck); const my = CV.gen, eng = cvEngine();
     const st = { my, eng, sent: 0, n: 0, chars: 0, done: false, q: [], wake: null, first: true, cut: false, budget: cvBudget(eng), ackT: 0 };
     CV.st = st; CV.busy = true; CV.prep = true; CV.spoken = ''; setSpeaking(true); cvCtx(); if (eng === 'device') { DEV.prime(); cvVoiceTip(); }
-    if (eng === 'george') st.ackT = setTimeout(() => { if (CV.st === st && CV.prep && !CV.ack) cvAck('moment'); }, 650); // George is still being made: a short remembered phrase fills the gap
     const enqueue = (chunk) => { const item = { text: chunk, p: st.eng === 'device' ? Promise.resolve(null) : cvGen(chunk, my) }; item.p.catch(() => { /* reported by the runner */ }); st.q.push(item); if (st.wake) st.wake(); };
     st.finish = () => { st.done = true; if (st.wake) st.wake(); };
     st.push = (full, final) => {
@@ -2642,100 +2648,158 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     capOpen(); setTimeout(() => { try { vIn.focus(); } catch (e) { /* not ready */ } }, 0);
     if (!cvDictate.told) { cvDictate.told = true; capNote('Inside Claude the microphone is closed to pages, so speak through your keyboard: tap the microphone on your phone’s keyboard, press Windows + H on a PC, or press Fn twice on a Mac, then press Send and I will answer aloud. For fully hands-free talking, open the website terminal (Talk hands-free, above).'); }
   }
-  function cvAsr() {
+  function cvAsr() { // the in-browser ears, used only when Caesar's line is not available: a smaller model on phones
     if (!CV.asr) {
+      const small = PL.ios || PL.android || /Mobile/i.test(navigator.userAgent || '');
       CV.asr = import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.1/dist/transformers.min.js')
-        .then((T) => T.pipeline('automatic-speech-recognition', 'onnx-community/whisper-base.en', { dtype: 'q8', device: 'wasm' }));
+        .then((T) => T.pipeline('automatic-speech-recognition', small ? 'onnx-community/whisper-tiny.en' : 'onnx-community/whisper-base.en', { dtype: 'q8', device: 'wasm' }));
       CV.asr.catch(() => { CV.asr = null; });
     }
     return CV.asr;
   }
-  /* the fallback ears for browsers without speech recognition (Firefox): record, wait for a clear pause, then Whisper in the browser */
+  /* v27 the recorder ears, for every browser whose own speech recognition is missing, switched off or refused (Firefox, iPhone without
+     Siri, Chrome on iPhone, the browsers built into apps): record, notice the pause, then Caesar's line writes it down in about half a
+     second (Whisper in the browser if the line is not there). The microphone is released while he speaks, so phones play him loudly. */
   async function cvWhisper(followUp) {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { vsStop('This browser has no microphone access; type to me here.'); return; }
-    let stream; try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }); } catch (e) { vsStop('Allow the microphone for this site, then tap it again.'); return; }
-    const asrP = cvAsr(); let mr; try { mr = new MediaRecorder(stream); } catch (e) { stream.getTracks().forEach((t) => t.stop()); vsStop('This browser cannot record sound; type to me here.'); return; }
-    const chunks = [], ctx = cvCtx(), t0 = performance.now(); let an = null, spoke = false, quiet = 0;
+    if (CV.rec || !VS.on) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { vsStop(PL.inapp ? micHelp() : 'This browser cannot record sound, so voice is off here. Type to me below, or open this page in Chrome, Safari or Edge.'); return; }
+    CV.rec = { stop: () => { CV.recStop = true; } }; CV.recStop = false; // held while the microphone opens
+    let stream;
+    try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+    catch (e) { CV.rec = null; const n = (e && e.name) || ''; vsStop(/NotFound|Overconstrained/.test(n) ? 'I cannot find a microphone on this device. Type to me below.' : micHelp()); return; }
+    if (!VS.on || CV.recStop) { stream.getTracks().forEach((t) => t.stop()); CV.rec = null; if (VS.on) vsStop('Microphone off. Tap it when you want to talk.'); return; }
+    const viaLine = !!lineUrl() && lineOn(); const asrP = viaLine ? null : cvAsr();
+    let mr; try { mr = new MediaRecorder(stream, { audioBitsPerSecond: 32000 }); } catch (e1) { try { mr = new MediaRecorder(stream); } catch (e2) { stream.getTracks().forEach((t) => t.stop()); CV.rec = null; vsStop('This browser cannot record sound; type to me here.'); return; } }
+    const chunks = [], ctx = cvCtx(), t0 = performance.now(); let an = null, spoke = false, quiet = 0, loud = 0, floor = 0, talkMs = 0, lastT = t0;
     CV.rec = { stop: () => { try { if (mr.state !== 'inactive') mr.stop(); } catch (e) { /* stopped */ } } };
-    try { const n = ctx.createMediaStreamSource(stream); an = ctx.createAnalyser(); an.fftSize = 1024; n.connect(an); } catch (e) { an = null; }
-    const buf = new Float32Array(1024);
+    try { if (ctx && ctx.state === 'suspended') ctx.resume(); const n = ctx.createMediaStreamSource(stream); an = ctx.createAnalyser(); an.fftSize = 1024; n.connect(an); } catch (e) { an = null; }
+    const buf = new Float32Array(1024), needQuiet = viaLine ? 900 : 1200;
     const tick = () => {
-      if (mr.state === 'inactive') return; const now = performance.now();
-      if (an) { an.getFloatTimeDomainData(buf); let q = 0; for (let k = 0; k < buf.length; k++) q += buf[k] * buf[k]; const rms = Math.sqrt(q / buf.length);
-        if (rms > 0.018) { spoke = true; quiet = 0; } else if (spoke) { quiet = quiet || now; if (now - quiet > 1700) { CV.rec.stop(); return; } }
-        if (!spoke && now - t0 > (followUp ? 7000 : 10000)) { CV.rec.stop(); return; } }
-      if (now - t0 > 20000) { CV.rec.stop(); return; }
-      setTimeout(tick, 100);
+      if (mr.state === 'inactive') return; const now = performance.now(), dt = now - lastT; lastT = now;
+      if (an) {
+        an.getFloatTimeDomainData(buf); let q = 0; for (let k = 0; k < buf.length; k++) q += buf[k] * buf[k]; const rms = Math.sqrt(q / buf.length);
+        if (now - t0 < 300) floor = floor ? floor * 0.7 + rms * 0.3 : rms; // the room's own hum, measured first
+        const thr = Math.max(0.011, Math.min(0.06, floor * 2.6));
+        if (rms > thr) { loud += dt; quiet = 0; if (loud > 120) { spoke = true; talkMs += dt; } }
+        else { loud = 0; if (!spoke) floor = floor * 0.95 + rms * 0.05; else { quiet = quiet || now; if (now - quiet > needQuiet) { CV.rec.stop(); return; } } }
+        if (!spoke && now - t0 > (followUp ? 7000 : 10000)) { CV.rec.stop(); return; }
+      }
+      if (now - t0 > 25000) { CV.rec.stop(); return; }
+      setTimeout(tick, 60);
     };
     mr.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = async () => {
       stream.getTracks().forEach((t) => t.stop()); CV.rec = null; cvListening(false);
       if (!VS.on) return;
       if (an && !spoke) { vsStop(followUp ? 'Microphone off. Tap it when you want to talk.' : 'I did not hear anything. Tap the microphone and try again.'); return; }
-      body.classList.add('thinking'); cvStatus(CV.asr && !CV.asrReady ? 'Preparing my ears (first time only)…' : 'Understanding…');
+      body.classList.add('thinking'); cvStatus(viaLine ? 'Thinking…' : CV.asr && !CV.asrReady ? 'Preparing my ears (first time only)…' : 'Understanding…');
+      const blob = new Blob(chunks, { type: (mr.mimeType || 'audio/webm').split(';')[0] });
       try {
-        const AC = window.AudioContext || window.webkitAudioContext, ac = new AC({ sampleRate: 16000 });
-        const pcm = (await ac.decodeAudioData(await new Blob(chunks, { type: mr.mimeType }).arrayBuffer())).getChannelData(0); ac.close();
-        const asr = await asrP; CV.asrReady = true; const out = await asr(pcm);
-        body.classList.remove('thinking'); cvHeard((out && out.text) || '', followUp);
+        let text = viaLine ? await lineHear(blob) : null;
+        if (text === null) { // no line, or the line failed: the in-browser model
+          const AC = window.AudioContext || window.webkitAudioContext, ac = new AC({ sampleRate: 16000 });
+          const pcm = (await ac.decodeAudioData(await blob.arrayBuffer())).getChannelData(0); ac.close();
+          const asr = await (asrP || cvAsr()); CV.asrReady = true; const out = await asr(pcm); text = (out && out.text) || '';
+        }
+        body.classList.remove('thinking'); cvHeard(text, followUp, talkMs);
       } catch (e) { body.classList.remove('thinking'); paintState(); vsStop('I could not hear that clearly. Tap the microphone and try again.'); }
     };
-    cvListening(true); mr.start(); setTimeout(tick, 150);
+    cvListening(true); mr.start(); setTimeout(tick, 80);
   }
-  function cvHeard(text, followUp) {
-    const v = String(text || '').replace(/\s+/g, ' ').trim();
+  function cvHeard(text, followUp, talkMs) {
+    let v = String(text || '').replace(/\s+/g, ' ').trim();
+    if (/^[\s.,!?]*(?:thank you|thanks for watching|thanks|you|bye)?[\s.,!?]*$/i.test(v) && (talkMs || 0) < 700) v = ''; // what Whisper invents from a cough
     if (!v || /^\[?(blank_audio|silence|music)\]?$/i.test(v)) { vsStop(followUp ? 'Microphone off. Tap it when you want to talk.' : 'I did not catch that. Tap the microphone and try again.'); return; }
-    vsSay(v);
+    const cmd = v.replace(LEAD_RE, '').trim();
+    if (!cmd) { vsSet('listen'); cvAck('yes').then(() => { if (VS.on && VS.state === 'listen' && !CV.rec) cvWhisper(true); }); return; } // just “Caesar”
+    vsSay(cmd);
   }
-  /* the website's thinking: a free, keyless model (Pollinations) with the same tools Caesar has inside Claude */
+  /* v27 Caesar's line: a small Cloudflare Worker (worker/caesar-line.js) holds the fast key, so every visitor thinks in about a second and
+     is heard in about half a second. Its address is public, like any website; the key never leaves Cloudflare. */
+  const LINE0 = '';
+  function lineUrl() {
+    let u = ''; try { u = localStorage.getItem('caesar-line') || ''; } catch (e) { /* no storage */ }
+    u = String(u || LINE0).trim().replace(/\/+$/, '');
+    return /^https:\/\/[a-z0-9.-]+(?:\/[\w.~-]+)*$/i.test(u) ? u : '';
+  }
+  const LINE = { downUntil: 0, warmAt: 0, info: null };
+  const lineOn = () => !!lineUrl() && Date.now() > LINE.downUntil;
+  function lineWarm() { // open the connection while the user is still talking, so the first answer does not pay for it
+    const u = lineUrl(); if (!u || Date.now() - LINE.warmAt < 40000) return; LINE.warmAt = Date.now();
+    fetch(u + '/', { cache: 'no-store' }).then((r) => r.json()).then((j) => { LINE.info = j; }).catch(() => { /* reported on use */ });
+  }
+  async function lineHear(blob) { // the words in a recording, or null when the line cannot help
+    const u = lineUrl(); if (!u || !lineOn()) return null;
+    try {
+      const r = await fetch(u + '/hear', { method: 'POST', headers: { 'Content-Type': blob.type || 'audio/webm' }, body: blob });
+      if (!r.ok) { LINE.downUntil = Date.now() + (r.status === 429 ? 20000 : 60000); return null; }
+      const j = await r.json(); return String((j && j.text) || '');
+    } catch (e) { LINE.downUntil = Date.now() + 30000; return null; }
+  }
+  // market words: only these questions carry the brain's facts, so small talk stays quick and cheap
+  const MKT_RE = /\b(?:markets?|stocks?|shares?|equit\w*|prices?|pric\w+|trad\w*|invest\w*|portfolio|setups?|signals?|brief\w*|econom\w*|fed|central bank|rates?|inflation|crypto\w*|bitcoin|btc|ethereum|eth|solana|coins?|s ?(?:&|and) ?p|nasdaq|dow|ftse|index|indices|sectors?|earnings|insiders?|congress|sec|filings?|funds?|etfs?|bonds?|gilts?|yields?|gold|oil|dollar|pound|sterling|euro|yen|currenc\w*|forex|fx|news|headlines?|paper|race|regime|vix|fear|greed|bull\w*|bear\w*|rally|crash\w*|recession|gdp|jobs|payrolls?|unemployment|commodit\w*|futures|options?|calendar|terminal|brain|watchlist|opportunit\w*|wealth|money|today|this week)\b/i;
+  /* the website's thinking: Caesar's line when it is set up, your own key if you added one, else the free public line (slow) */
   function webSample() {
-    const API = 'https://text.pollinations.ai/openai';
-    // the free line allows one reply every 45 seconds and thinks for several seconds, so the page fetches the facts itself and asks once
+    const API = 'https://text.pollinations.ai/openai', GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
     const adCut = (t) => { const m = String(t).match(/\n+\s*(?:[-*_]{3,}\s*\n+)?[^\n]*pollinations[^\n]*/i); return (m ? String(t).slice(0, m.index) : String(t)).trim(); };
+    const readSSE = async (r, opts) => {
+      let content = '';
+      if (/event-stream/.test(r.headers.get('content-type') || '') && r.body && r.body.getReader) {
+        const reader = r.body.getReader(), dec = new TextDecoder(); let buf = '';
+        for (;;) {
+          const { done, value } = await reader.read(); if (done) break;
+          buf += dec.decode(value, { stream: true }); let i;
+          while ((i = buf.indexOf('\n')) >= 0) {
+            const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
+            if (line.slice(0, 5) !== 'data:') continue; const dd = line.slice(5).trim(); if (!dd || dd === '[DONE]') continue;
+            let j; try { j = JSON.parse(dd); } catch (e) { continue; }
+            const dl = j.choices && j.choices[0] && (j.choices[0].delta || j.choices[0].message);
+            if (dl && dl.content) { content += dl.content; if (opts.onText) opts.onText({ text: adCut(content), delta: dl.content }); } // the model’s private reasoning arrives separately and is never shown or spoken
+          }
+        }
+      } else { const j = await r.json(); content = String((j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || ''); }
+      return content;
+    };
     const f = async (input, opts = {}) => {
       const msgs = (Array.isArray(input) ? input : [{ role: 'user', content: String(input) }]).map((m, k) => ({ role: k === 0 && m.role === 'user' && /^You are Caesar/.test(m.content) ? 'system' : m.role, content: m.content }));
       const list = opts.tools || [], byName = Object.fromEntries(list.map((t) => [t.name, t]));
       const lastU = [...msgs].reverse().find((m) => m.role === 'user'), q = lastU ? String(lastU.content).replace(/\n\n\(Said aloud[\s\S]*$/, '') : '';
       const facts = [];
       const grab = async (name, args, cap) => { const t = byName[name]; if (!t) return; try { const o = await t.execute(args || {}); facts.push(name + ': ' + (typeof o === 'string' ? o : JSON.stringify(o)).slice(0, cap || 1500)); } catch (e) { /* not available on the website */ } };
-      await grab('brief', {}, 1300);
-      const sy = qSymbol(q); if (sy) await grab('stock', { symbol: sy }, 1800);
+      const sy = qSymbol(q);
+      if (sy || MKT_RE.test(q)) await grab('brief', {}, 1300);
+      if (sy) await grab('stock', { symbol: sy }, 1800);
       if (/\b(news|headlines?|stor(?:y|ies))\b/i.test(q)) await grab('news', { query: sy || '' }, 1200);
       if (/\b(crypto|bitcoin|btc|ethereum|eth|solana|coins?)\b/i.test(q)) await grab('crypto', {}, 1200);
       if (/\b(macro|inflation|fed|rates?|yields?|recession|gdp|jobs|unemployment|dollar|oil|gold)\b/i.test(q)) await grab('macro', {}, 1400);
       if (/\b(sectors?|index|indices|nasdaq|dow|futures|commodit\w*|currenc\w*)\b/i.test(q)) await grab('markets', {}, 1400);
-      const sys = msgs.filter((m) => m.role === 'system').map((m) => m.content).join('\n') + '\nFacts just fetched from the brain (quote numbers only from these; if a fact is missing, say you do not hold it):\n' + facts.join('\n');
+      const sys = msgs.filter((m) => m.role === 'system').map((m) => m.content).join('\n') + (facts.length
+        ? '\nFacts just fetched from the brain (quote market numbers only from these; if a figure is missing, say you do not hold it):\n' + facts.join('\n')
+        : '\nNo market data was fetched for this message. Answer from general knowledge; if it needs live market figures, say so in a few words.');
       let gk = null; try { gk = localStorage.getItem('caesar-groq'); } catch (e) { /* no storage */ }
       const convo2 = [{ role: 'system', content: sys }, ...msgs.filter((m) => m.role !== 'system' && m.role !== 'tool')];
-      const body = gk ? { model: 'openai/gpt-oss-20b', stream: true, max_completion_tokens: 700, reasoning_effort: 'low', messages: convo2 } // v24: about a second with your own free key
-        : { model: 'openai-fast', stream: true, max_tokens: 700, reasoning_effort: 'low', referrer: 'koochooloo', messages: convo2 };
+      const tries = [];
+      if (gk) tries.push({ kind: 'key', url: GROQ_URL, headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + gk }, body: { model: 'openai/gpt-oss-20b', stream: true, max_completion_tokens: 700, reasoning_effort: 'low', messages: convo2 } });
+      if (lineOn()) tries.push({ kind: 'line', url: lineUrl() + '/chat', headers: { 'Content-Type': 'application/json' }, body: { messages: convo2, max_tokens: 600 } });
+      tries.push({ kind: 'free', url: API, headers: { 'Content-Type': 'application/json' }, body: { model: 'openai-fast', stream: true, max_tokens: 700, reasoning_effort: 'low', referrer: 'koochooloo', messages: convo2 } });
       try {
-        const r = await fetch(gk ? 'https://api.groq.com/openai/v1/chat/completions' : API, { method: 'POST', headers: gk ? { 'Content-Type': 'application/json', Authorization: 'Bearer ' + gk } : { 'Content-Type': 'application/json' }, signal: opts.signal, body: JSON.stringify(body) });
-        if (gk && r.status === 401) throw Object.assign(new Error('key refused'), { code: 'busy_line', text: 'My fast thinking key was refused. Check it in Settings, under Caesar\u2019s voice.' });
-        if (gk && r.status === 429) throw Object.assign(new Error('busy'), { code: 'busy_line', text: 'My fast line needs a moment. Ask again in a few seconds.' });
-        if (r.status === 402 || r.status === 429) {
-          let wait = 45; try { const j = await r.json(), m = JSON.stringify(j).match(/retry after (\d+)\s*s/i); if (m) wait = +m[1]; } catch (e) { /* default wait */ }
-          throw Object.assign(new Error('line busy'), { code: 'busy_line', text: 'My free thinking line is busy for another ' + wait + ' seconds. Ask about prices, the market, setups, crypto, the calendar or the headlines, and I can answer from the data straight away.' });
-        }
-        if (!r.ok) throw Object.assign(new Error('answer service ' + r.status), { code: 'upstream_error' });
-        let content = '';
-        if (/event-stream/.test(r.headers.get('content-type') || '') && r.body && r.body.getReader) {
-          const reader = r.body.getReader(), dec = new TextDecoder(); let buf = '';
-          for (;;) {
-            const { done, value } = await reader.read(); if (done) break;
-            buf += dec.decode(value, { stream: true }); let i;
-            while ((i = buf.indexOf('\n')) >= 0) {
-              const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1);
-              if (line.slice(0, 5) !== 'data:') continue; const dd = line.slice(5).trim(); if (!dd || dd === '[DONE]') continue;
-              let j; try { j = JSON.parse(dd); } catch (e) { continue; }
-              const dl = j.choices && j.choices[0] && (j.choices[0].delta || j.choices[0].message);
-              if (dl && dl.content) { content += dl.content; if (opts.onText) opts.onText({ text: adCut(content), delta: dl.content }); } // the model’s private reasoning arrives separately and is never shown or spoken
-            }
+        for (let k = 0; k < tries.length; k++) {
+          const t = tries[k], last = k === tries.length - 1; let r;
+          try { r = await fetch(t.url, { method: 'POST', headers: t.headers, signal: opts.signal, body: JSON.stringify(t.body) }); }
+          catch (e) { if (e && e.name === 'AbortError') throw e; if (t.kind === 'line') LINE.downUntil = Date.now() + 30000; if (last) throw Object.assign(new Error('offline'), { code: 'upstream_error' }); continue; }
+          if (t.kind === 'key' && !r.ok) { if (r.status === 401 && !LINE.keyTold) { LINE.keyTold = true; toast('Caesar · your Groq key was refused; check it in Settings'); } continue; }
+          if (t.kind === 'line' && !r.ok) { LINE.downUntil = Date.now() + (r.status === 429 ? 20000 : 60000); continue; }
+          if (r.status === 402 || r.status === 429) {
+            let wait = 45; try { const j = await r.json(), m = JSON.stringify(j).match(/retry after (\d+)\s*s/i); if (m) wait = +m[1]; } catch (e) { /* default wait */ }
+            throw Object.assign(new Error('line busy'), { code: 'busy_line', text: 'My free thinking line is busy for another ' + wait + ' seconds. Ask about prices, the market, setups, crypto, the calendar or the headlines, and I can answer from the data straight away.' });
           }
-        } else { const j = await r.json(); content = String((j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || ''); }
-        const text = adCut(content); if (!text) throw Object.assign(new Error('empty'), { code: 'empty_completion' });
-        if (opts.onText) opts.onText({ text, delta: '' });
-        return { text, truncated: false };
+          if (!r.ok) throw Object.assign(new Error('answer service ' + r.status), { code: 'upstream_error' });
+          const text = adCut(await readSSE(r, opts));
+          if (!text) { if (!last && t.kind !== 'free') continue; throw Object.assign(new Error('empty'), { code: 'empty_completion' }); }
+          if (opts.onText) opts.onText({ text, delta: '' });
+          return { text, truncated: false };
+        }
+        throw Object.assign(new Error('no line'), { code: 'upstream_error' });
       } catch (e) { if (e && e.name === 'AbortError') throw Object.assign(new Error('cancelled'), { code: 'cancelled' }); throw e; }
     };
     f.limits = async () => ({ tools: { maxCount: 40 } });
@@ -3087,11 +3151,13 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     turns.push({ role: 'user', content: text }, { role: 'assistant', content: qa.say }); speak(qa.say);
   }
   /* ----- lean AI for everything else ----- */
+  const TOPICS = 'Talk about anything the user wants. Markets and money are your speciality, but sport, science, history, culture, books, film, music, food, travel, tech, work, family, relationships, ideas, jokes and small talk are all welcome; follow the conversation where the user takes it and never steer it back to markets unless asked. Use your general knowledge freely and say when something may be out of date; for live prices and market figures use only the facts or tools you are given. Decline only what would break the law or put people in danger, such as weapons, hacking, fraud, harming anyone or sexual content involving minors: one courteous sentence, then offer something nearby. For health, legal or tax questions give clear general information and suggest a professional when it matters.';
   function rulesLean() {
     const core = BR.parts.core;
-    return 'You are Caesar, chief strategist of Koochooloo Constellation, a market intelligence terminal. Speak refined, calm British English. At most three short sentences; plain words for new traders, explaining any jargon in a few words. Today is ' + new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) + ' UK. '
-      + (core ? 'Brain updated ' + core.updated + '; regime ' + ((core.regime || {}).level || '?') + '. ' : 'The brain is still loading. ')
-      + 'Call a tool before quoting any number. Use show to change the screen when asked. Evidence rules: only the research setup (smaller company, 2+ insiders each buying $25k+ in 30 days, cash flow above profit) and insider clusters in smaller companies have tested support; Congress copying and big insider buys showed no edge; everything else is attention. A warning in a company’s SEC filing outranks any signal. This is research, not financial advice: never say buy or sell, never promise returns. Wealth and Business have no accounts connected: never invent balances. No tables, no lists over three items, no exclamation marks.';
+    return 'You are Caesar, the voice of Koochooloo Constellation: a quick, warm, quietly witty British companion in the spirit of JARVIS, and a chief strategist when it comes to markets. Talk like a real person in a real conversation: natural, relaxed, refined British English with contractions, no lectures, no exclamation marks. Answer first, keep it short (one to three sentences unless asked for more), and explain any jargon in a few plain words. Today is ' + new Date().toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) + ' UK. '
+      + TOPICS + ' '
+      + (core ? 'Brain updated ' + core.updated + '; market regime ' + ((core.regime || {}).level || '?') + '. ' : 'The market brain is still loading. ')
+      + 'Use show to change the screen when asked. On money this is research, not financial advice: never tell the user to buy or sell a particular investment and never promise returns. Evidence rules for stocks: only the research setup (smaller company, 2+ insiders each buying $25k+ in 30 days, cash flow above profit) and insider clusters in smaller companies have tested support; Congress copying and big insider buys showed no edge; everything else is attention. A warning in a company’s SEC filing outranks any signal. Wealth and Business have no accounts connected: never invent balances. No tables, no lists over three items.';
   }
   const Q_LEAN = ['brief', 'stock', 'scan', 'markets', 'macro', 'crypto', 'news', 'show'].concat(window.claude ? ['live_quote'] : []); // the live quote connector exists only inside Claude
   function leanTools() {
@@ -3144,7 +3210,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (/\b(?:and|or|but|the|a|an|of|to|for|with|about|on|in|at|is|are|was|what|how|why|that|my|your|if|then|so|because|than|between|versus|compared|like|should|would|could|can|do|does|will|whether|from|into)$/i.test(cmd)) return 2200;  // an unfinished sentence: wait longer
     let fast = false; try { const r = caesarRoute(cmd); fast = (cmd.length < 140 && !!quickAnswer(r.text)) || (r.dest && r.nav && !r.rest); } catch (e) { /* the engine will decide */ }
     if (fast) return 700;
-    return words <= 2 ? 1200 : 1000; // v24: about a second of silence, like a person
+    return words <= 2 ? 1100 : 900; // v27: under a second of silence; if you carry on talking he hears the whole question
   }
   function vsPaint() {
     const on = VS.on, s = on ? VS.state : 'off';
@@ -3160,24 +3226,69 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function vsSet(state) { VS.state = state; VS.stateAt = Date.now(); vsPaint(); }
   function vsAbort() { const r = VS.rec; VS.rec = null; if (r) { r.onresult = r.onend = r.onerror = null; try { r.abort(); } catch (e) { /* closed */ } } }
+  /* v27: every phone gets a way to talk. Browsers whose own speech recognition is missing, switched off or refused move to the recorder
+     ears by themselves, and a blocked microphone gets instructions for that exact device. */
+  function vsRecFirst() { return !CV_SR || CV.noSR || (!!lineUrl() && (PL.iosOther || PL.inapp)); }
+  function micHelp() {
+    if (PL.inapp) return 'This app’s built-in browser is blocking the microphone. Open this page in ' + (PL.ios ? 'Safari' : 'Chrome') + ' (the ⋯ or share menu, then “Open in browser”) and talk to me there. You can also type below.';
+    if (PL.ios && !PL.iosOther) return 'The microphone is blocked. In Safari, tap the “aA” or page icon in the address bar, choose Website Settings, set Microphone to Allow, then tap the microphone again.';
+    if (PL.ios) return 'The microphone is blocked. Open the iPhone Settings app, find this browser, switch Microphone on, then come back and tap the microphone again.';
+    if (PL.android) return 'The microphone is blocked. Tap the icon to the left of the web address, choose Permissions, allow the microphone, then tap the microphone again.';
+    return 'The microphone is blocked. Click the icon to the left of the web address, allow the microphone for this site, then click the microphone again.';
+  }
+  const micState = () => (navigator.permissions && navigator.permissions.query ? navigator.permissions.query({ name: 'microphone' }).then((p) => p.state).catch(() => '') : Promise.resolve(''));
+  function vsMicRefused() { // refused by the person, or by the browser for its own reasons: the recorder tries once and explains if it fails
+    micState().then((st) => { if (!VS.on) return; if (st === 'denied') vsStop(micHelp()); else vsToRecorder(''); });
+  }
+  function vsWatch() { // speech recognition that never starts (some phones, some built-in browsers): use the recorder instead
+    if (VS.srAlive || !VS.on || VS.mode !== 'sr') return;
+    micState().then((st) => {
+      if (VS.srAlive || !VS.on || VS.mode !== 'sr') return;
+      if (st === 'prompt') { clearTimeout(VS.wd); VS.wd = setTimeout(vsWatch, 5000); return; } // still waiting for the person to allow it
+      vsToRecorder('Speech recognition did not start in this browser, so I am listening another way: speak, then pause.');
+    });
+  }
+  function vsToRecorder(msg) {
+    CV.noSR = true; clearTimeout(VS.wd); clearTimeout(VS.timer); vsAbort();
+    if (msg && !VS.recTold) { VS.recTold = true; capNote(msg + (lineUrl() ? '' : ' The first time, a small speech model loads (about 40 MB on a phone).')); }
+    if (!VS.on) return;
+    VS.mode = 'whisper'; vsPaint();
+    if ((VS.state === 'listen' || VS.state === 'wake') && !CV.rec) { vsSet('listen'); cvWhisper(false); } // while he thinks or speaks, he listens again when he has finished
+  }
+  function vsMergeable(region) { // more words arrived before he started answering: you had not finished
+    if (!VS.commitAt || Date.now() - VS.commitAt > 3000 || VS.mode !== 'sr' || (VS.state !== 'think' && VS.state !== 'speak')) return false;
+    if (String(CV.spoken || '').trim()) return false; // he has started speaking
+    const t = String(region || '').trim(); return t.length > 1 && !vsEcho(t);
+  }
+  function vsMerge() { // drop the half-question and hear the whole of it
+    clearTimeout(VS.timer); if (ctl) { try { ctl.abort(); } catch (e) { /* done */ } }
+    cvHalt(); VOICE_TURN = false; VS.commitAt = 0;
+    VS.skip = VS.commitFrom || 0; VS.strip = VS.commitStrip || null; VS.follow = !!VS.commitFollow;
+    if (VS.him && VS.him.isConnected && /think/.test(VS.him.className)) VS.him.remove(); VS.him = null;
+    if (VS.userRow && VS.userRow.isConnected) { VS.live = VS.userRow; VS.live.className = 'vyou live'; }
+    vsSet('listen');
+  }
   function vsRec() {
     if (!VS.on || VS.mode !== 'sr' || VS.rec || document.hidden) return;
     let r; try { r = new CV_SR(); } catch (e) { CV.noSR = true; return; }
     r.lang = 'en-GB'; r.continuous = true; r.interimResults = true; r.maxAlternatives = 1;
     const t0 = Date.now(); let got = false; VS.rec = r;
-    r.onresult = (ev) => { got = true; VS.fast = 0; VS.nets = 0; VS.cur = vsJoin(ev.results); vsEval(ev); };
+    r.onstart = r.onaudiostart = () => { VS.srAlive = true; clearTimeout(VS.wd); };
+    r.onresult = (ev) => { got = true; VS.srAlive = true; VS.fast = 0; VS.nets = 0; VS.cur = vsJoin(ev.results); vsEval(ev); };
     r.onerror = (ev) => {
       const e = ev && ev.error;
-      if (e === 'not-allowed' || e === 'service-not-allowed') vsStop('The microphone is blocked. Allow it for this site, then tap the microphone.');
-      else if (e === 'audio-capture') vsStop('I cannot find a microphone on this device.');
-      else if (e === 'network' && ++VS.nets >= 3) { CV.noSR = true; vsAbort(); VS.on = false; capNote('This browser’s speech service is not reachable, so I will listen the other way: tap the microphone, speak, then pause.'); vsStart(true); }
+      if (e === 'not-allowed') vsMicRefused();
+      else if (e === 'service-not-allowed' || e === 'language-not-supported') vsToRecorder(PL.ios && !PL.iosOther ? 'Speech recognition is switched off on this device (on iPhone and iPad it needs Siri turned on in Settings), so I am listening another way: speak, then pause.' : 'This browser cannot use its speech service here, so I am listening another way: speak, then pause.');
+      else if (e === 'audio-capture') vsStop('I cannot find a microphone on this device. Type to me below.');
+      else if (e === 'network' && ++VS.nets >= 3) vsToRecorder('This browser’s speech service is not reachable, so I am listening another way: speak, then pause.');
     };
     r.onend = () => {
       if (VS.rec === r) VS.rec = null;
       if (VS.cur) { VS.acc = (VS.acc + ' ' + VS.cur).trim(); VS.cur = ''; }
-      if (VS.acc.length > 700) { const cut = VS.acc.length - 350; VS.acc = VS.acc.slice(cut); VS.skip = Math.max(0, VS.skip - cut); }
+      if (VS.acc.length > 700) { const cut = VS.acc.length - 350; VS.acc = VS.acc.slice(cut); VS.skip = Math.max(0, VS.skip - cut); VS.commitFrom = Math.max(0, (VS.commitFrom || 0) - cut); }
       if (!VS.on || VS.mode !== 'sr') return;
       if (!got && Date.now() - t0 < 1500) VS.fast++;
+      if (VS.fast > 3 && !VS.srAlive) { vsToRecorder('Speech recognition keeps stopping in this browser, so I am listening another way: speak, then pause.'); return; }
       if (VS.fast > 10) { vsStop('The microphone keeps closing on this device. Tap it to try again, or type to me.'); return; }
       setTimeout(vsRec, Math.min(2500, 120 + VS.fast * 250));
     };
@@ -3190,10 +3301,12 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       const last = ev && ev.results && ev.results[ev.results.length - 1], seg = String((last && last[0] && last[0].transcript) || '').trim();
       if (STOP_RE.test(seg)) { vsInterrupt(); return; }
       const we = vsWakeEnd(region);
-      if (we < 0) return;
-      const a = region.slice(we).replace(/^[\s,.:;!?-]+/, '');
-      if (a.split(/\s+/).filter(Boolean).length < 2 || vsEcho(a)) return;
-      vsInterrupt(); VS.skip += we; VS.strip = null; VS.follow = false; vsSet('listen');
+      if (we < 0) { if (!vsMergeable(region)) return; vsMerge(); } // you had not finished: hear the whole question as one
+      else {
+        const a = region.slice(we).replace(/^[\s,.:;!?-]+/, '');
+        if (a.split(/\s+/).filter(Boolean).length < 2 || vsEcho(a)) return;
+        vsInterrupt(); VS.skip += we; VS.strip = null; VS.follow = false; vsSet('listen');
+      }
     } else if (s === 'wake') {
       const we = vsWakeEnd(region); if (we < 0) return;
       VS.skip += we; VS.strip = null; VS.ackDone = false; VS.follow = false; cvChime(); vsSet('listen'); capOpen();
@@ -3201,7 +3314,9 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     VS.winUntil = Date.now() + 14000;
     const cmd = vsCmdOf(full); clearTimeout(VS.timer);
     if (!cmd) { VS.timer = setTimeout(vsWakeOnly, 900); return; }
-    capLive(cmd); VS.timer = setTimeout(vsCommit, vsEndMs(cmd));
+    let ms = vsEndMs(cmd); const lr = ev && ev.results && ev.results[ev.results.length - 1];
+    if (lr && lr.isFinal && ms <= 1200 && cmd.split(/\s+/).length >= 3) ms = Math.min(ms, 300); // the recogniser has closed the phrase: no need to wait out the silence
+    capLive(cmd); VS.timer = setTimeout(vsCommit, ms);
   }
   function vsWakeOnly() { // you said only “Caesar”: answer with a remembered “Yes?”
     if (!VS.on || VS.state !== 'listen' || VS.ackDone || vsCmdOf(vsFull())) return;
@@ -3213,6 +3328,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (cmd.length < 2) return;
     if (Date.now() - CV.spokenEnd < 5000 && vsEcho(cmd)) { VS.skip = full.length; return; } // only his own voice
     if (VS.follow && !vsPlausible(cmd)) { VS.skip = full.length; VS.strip = null; if (VS.live && VS.live.isConnected) VS.live.remove(); VS.live = null; return; } // a cough or a clatter, not a question
+    VS.commitAt = Date.now(); VS.commitFrom = VS.skip; VS.commitStrip = VS.strip; VS.commitFollow = VS.follow; VS.userRow = VS.live && VS.live.isConnected ? VS.live : null;
     VS.skip = full.length; VS.strip = null; vsSay(cmd);
   }
   function vsSay(cmd) {
@@ -3224,7 +3340,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   function vsInterrupt() {
     clearTimeout(VS.timer); if (ctl) { try { ctl.abort(); } catch (e) { /* done */ } }
     cvHalt(); stopVoice(); VS.settling = false; VS.skip = vsFull().length; VS.strip = null; VS.winUntil = Date.now() + 14000; VOICE_TURN = false;
-    VS.follow = true; if (VS.on) vsSet('listen');
+    VS.follow = true; VS.commitAt = 0; if (VS.on) { vsSet('listen'); if (VS.mode === 'whisper' && !CV.rec) cvWhisper(true); }
   }
   function vsIdle() { // he has finished: after a short pause for the last echoes to fade, he listens again
     if (VS.settling) return; VS.settling = true; const bye = VS.bye; VS.bye = false;
@@ -3251,13 +3367,15 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     capOpen(); stopVoiceClips(); cvHalt();
     VS.on = true; VS.follow = false; VS.fast = 0; VS.nets = 0; VS.acc = ''; VS.cur = ''; VS.skip = 0; VS.strip = null; VS.settling = false; VS.bye = false; VS.winUntil = Date.now() + (active ? 14000 : 0);
     try { localStorage.setItem('cv-hands', '1'); } catch (e) { /* convenience only */ }
-    if (!VS.told) { VS.told = true; capNote('I am listening. Say “Caesar”, then ask, and pause when you have finished. Chrome and Edge send what the microphone hears to their speech service while it is on; tap the microphone to switch it off. You can also type below.'); }
-    if (!CV_SR || CV.noSR) { VS.mode = 'whisper'; vsSet('listen'); cvWhisper(false); }
-    else { VS.mode = 'sr'; vsSet(active ? 'listen' : 'wake'); vsRec(); }
+    lineWarm(); const recFirst = vsRecFirst();
+    if (!VS.told) { VS.told = true; capNote(recFirst ? 'I am listening: speak, then pause, and I will answer. ' + (lineUrl() ? 'What you say is sent to Caesar’s line to be written down. ' : '') + 'Tap the microphone to switch it off. You can also type below.'
+      : 'I am listening. Ask away and pause when you have finished' + (VS.wake ? ', or say “Caesar” first' : '') + '. Your browser’s speech service hears the microphone while it is on; tap the microphone to switch it off. You can also type below.'); }
+    if (recFirst) { VS.mode = 'whisper'; vsSet('listen'); cvWhisper(false); }
+    else { VS.mode = 'sr'; vsSet(active ? 'listen' : 'wake'); vsRec(); clearTimeout(VS.wd); if (!VS.srAlive) VS.wd = setTimeout(vsWatch, 4000); }
     clearInterval(VS.tick); VS.tick = setInterval(vsTick, 250);
   }
   function vsStop(msg) {
-    VS.on = false; clearTimeout(VS.timer); clearInterval(VS.tick); vsAbort(); VS.acc = VS.cur = ''; VS.skip = 0; VS.live = null;
+    VS.on = false; clearTimeout(VS.timer); clearTimeout(VS.wd); clearInterval(VS.tick); vsAbort(); VS.commitAt = 0; VS.acc = VS.cur = ''; VS.skip = 0; VS.live = null;
     try { localStorage.setItem('cv-hands', '0'); } catch (e) { /* convenience only */ }
     if (CV.rec && CV.rec.stop) { const r = CV.rec; CV.rec = null; r.stop(); }
     vsSet('off'); if (msg) capNote(msg);
