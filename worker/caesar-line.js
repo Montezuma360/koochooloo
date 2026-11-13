@@ -5,9 +5,10 @@
  *   POST /hear  raw audio (webm, mp4/m4a, ogg, wav)       -> {"text": "what you said"}
  *   GET  /                                                  -> {"ok": true, ...} (a health check; also warms the line)
  *
- * What it needs (set in the Cloudflare dashboard, never in this file)
- *   GROQ_KEY  a secret: your free key from console.groq.com (starts gsk_). Thinking in about a second, ears in about half a second.
- *   AI        optional binding to Workers AI: the free backup when Groq's daily allowance is used up.
+ * What it needs: nothing but a free Cloudflare account. The "Deploy to Cloudflare" button sets everything up:
+ *   AI        the Workers AI binding (in wrangler.jsonc): free thinking and ears, about 10,000 "neurons" a day, roughly 800 short answers.
+ *   GROQ_KEY  optional secret, added later in the dashboard (Settings, Variables and Secrets): a free key from console.groq.com
+ *             (starts gsk_) makes answers even quicker and adds Groq's own free daily allowance. Never put a key in this file.
  *
  * Safety
  *   - The key lives only in Cloudflare's encrypted secrets. Visitors never see it.
@@ -121,7 +122,9 @@ async function hear(req, env, h) {
     if (r.ok) { const j = await r.json(); return json({ text: String((j && j.text) || '').trim(), by: 'groq' }, 200, h); }
   }
   if (env.AI) {
-    const j = await env.AI.run(CF_EARS, { audio: b64(buf), language: 'en', initial_prompt: EAR_HINT });
+    let j; // the audio as base64; if this model build wants the raw body and its type instead, send it that way
+    try { j = await env.AI.run(CF_EARS, { audio: b64(buf), language: 'en', initial_prompt: EAR_HINT, vad_filter: true }); }
+    catch (e) { j = await env.AI.run(CF_EARS, { audio: { body: new Uint8Array(buf), contentType: type }, language: 'en', initial_prompt: EAR_HINT }); }
     return json({ text: String((j && j.text) || '').trim(), by: 'cloudflare' }, 200, h);
   }
   return json({ error: 'busy' }, 429, { ...h, 'Retry-After': '20' });

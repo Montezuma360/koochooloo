@@ -1,0 +1,9 @@
+// Caesar's line: deployed by the "Deploy to Cloudflare" button. Free plan, no payment card needed.
+{
+  "name": "caesar-line",
+  "main": "caesar-line.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "ai": { "binding": "AI" },
+  "observability": { "enabled": true }
+}
