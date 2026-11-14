@@ -411,7 +411,12 @@ body.speaking .ripples i, body.thinking .ripples i { animation-duration: 2.4s; b
 body.listening .swanBtn::before { box-shadow: inset 0 0 0 1.5px rgba(220, 194, 140, 0.85), inset 0 0 34px 6px rgba(0, 0, 0, 0.5); }
 .swanBtn::after { inset: -50%; border-radius: 0; background: radial-gradient(closest-side, rgba(220, 194, 140, 0.13), rgba(220, 194, 140, 0) 70%); mix-blend-mode: normal; animation: sheen 16s ease-in-out infinite alternate; will-change: transform; z-index: 2; }
 @keyframes sheen { from { transform: translate(-24%, -20%); } to { transform: translate(24%, 8%); } }
-.swanBtn .tapHint { z-index: 4; }
+.swanBtn .tapHint { z-index: 4; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9); }
+@media (hover: none) { .swanBtn .tapHint { opacity: 0.92; } body.listening .swanBtn .tapHint, body.speaking .swanBtn .tapHint, body.thinking .swanBtn .tapHint { opacity: 0; } }
+/* v31: the ring glows with your voice, so you can see that Caesar hears you */
+body.listening .swanBtn::before { box-shadow: inset 0 0 0 calc(1.5px + var(--lvl, 0) * 3px) rgba(220, 194, 140, calc(0.6 + var(--lvl, 0) * 0.4)), inset 0 0 34px 6px rgba(0, 0, 0, 0.5); transition: box-shadow 0.08s; }
+body.listening.hearing .swanBtn::before { box-shadow: inset 0 0 0 3px rgba(236, 210, 150, 0.95), inset 0 0 34px 6px rgba(0, 0, 0, 0.5); }
+body.listening.hearing #vMic { box-shadow: 0 0 0 3px rgba(220, 194, 140, 0.55), 0 0 24px rgba(220, 194, 140, 0.35); }
 .swanBtn { background: #020202; box-shadow: 0 0 0 1px rgba(184, 151, 90, 0.42), 0 0 50px rgba(0, 0, 0, 0.7); }
 .swanBtn .swanArt { animation: swimNear 11s ease-in-out infinite alternate; transform-origin: 50% 80%; will-change: transform; }
 .swanBob { position: absolute; inset: 0; transform-origin: 50% 80%; animation: swimBob 3.4s ease-in-out infinite; will-change: transform; }
@@ -1739,12 +1744,17 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const tAsk = Date.now(); // v27: no filler phrase while he thinks; he simply answers
     addMsg('u', text); turns.push({ role: 'user', content: text });
     const bubble = addMsg('a', 'Thinking…'); setBusy(true); ctl = new AbortController();
+    let gotText = false; const thinkT = setInterval(() => { // v31: show progress, so a wait never looks like a fault
+      if (gotText) { clearInterval(thinkT); return; } const secs = Math.round((Date.now() - tAsk) / 1000); if (secs < 2) return;
+      const msg = 'Thinking… ' + secs + ' s' + (!fastLine && secs >= 6 ? ' (free line)' : '');
+      if (vt) { if (VS.him && VS.him.isConnected && /think/.test(VS.him.className)) VS.him.textContent = msg; cvStatus(msg); } else bubble.textContent = msg;
+    }, 1000);
     const convo = [{ role: 'user', content: deep ? rules() : rulesLean() }, ...turns.slice(-8)];
     if (say) convo[convo.length - 1] = { role: 'user', content: text + '\n\n(Said aloud in a live conversation: talk like a person, not a report. Answer in the first few words, use contractions, one to three short sentences, no lists or symbols, round the numbers. Only end with a question if you truly need an answer.)' }; // only the newest turn carries the spoken-style note
     // the list must end on a user turn and not start with two user turns the model reads as one: fine per the API
     try {
       const tl = deep ? toolList.slice(0, toolCap) : leanTools().slice(0, toolCap);
-      const res = await sampleFn(convo, { ...(toolCap ? { tools: tl } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; if (vt) capSay(t, true); if (say) { clearTimeout(ackT); if (!sp) sp = cvStream(true); sp.push(t, false); } } });
+      const res = await sampleFn(convo, { ...(toolCap ? { tools: tl } : {}), modelTier: deep ? 'default' : 'quick', signal: ctl.signal, onText: ({ text: t }) => { gotText = true; bubble.textContent = t; msgs.scrollTop = msgs.scrollHeight; if (vt) capSay(t, true); if (say) { clearTimeout(ackT); if (!sp) sp = cvStream(true); sp.push(t, false); } } });
       clearTimeout(ackT); if (vt) capSay(res.text);
       if (say && !fastLine && Date.now() - tAsk > 6000) { let told = false; try { told = !!localStorage.getItem('cv-tip-fast'); localStorage.setItem('cv-tip-fast', '1'); } catch (e) { /* no storage */ } if (!told) capNote('That took ' + Math.round((Date.now() - tAsk) / 1000) + ' seconds because my free thinking line is slow. A free key from console.groq.com, pasted in Settings under Caesar\u2019s voice, brings open questions down to about a second.'); }
       bubble.textContent = res.text; turns.push({ role: 'assistant', content: res.text }); out(res.text);
@@ -1754,7 +1764,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       else { bubble.remove(); turns.pop(); }
       if (e && e.code !== 'cancelled' && !(e && e.text)) { const ec = Object.prototype.hasOwnProperty.call(errCopy, e.code) ? errCopy[e.code] : errCopy.upstream_error; if (ec) { addMsg('a err', ec); if (vt) capSay(ec); out(ec); } }
       if (e && (e.code === 'not_granted' || e.code === 'sampling_disabled')) { orb.disabled = true; }
-    } finally { clearTimeout(ackT); if (sp && !sp.done) sp.finish(); setBusy(false); ctl = null; if (!orb.disabled && !vt) cIn.focus(); }
+    } finally { clearTimeout(ackT); gotText = true; clearInterval(thinkT); if (sp && !sp.done) sp.finish(); setBusy(false); ctl = null; if (!orb.disabled && !vt) cIn.focus(); }
   }
   window.__ask = ask; // used by the hot-row click through askOrb below
   function askOrb(q) { if (!VOICE_TURN) chat.classList.add('open'); orb.classList.remove('alert'); if (!sampleFn) { return; } ask(q); }
@@ -1860,7 +1870,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       nod.append(h0, el('i', 'blink l'), el('i', 'blink r')); head.append(nod); bob.append(body0, head); art.append(bob);
       const water = el('span', 'water'); water.innerHTML = '<i></i><i></i><i></i><b class="wk l"></b><b class="wk r"></b><s></s>'; art.append(water);
     } else art.innerHTML = DRAWN_SWAN;
-    sb.prepend(art); sb.append(el('span', 'tapHint', CC_WEB ? 'Speak to Caesar' : 'Ask Caesar'));
+    const touch = !!(window.matchMedia && matchMedia('(hover: none)').matches);
+    sb.prepend(art); sb.append(el('span', 'tapHint', CC_WEB ? (touch ? 'Tap to talk' : 'Speak to Caesar') : 'Ask Caesar'));
     sb.onclick = () => {
       if (CV.busy || VOICE.playing) { cvHalt(); stopVoice(); return; }
       if (CC_WEB) { caesarListen(false); return; }
@@ -2706,15 +2717,16 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const chunks = [], ctx = cvCtx(), t0 = performance.now(); let an = null, spoke = false, quiet = 0, loud = 0, floor = 0, talkMs = 0, lastT = t0;
     CV.rec = { stop: () => { try { if (mr.state !== 'inactive') mr.stop(); } catch (e) { /* stopped */ } } };
     try { if (ctx && ctx.state === 'suspended') ctx.resume(); const n = ctx.createMediaStreamSource(stream); an = ctx.createAnalyser(); an.fftSize = 1024; n.connect(an); } catch (e) { an = null; }
-    const buf = new Float32Array(1024), needQuiet = viaLine ? 900 : 1200;
+    const buf = new Float32Array(1024), needQuiet = viaLine ? 900 : 1200, lvlEl = document.getElementById('ccSwan');
     const tick = () => {
       if (mr.state === 'inactive') return; const now = performance.now(), dt = now - lastT; lastT = now;
       if (an) {
         an.getFloatTimeDomainData(buf); let q = 0; for (let k = 0; k < buf.length; k++) q += buf[k] * buf[k]; const rms = Math.sqrt(q / buf.length);
         if (now - t0 < 300) floor = floor ? floor * 0.7 + rms * 0.3 : rms; // the room's own hum, measured first
         const thr = Math.max(0.011, Math.min(0.06, floor * 2.6));
-        if (rms > thr) { loud += dt; quiet = 0; if (loud > 120) { spoke = true; talkMs += dt; } }
-        else { loud = 0; if (!spoke) floor = floor * 0.95 + rms * 0.05; else { quiet = quiet || now; if (now - quiet > needQuiet) { CV.rec.stop(); return; } } }
+        if (lvlEl) lvlEl.style.setProperty('--lvl', Math.min(1, rms / (thr * 5)).toFixed(2));
+        if (rms > thr) { loud += dt; quiet = 0; if (loud > 120) { spoke = true; talkMs += dt; body.classList.add('hearing'); } }
+        else { loud = 0; if (!spoke) floor = floor * 0.95 + rms * 0.05; else { quiet = quiet || now; if (now - quiet > 250) body.classList.remove('hearing'); if (now - quiet > needQuiet) { CV.rec.stop(); return; } } }
         if (!spoke && now - t0 > (followUp ? 7000 : 10000)) { CV.rec.stop(); return; }
       }
       if (now - t0 > 25000) { CV.rec.stop(); return; }
@@ -2722,7 +2734,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     };
     mr.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = async () => {
-      stream.getTracks().forEach((t) => t.stop()); CV.rec = null; cvListening(false);
+      stream.getTracks().forEach((t) => t.stop()); CV.rec = null; cvListening(false); body.classList.remove('hearing'); if (lvlEl) lvlEl.style.setProperty('--lvl', '0');
       if (!VS.on) return;
       if (an && !spoke) { vsStop(followUp ? 'Microphone off. Tap it when you want to talk.' : 'I did not hear anything. Tap the microphone and try again.'); return; }
       body.classList.add('thinking'); cvStatus(viaLine ? 'Thinking…' : CV.asr && !CV.asrReady ? 'Preparing my ears (first time only)…' : 'Understanding…');
@@ -3085,9 +3097,36 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const day = ds[0].date, today = ds.filter((d) => d.date === day), n = today.filter((d) => d.decision === 'TRADE').length;
     return { go: 'wealth', say: 'Latest paper decisions, ' + day + ': ' + n + ' bought, ' + (today.length - n) + ' skipped. For example, it ' + today.slice(0, 2).map(why).join(' And it ') + ' Ask why it skipped or bought a stock by name.' };
   }
+  const JOKES = ['Why don’t swans day-trade? We prefer to keep our feathers unruffled.', 'I asked the market for a sign. It gave me a candlestick and a shrug.',
+    'My favourite exercise is a balanced portfolio: very little running, plenty of patience.', 'Bulls make money, bears make money, and swans simply glide past both, looking unbothered.',
+    'I tried to time the market once. The market asked me to stop calling.'];
+  function smallTalk(low, core) { // v31: what people say first, answered at once
+    const c = low.replace(/^(?:(?:hey|hi|hello|ok|okay|oi)\s+)?(?:caesar|cesar|ceasar)[,!.]?\s*/, '').replace(/[,]?\s*(?:caesar|cesar|mate|sir|please)$/, '').trim();
+    const lv = core && core.regime && core.regime.level ? String(core.regime.level).replace(/-/g, ' ') : '';
+    if (/^(?:hi|hello|hey|hiya|good (?:morning|afternoon|evening|day)|morning|evening|afternoon|greetings|yo|hey there|hello there)$/.test(c) || (!c && /caesar|cesar/.test(low)))
+      return { say: greet() + ' What shall we look at? I can brief you, check a price, or talk through anything on your mind.' };
+    if (/^(?:can you hear me|are you there|are you listening|testing(?: testing)?(?: one two(?: three)?)?|test|hello can you hear me|is this working|are you working)$/.test(c))
+      return { say: 'Loud and clear. Ask me anything: the markets, a company, or whatever is on your mind.' };
+    if (/^(?:how are you(?: doing)?(?: today)?|how(?:'s| is) it going|how are things|how do you do|you (?:ok|alright|good)|how have you been)$/.test(c))
+      return { say: 'Very well, thank you.' + (lv ? ' The market is in ' + lv + ' and I am watching every feed.' : '') + ' How can I help?' };
+    if (/^(?:who are you|what are you|who is caesar|what(?:'s| is) your name|introduce yourself|tell me about yourself|what do you do)$/.test(c))
+      return { say: 'I am Caesar, the chief strategist of Koochooloo Constellation. I watch the markets, insider and Congress filings, macro and crypto for you, and you can talk to me about anything. Say brief me to start.' };
+    if (/^(?:what(?:'s| is) the time|what time is it|time(?: please)?|what time is it now)$/.test(c)) {
+      const now = new Date(), ny = now.toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' });
+      return { say: 'It is ' + now.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit' }) + ' here and ' + ny + ' in New York, where the stock market is ' + (usSession(now).open ? 'open.' : 'shut.') };
+    }
+    if (/^(?:what(?:'s| is) (?:the )?date(?: today)?|what day is it(?: today)?|what(?:'s| is) today(?:'s date)?|what is the day)$/.test(c))
+      return { say: 'Today is ' + new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '.' };
+    if (/\b(?:tell me a joke|another joke|a joke|make me laugh|say something funny|something funny)\b/.test(c) || c === 'joke') { JOKES.k = ((JOKES.k || 0) + 1) % JOKES.length; return { say: JOKES[JOKES.k] }; }
+    if (/^(?:thanks|thank you|thank you very much|cheers|nice one|great|perfect|brilliant|lovely|good job|well done|that'?s great)$/.test(c)) return { say: 'My pleasure.' };
+    if (/\b(?:weather|is it (?:going to )?rain\w*|temperature outside)\b/.test(c) && !/\b(?:market|stocks?|economy|earnings)\b/.test(c))
+      return { say: 'I do not have a live weather feed, I am afraid. I can tell you how the markets are faring instead.' };
+    return null;
+  }
   function quickAnswer(raw) {
     const t = String(raw || '').trim(), low = t.toLowerCase().replace(/[?.!]+$/, '');
     const core = BR.parts.core, rg = (core && core.regime) || {}, fg = (core && core.fear_greed) || {};
+    const stk = smallTalk(low, core); if (stk) return stk;
     if (/^(?:help|what can (?:you|i) (?:do|ask|say)|how do (?:i|you) (?:use|work)|commands)\b/.test(low))
       return { say: 'Ask me anything about the markets. Try: brief me; how is the market; what is Fear and Greed; price of Nvidia; any setups today; biggest movers; how is Bitcoin; what is on the calendar; latest headlines; or what does RSI mean. I also keep a watchlist and check our rules: say add Nvidia to my watchlist, what is on my watchlist, set my portfolio to 100 pounds, or order ticket for Nvidia. Say open wealth, or opportunities, to change rooms, and stop to quiet me.' };
     const gq = low.match(/^(?:what(?:'s| is| are| does)|explain|define|tell me what|meaning of)\b/);
@@ -3179,7 +3218,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const boxed = from === 'voice' || from === 'box' || from === 'home', spoken = from === 'voice' || (from === 'box' && (VS.on || voiceOn));
     if (qa.go && boxed && qa.go !== view.id) go(qa.go, true);
     if (qa.focus && boxed) { try { focusStock(qa.focus); } catch (e) { /* not on screen */ } }
-    if (boxed) { capUser(text); capSay(qa.say); speak(qa.say, spoken); return; }
+    if (boxed) { capUser(text); capSay(qa.say); turns.push({ role: 'user', content: text }, { role: 'assistant', content: qa.say }); speak(qa.say, spoken); return; }
     chat.classList.add('open'); $('#hints').hidden = true; addMsg('u', text); addMsg('a', qa.say);
     turns.push({ role: 'user', content: text }, { role: 'assistant', content: qa.say }); speak(qa.say);
   }
@@ -3240,6 +3279,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function vsEndMs(cmd) { // v28: how long to wait in silence before deciding you have finished: patient, like a person who lets you finish
     const c = cmd.trim(), words = c.split(/\s+/).length;
+    try { if (smallTalk(c.toLowerCase().replace(/[?.!]+$/, ''), BR.parts.core)) return 1000; } catch (e) { /* not small talk */ } // v31: a complete greeting or 'what is the weather like' needs no long wait
     if (/\b(?:and|or|but|the|a|an|of|to|for|with|about|on|in|at|is|are|was|were|what|how|why|when|where|which|who|that|this|my|your|our|their|if|then|so|because|than|between|versus|vs|compared|like|should|would|could|can|do|does|did|will|whether|from|into|also|plus|um|uh|er|erm)[,]?$/i.test(c)) return 2500; // an unfinished sentence
     if (/\?$/.test(c) && words >= 3) return 1000; // the recogniser heard a finished question (iPhone adds the question mark)
     let fast = false; try { const r = caesarRoute(c); fast = (c.length < 60 && !!quickAnswer(r.text)) || (r.dest && r.nav && !r.rest); } catch (e) { /* the engine will decide */ }
@@ -3325,6 +3365,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const t0 = Date.now(); let got = false; VS.rec = r;
     r.onstart = () => { VS.srAlive = true; clearTimeout(VS.wd); vlog('recogniser on'); };
     r.onaudiostart = () => { VS.srAlive = true; clearTimeout(VS.wd); };
+    r.onspeechstart = () => body.classList.add('hearing'); r.onspeechend = () => body.classList.remove('hearing');
     r.onresult = (ev) => { got = true; VS.srAlive = true; VS.fast = 0; VS.nets = 0; VS.cur = vsJoin(ev.results); const lr = ev.results && ev.results[ev.results.length - 1]; if (lr && lr.isFinal) vlog('phrase: “' + String(lr[0] && lr[0].transcript || '').trim().slice(0, 50) + '”'); vsEval(ev); };
     r.onerror = (ev) => {
       const e = ev && ev.error; vlog('recogniser error: ' + e);
@@ -3334,7 +3375,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       else if (e === 'network' && ++VS.nets >= 3) vsToRecorder('This browser’s speech service is not reachable, so I am listening another way: speak, then pause.');
     };
     r.onend = () => {
-      if (VS.rec === r) VS.rec = null; vlog('recogniser off');
+      if (VS.rec === r) VS.rec = null; vlog('recogniser off'); body.classList.remove('hearing');
       if (VS.cur) { VS.acc = (VS.acc + ' ' + VS.cur).trim(); VS.cur = ''; }
       if (VS.acc.length > 700) { const cut = VS.acc.length - 350; VS.acc = VS.acc.slice(cut); VS.skip = Math.max(0, VS.skip - cut); VS.commitFrom = Math.max(0, (VS.commitFrom || 0) - cut); }
       if (!VS.on || VS.mode !== 'sr') return;
@@ -3421,8 +3462,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     try { localStorage.setItem('cv-hands', '1'); } catch (e) { /* convenience only */ }
     lineWarm(); if (cvEngine() === 'line') [CV_ACK.yes, CV_ACK.sorry].forEach((t) => lineSay(t).catch(() => { /* the device voice covers it */ }));
     const recFirst = vsRecFirst(); vlog('microphone on · ' + (recFirst ? 'recorder' : 'browser speech') + (PL.ios ? ' · iPhone mode' : ''));
-    if (!VS.told) { VS.told = true; capNote(recFirst ? 'I am listening: speak, then pause, and I will answer. ' + (lineUrl() ? 'What you say is sent to Caesar’s line to be written down. ' : '') + 'Tap the microphone to switch it off. You can also type below.'
-      : 'I am listening. Ask away and pause when you have finished' + (VS.wake ? ', or say “Caesar” first' : '') + '. Your browser’s speech service hears the microphone while it is on; tap the microphone to switch it off. You can also type below.'); }
+    if (!VS.told) { VS.told = true; capNote('Listening. Ask anything, then pause. Tap the microphone to stop' + (PL.ios || PL.android ? '' : ' (or press the space bar)') + '. '
+      + (recFirst ? (lineUrl() ? 'What you say goes to Caesar’s line to be written down.' : '') : 'Your browser’s speech service hears the microphone while it is on.')); }
     if (recFirst) { VS.mode = 'whisper'; vsSet('listen'); cvWhisper(false); }
     else { VS.mode = 'sr'; vsSet(active ? 'listen' : 'wake'); vsRec(); clearTimeout(VS.wd); if (!VS.srAlive) VS.wd = setTimeout(vsWatch, 4000); }
     clearInterval(VS.tick); VS.tick = setInterval(vsTick, 250);
@@ -3443,6 +3484,13 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     if (VS.on) { vsStop('Microphone off. Tap it, or type, to carry on.'); return; }
     vsStart(true);
   };
+  addEventListener('keydown', (e) => { // v31: on a laptop, the space bar starts and stops talking on the home screen or in the conversation box
+    if (!CC_WEB || e.code !== 'Space' || e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+    const tg = document.activeElement, typing = /INPUT|TEXTAREA|SELECT|BUTTON/.test((tg && tg.tagName) || '') || (tg && tg.isContentEditable);
+    if (typing || !((typeof view !== 'undefined' && view && view.id === 'cc') || !vBox.hidden)) return;
+    e.preventDefault(); vMic.onclick();
+  });
+  if (CC_WEB && !(window.matchMedia && matchMedia('(hover: none)').matches)) vMic.title = 'Talk to Caesar (or press the space bar)';
   $('#vWake').onclick = () => { VS.wake = !VS.wake; try { localStorage.setItem('cv-wake', VS.wake ? '1' : '0'); } catch (e) { /* convenience only */ } if (VS.on && VS.state === 'wake' && !VS.wake) { VS.winUntil = Date.now() + 14000; vsSet('listen'); } vsPaint(); };
   function caesarListen() { vMic.onclick(); }
   vMic.onpointerenter = () => { if (CC_WEB && !CV.tts && !CV.loading && cvWantGeorge() && !(navigator.connection && navigator.connection.saveData)) cvLoad().catch(() => { /* reported on use */ }); };
