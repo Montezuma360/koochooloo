@@ -3428,8 +3428,9 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     let granted = false, was = false;
     try { const p = await navigator.permissions.query({ name: 'microphone' }); granted = p.state === 'granted'; } catch (e) { /* not supported */ }
     try { was = localStorage.getItem('cv-hands') === '1'; } catch (e) { /* convenience only */ }
-    if (granted && (was || /talk/.test(location.hash)) && !VS.on) { capOpen(); vsStart(false); }
-    else if (/talk/.test(location.hash)) { vMic.classList.add('pulse'); setTimeout(() => toast('Caesar · tap the microphone, then say “Caesar”'), 900); }
+    const phone = PL.ios || PL.android || MOBILE; // phones need a tap to allow the microphone and the voice
+    if (granted && !phone && (was || /talk/.test(location.hash)) && !VS.on) { capOpen(); vsStart(false); }
+    else if (/talk/.test(location.hash) || (phone && was)) { vMic.classList.add('pulse'); setTimeout(() => toast('Caesar · tap the gold microphone and ask me anything'), 900); }
   })();
 
   /* ----- Caesar's only voice: Jerry B. (British RP). The data repo records the briefing and critical alerts (data/voice/);
