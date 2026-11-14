@@ -3374,7 +3374,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       VS.skip = vsFull().length; VS.strip = null; VS.winUntil = Date.now() + 16000;
       if (VS.mode === 'whisper') { vsSet('listen'); cvWhisper(true); return; }
       VS.follow = true; vsSet(bye && VS.wake ? 'wake' : 'listen');
-    }, 450);
+      if (VS.mode === 'sr' && !VS.rec) vsRec(); // listening again at once (iPhone paused it while he spoke)
+    }, PL.ios && VS.mode === 'sr' ? 120 : 450); // iPhone: the recogniser was off while he spoke, so there is no echo to wait out
   }
   function vsTick() {
     if (!VS.on) return;
