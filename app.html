@@ -397,6 +397,21 @@ body.speaking .ripples i, body.thinking .ripples i { animation-duration: 2.4s; b
 .swanBtn:hover .tapHint, .swanBtn:focus-visible .tapHint { opacity: 1; }
 
 /* ===== v26: Caesar from the owner's portrait, swimming toward you (transform and opacity only: smooth on phones) ===== */
+/* v29: a clean circle in every browser. Safari does not clip moving pictures to a rounded box, so it showed the square portrait over
+   the calligraphy. The circle is now cut with clip-path, and the portrait itself fades to black before the edge, so no corner can show. */
+.ringwrap svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; filter: none; transform-origin: 50% 50%; }
+.ringwrap svg.spinA { animation: ringTurn 300s linear infinite; will-change: transform; }
+.ringwrap svg.spinB { animation: ringTurn 520s linear infinite reverse; will-change: transform; }
+.ripples { display: none; }
+.swanBtn { overflow: visible; isolation: isolate; -webkit-clip-path: circle(50% at 50% 50%); clip-path: circle(50% at 50% 50%); background: radial-gradient(circle closest-side, #030304 0 66%, rgba(3, 3, 4, 0) 100%) !important; box-shadow: none !important; }
+.swanBtn .swanArt { -webkit-mask-image: radial-gradient(circle closest-side at 50% 50%, #000 70%, rgba(0, 0, 0, 0) 98%); mask-image: radial-gradient(circle closest-side at 50% 50%, #000 70%, rgba(0, 0, 0, 0) 98%); }
+.swanBtn::before { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: 50%; pointer-events: none; box-shadow: inset 0 0 0 1px rgba(184, 151, 90, 0.42), inset 0 0 34px 6px rgba(0, 0, 0, 0.55); transition: box-shadow 0.4s; }
+.swanBtn:focus-visible { outline: none; }
+.swanBtn:focus-visible::before, .swanBtn:hover::before { box-shadow: inset 0 0 0 1.5px rgba(220, 194, 140, 0.8), inset 0 0 34px 6px rgba(0, 0, 0, 0.55); }
+body.listening .swanBtn::before { box-shadow: inset 0 0 0 1.5px rgba(220, 194, 140, 0.85), inset 0 0 34px 6px rgba(0, 0, 0, 0.5); }
+.swanBtn::after { inset: -50%; border-radius: 0; background: radial-gradient(closest-side, rgba(220, 194, 140, 0.13), rgba(220, 194, 140, 0) 70%); mix-blend-mode: normal; animation: sheen 16s ease-in-out infinite alternate; will-change: transform; z-index: 2; }
+@keyframes sheen { from { transform: translate(-24%, -20%); } to { transform: translate(24%, 8%); } }
+.swanBtn .tapHint { z-index: 4; }
 .swanBtn { background: #020202; box-shadow: 0 0 0 1px rgba(184, 151, 90, 0.42), 0 0 50px rgba(0, 0, 0, 0.7); }
 .swanBtn .swanArt { animation: swimNear 11s ease-in-out infinite alternate; transform-origin: 50% 80%; will-change: transform; }
 .swanBob { position: absolute; inset: 0; transform-origin: 50% 80%; animation: swimBob 3.4s ease-in-out infinite; will-change: transform; }
@@ -584,7 +599,7 @@ table.lux td:first-child { font-family: var(--sans); }
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ring .rot, .ring .rot2, .ring .mote, .ccglow, .ripples i, .swanBtn .swanArt, .swanBtn::after, .map .hs .pulse { animation: none !important; }
+  .ring .rot, .ring .rot2, .ringwrap svg.spinA, .ringwrap svg.spinB, .ring .mote, .ccglow, .ripples i, .swanBtn .swanArt, .swanBtn::after, .map .hs .pulse { animation: none !important; }
   .ripples i { opacity: 0; }
 }
 
@@ -1832,11 +1847,12 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     for (let k = 0; k < 26; k++) { const a = (k / 26) * Math.PI * 2 + (k % 3) * 0.07, r = 392 + ((k * 37) % 23) - 11; motes += '<circle class="mote" cx="' + (500 + r * Math.sin(a)).toFixed(1) + '" cy="' + (500 - r * Math.cos(a)).toFixed(1) + '" r="' + (1.4 + (k % 4) * 0.45).toFixed(2) + '" style="animation-delay:-' + ((k * 0.83) % 6).toFixed(2) + 's"/>'; }
     let ticks = ''; for (let k = 0; k < 4; k++) ticks += '<rect x="495.5" y="25.5" width="9" height="9" transform="rotate(' + (k * 90) + ' 500 500) rotate(45 500 30)" fill="#0b0b0e" stroke="rgba(184,151,90,.55)"/>';
     const cal = [16.667, 50, 83.333].map((o) => '<text class="cal"><textPath href="#ccRp" startOffset="' + o + '%" text-anchor="middle">' + PHRASE + '</textPath></text>').join('');
-    svg.innerHTML = '<defs><path id="ccRp" d="M500,138 a362,362 0 1,1 -0.1,0 Z"/></defs>'
-      + '<circle cx="500" cy="500" r="350" fill="none" stroke="rgba(184,151,90,.34)"/><circle cx="500" cy="500" r="426" fill="none" stroke="rgba(184,151,90,.2)"/>'
-      + '<g class="rot2"><circle cx="500" cy="500" r="470" fill="none" stroke="rgba(184,151,90,.16)" stroke-dasharray="1.2 10.6"/>' + ticks + '</g>'
-      + '<g class="rot">' + cal + motes + '</g>';
-    wrap.prepend(svg);
+    const layer = (cls, html) => { const g = document.createElementNS(NS, 'svg'); g.setAttribute('viewBox', '0 0 1000 1000'); g.setAttribute('class', 'ring ' + cls); g.setAttribute('aria-hidden', 'true'); g.innerHTML = html; return g; };
+    svg.setAttribute('class', 'ring base');
+    svg.innerHTML = '<circle cx="500" cy="500" r="426" fill="none" stroke="rgba(184,151,90,.2)"/>';
+    const spinA = layer('spinA', '<defs><path id="ccRp" d="M500,138 a362,362 0 1,1 -0.1,0 Z"/><filter id="ccGlow" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="b"/><feFlood flood-color="#a8323f" flood-opacity="0.42"/><feComposite in2="b" operator="in" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g filter="url(#ccGlow)">' + cal + '</g>'); // v29: the calligraphy, its glow drawn once, turning slowly
+    const spinM = layer('spinA motes', motes), spinB = layer('spinB', '<circle cx="500" cy="500" r="470" fill="none" stroke="rgba(184,151,90,.16)" stroke-dasharray="1.2 10.6"/>' + ticks);
+    wrap.prepend(svg, spinB, spinA, spinM);
     const sb = $('#ccSwan'), art = el('span', 'swanArt');
     if (SWAN) { // v26: body and head are two layers of the same portrait, so the head can look around and nod while he glides
       const bob = el('span', 'swanBob'), body0 = new Image(); body0.src = SWAN; body0.alt = ''; body0.decoding = 'async'; body0.className = 'sb'; body0.draggable = false;
