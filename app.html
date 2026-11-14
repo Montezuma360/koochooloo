@@ -2215,7 +2215,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     const vc = card('Caesar’s voice'); const tog = (label, on, fn) => { const b = el('button', 'tog'); b.type = 'button'; b.setAttribute('aria-pressed', String(on)); b.append(el('span', '', label), el('u', '', on ? 'ON' : 'OFF')); b.onclick = () => { fn(); renderSettings(); }; return b; };
     const vx = VOICE.ix, vb = vx && vx.briefing; const vs = el('div', 'kv');
     const cvName = (CV_VOICES.find((v) => v[0] === CV.voice) || CV_VOICES[0])[1];
-    vs.append(el('span', '', 'Speaking voice'), el('b', '', cvEngine() === 'device' ? 'Device British voice' + (DEV.voice ? ' · ' + DEV.voice.name.replace(/Microsoft |Google |\(.*?\)| - .*$/g, '').trim() : '') : cvName + ' · ' + (CV.tts ? 'ready' : CV.loading ? 'loading ' + CV.pct + '%' : CV.err ? 'could not load' : 'loads on first use')),
+    vs.append(el('span', '', 'Speaking voice'), el('b', '', cvEngine() === 'line' ? 'Caesar’s line · natural British voice' : cvEngine() === 'device' ? 'Device British voice' + (DEV.voice ? ' · ' + DEV.voice.name.replace(/Microsoft |Google |\(.*?\)| - .*$/g, '').trim() : '') : cvName + ' · ' + (CV.tts ? 'ready' : CV.loading ? 'loading ' + CV.pct + '%' : CV.err ? 'could not load' : 'loads on first use')),
       el('span', '', 'George’s speed here'), el('b', '', CV.rtf ? CV.rtf.toFixed(1) + ' s to make 1 s of speech' + (CV.rtf > GEORGE_MAX_RTF ? ' · too slow to answer live' : ' · fast enough') : 'not measured yet'),
       el('span', '', 'Listening'), el('b', '', !CC_WEB ? 'keyboard dictation' : !vsRecFirst() ? 'browser speech' : lineUrl() ? 'recorder · Caesar’s line (fast)' : 'recorder · Whisper in this browser'),
       el('span', '', 'Thinking'), el('b', '', !CC_WEB ? 'Claude' : (() => { let k = false; try { k = !!localStorage.getItem('caesar-groq'); } catch (e) { /* none */ } return k ? 'your own Groq key' : lineUrl() ? 'Caesar’s line (fast)' : 'free public line (slow)'; })()),
@@ -2352,12 +2352,23 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     }
   };
   try { if (window.speechSynthesis) { DEV.pick(); speechSynthesis.addEventListener('voiceschanged', () => { DEV.pick(); }); } } catch (e) { /* no speech on this device */ }
+  /* v30: Caesar's line speaks too: a natural British voice made on the line's servers, so a phone never falls back to its robotic voice */
+  const LV = { cache: new Map(), downUntil: 0 };
+  const lineVoice = () => { try { return !!lineUrl() && lineOn() && Date.now() > LV.downUntil && !(LINE.info && LINE.info.voice === 'none'); } catch (e) { return false; } }; // safe before the line code has loaded
+  function lineSay(text) {
+    const t = String(text || '').trim(); const hit = LV.cache.get(t); if (hit) return Promise.resolve(hit);
+    return fetch(lineUrl() + '/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: t.slice(0, 700) }) })
+      .then((r) => { if (!r.ok) { if (r.status === 429 || r.status >= 500 || r.status === 501) LV.downUntil = Date.now() + 60000; throw new Error('line voice ' + r.status); } return r.arrayBuffer(); })
+      .then((buf) => new Promise((ok, no) => { const ctx = cvCtx(); if (!ctx) { no(new Error('no audio')); return; } try { const p = ctx.decodeAudioData(buf, ok, no); if (p && p.then) p.then(ok, no); } catch (e) { no(e); } }))
+      .then((ab) => { const a = { audio: ab.getChannelData(0).slice(), sampling_rate: ab.sampleRate }; if (t.length <= 48) LV.cache.set(t, a); return a; });
+  }
   function cvEngine() {
+    if (CV.mode !== 'george' && CV.mode !== 'device' && lineVoice()) return 'line';
     if (CV.mode === 'george' || !DEV.ok()) return 'george';
     if (CV.mode === 'device') return 'device';
     return CV.tts && CV.rtf && CV.rtf <= GEORGE_MAX_RTF ? 'george' : 'device';
   }
-  const cvWantGeorge = () => CV.mode === 'george' || !DEV.ok() || (CV.mode === 'auto' && !(CV.rtf > GEORGE_MAX_RTF));
+  const cvWantGeorge = () => CV.mode === 'george' || (!(CV.mode === 'auto' && lineVoice()) && (!DEV.ok() || (CV.mode === 'auto' && !(CV.rtf > GEORGE_MAX_RTF)))); // no 90 MB download when the line speaks
   function cvVoiceTip() { // once: say plainly when this browser only offers a basic, robotic British voice
     const v = DEV.voice; if (!v || /natural|neural|premium|enhanced|online|siri/i.test(v.name)) return;
     let told = false; try { told = !!localStorage.getItem('cv-tip-voice'); localStorage.setItem('cv-tip-voice', '1'); } catch (e) { return; }
@@ -2584,7 +2595,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function cvAck(key) { // an instant remembered phrase, or nothing; never waits on the model
     if (cvEngine() === 'device') { const pd = DEV.say(CV_ACK[key]).then(() => true); CV.ack = pd; pd.then(() => { if (CV.ack === pd) CV.ack = null; }); return pd; }
-    const hit = CV.cache.get(CV_ACK[key]); if (!hit || !cvCtx()) return Promise.resolve(false);
+    const hit = (cvEngine() === 'line' ? LV.cache : CV.cache).get(CV_ACK[key]); if (!hit || !cvCtx()) return Promise.resolve(false);
     const p = cvPlayNow(hit, 'ack').then(() => true); CV.ack = p; p.then(() => { if (CV.ack === p) CV.ack = null; }); return p;
   }
   function cvChime() {
@@ -2600,11 +2611,11 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     CV.busy = false; setSpeaking(false);
   }
   /* ----- speaking as the answer arrives: the first clause is short, later sentences are made while he talks ----- */
-  function cvBudget(eng) { if (eng === 'device') return { n: 5, c: 560 }; const r = CV.rtf || 0; return r > 2.4 ? { n: 1, c: 130 } : r > 1.15 ? { n: 2, c: 230 } : { n: 3, c: 360 }; }
+  function cvBudget(eng) { if (eng === 'device' || eng === 'line') return { n: 5, c: 560 }; const r = CV.rtf || 0; return r > 2.4 ? { n: 1, c: 130 } : r > 1.15 ? { n: 2, c: 230 } : { n: 3, c: 360 }; }
   function cvClip(p, c) { if (p.length <= c) return p; const cut = p.slice(0, c), m = cut.match(/^[\s\S]*[,;:]\s/); return ((m && m[0].length > c * 0.5 ? m[0] : cut.replace(/\s+\S*$/, '')).trim().replace(/[,;:]$/, '')) + '.'; }
   function cvFirstLen() { const r = CV.rtf || 0.6; return Math.max(28, Math.min(85, Math.round(1.8 / r * 14.5))); } // characters he can make in about 1.8 s
   function cvClauses(s, first, eng) {
-    const out = []; let x = s.trim(); const maxc = eng === 'device' ? 200 : 320, fl = first && eng !== 'device' ? cvFirstLen() : 0;
+    const out = []; let x = s.trim(); const maxc = eng === 'device' ? 200 : 320, fl = first && eng === 'george' ? cvFirstLen() : first && eng === 'line' ? 70 : 0;
     if (fl && x.length > fl + 6) { const lo = Math.min(24, fl - 4), m = x.slice(lo, fl + 26).search(/[,;:]\s|\s(?:and|but|while|which|because|with)\s/i); if (m >= 0) { const cut = lo + m, head = x.slice(0, cut + (/[,;:]/.test(x[cut]) ? 1 : 0)).trim(); if (head.length >= 18) { out.push(head); x = x.slice(head.length).replace(/^[,;:\s]+/, ''); } } }
     while (x.length > maxc) { const m = x.slice(0, maxc - 20).match(/^[\s\S]*[,;:]\s/), cut = m ? m[0].length : maxc - 20; out.push(x.slice(0, cut).trim()); x = x.slice(cut).trim(); }
     if (x) out.push(x);
@@ -2614,7 +2625,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     cvHalt(keepAck); const my = CV.gen, eng = cvEngine();
     const st = { my, eng, sent: 0, n: 0, chars: 0, done: false, q: [], wake: null, first: true, cut: false, budget: cvBudget(eng), ackT: 0 };
     CV.st = st; CV.busy = true; CV.prep = true; CV.spoken = ''; setSpeaking(true); cvCtx(); if (eng === 'device') { DEV.prime(); cvVoiceTip(); }
-    const enqueue = (chunk) => { const item = { text: chunk, p: st.eng === 'device' ? Promise.resolve(null) : cvGen(chunk, my) }; item.p.catch(() => { /* reported by the runner */ }); st.q.push(item); if (st.wake) st.wake(); };
+    const enqueue = (chunk) => { const item = { text: chunk, p: st.eng === 'device' ? Promise.resolve(null) : st.eng === 'line' ? lineSay(chunk) : cvGen(chunk, my) }; item.p.catch(() => { /* reported by the runner */ }); st.q.push(item); if (st.wake) st.wake(); };
     st.finish = () => { st.done = true; if (st.wake) st.wake(); };
     st.push = (full, final) => {
       if (my !== CV.gen || st.done) return;
@@ -2644,10 +2655,10 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
       while (my === CV.gen) {
         if (!st.q.length) { if (st.done) break; await new Promise((r) => { st.wake = r; }); st.wake = null; continue; }
         const it = st.q.shift(); let a = null;
-        if (st.eng === 'george') {
+        if (st.eng === 'george' || st.eng === 'line') {
           try { a = await it.p; } catch (e1) {
             if (my !== CV.gen) return; if (/cancel/.test(String((e1 && e1.message) || e1)) || !DEV.ok()) throw e1;
-            st.eng = 'device'; st.q.forEach((x) => { x.p = Promise.resolve(null); }); if (!CV.fellBack) { CV.fellBack = true; toast('Caesar · George could not be made here, so I am using the device’s own voice'); }
+            const was = st.eng; st.eng = 'device'; DEV.prime(); st.q.forEach((x) => { x.p = Promise.resolve(null); }); if (!CV.fellBack) { CV.fellBack = true; toast(was === 'line' ? 'Caesar · my voice line is busy, so I am using this device’s voice for a moment' : 'Caesar · George could not be made here, so I am using the device’s own voice'); }
           }
         }
         if (my !== CV.gen) return;
@@ -3260,7 +3271,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   /* v27: every phone gets a way to talk. Browsers whose own speech recognition is missing, switched off or refused move to the recorder
      ears by themselves, and a blocked microphone gets instructions for that exact device. */
-  function vsRecFirst() { return !CV_SR || CV.noSR || (!!lineUrl() && (PL.iosOther || PL.inapp)); }
+  function vsRecFirst() { return !CV_SR || CV.noSR || (!!lineUrl() && (PL.ios || PL.android || PL.iosOther || PL.inapp)); }
   function micHelp() {
     if (PL.inapp) return 'This app’s built-in browser is blocking the microphone. Open this page in ' + (PL.ios ? 'Safari' : 'Chrome') + ' (the ⋯ or share menu, then “Open in browser”) and talk to me there. You can also type below.';
     if (PL.ios && !PL.iosOther) return 'The microphone is blocked. In Safari, tap the “aA” or page icon in the address bar, choose Website Settings, set Microphone to Allow, then tap the microphone again.';
@@ -3359,7 +3370,7 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
   }
   function vsWakeOnly() { // you said only “Caesar”: answer with a remembered “Yes?”
     if (!VS.on || VS.state !== 'listen' || VS.ackDone || vsCmdOf(vsFull())) return;
-    VS.ackDone = true; if (cvEngine() === 'device' || CV.cache.has(CV_ACK.yes)) { VS.strip = /^(?:yes)\b[\s,.?!-]*/i; cvAck('yes'); }
+    VS.ackDone = true; if (cvEngine() === 'device' || (cvEngine() === 'line' ? LV.cache : CV.cache).has(CV_ACK.yes)) { VS.strip = /^(?:yes)\b[\s,.?!-]*/i; cvAck('yes'); }
   }
   function vsCommit() {
     clearTimeout(VS.timer); if (!VS.on || (VS.state !== 'listen')) return;
@@ -3408,7 +3419,8 @@ let LIVE = {"generated":"2026-10-31T01:32:10Z","layers":{"prices":"2026-10-31T01
     capOpen(); stopVoiceClips(); cvHalt();
     VS.on = true; VS.follow = false; VS.fast = 0; VS.nets = 0; VS.acc = ''; VS.cur = ''; VS.skip = 0; VS.strip = null; VS.settling = false; VS.bye = false; VS.winUntil = Date.now() + (active ? 14000 : 0);
     try { localStorage.setItem('cv-hands', '1'); } catch (e) { /* convenience only */ }
-    lineWarm(); const recFirst = vsRecFirst(); vlog('microphone on · ' + (recFirst ? 'recorder' : 'browser speech') + (PL.ios ? ' · iPhone mode' : ''));
+    lineWarm(); if (cvEngine() === 'line') [CV_ACK.yes, CV_ACK.sorry].forEach((t) => lineSay(t).catch(() => { /* the device voice covers it */ }));
+    const recFirst = vsRecFirst(); vlog('microphone on · ' + (recFirst ? 'recorder' : 'browser speech') + (PL.ios ? ' · iPhone mode' : ''));
     if (!VS.told) { VS.told = true; capNote(recFirst ? 'I am listening: speak, then pause, and I will answer. ' + (lineUrl() ? 'What you say is sent to Caesar’s line to be written down. ' : '') + 'Tap the microphone to switch it off. You can also type below.'
       : 'I am listening. Ask away and pause when you have finished' + (VS.wake ? ', or say “Caesar” first' : '') + '. Your browser’s speech service hears the microphone while it is on; tap the microphone to switch it off. You can also type below.'); }
     if (recFirst) { VS.mode = 'whisper'; vsSet('listen'); cvWhisper(false); }

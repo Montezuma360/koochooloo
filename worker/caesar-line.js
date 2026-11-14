@@ -3,10 +3,13 @@
  * What it does
  *   POST /chat  {messages:[{role, content}], max_tokens}  -> the answer, streamed word by word (OpenAI-style server-sent events)
  *   POST /hear  raw audio (webm, mp4/m4a, ogg, wav)       -> {"text": "what you said"}
+ *   POST /speak {text}                                      -> Caesar's voice: natural British speech as MP3 (Deepgram Aura "Helios" on Workers AI)
  *   GET  /                                                  -> {"ok": true, ...} (a health check; also warms the line)
  *
  * What it needs: nothing but a free Cloudflare account. The "Deploy to Cloudflare" button sets everything up:
- *   AI        the Workers AI binding (in wrangler.jsonc): free thinking and ears, about 10,000 "neurons" a day, roughly 800 short answers.
+ *   AI        the Workers AI binding (in wrangler.jsonc): thinking, ears and voice from Cloudflare's free daily allowance (10,000
+ *             "neurons" a day, renewed every day). A spoken answer costs about 220 neurons, almost all of it the natural voice, so the
+ *             free allowance covers roughly 45 spoken answers a day; on Cloudflare's $5 Workers Paid plan each one costs about $0.0025.
  *   GROQ_KEY  optional secret, added later in the dashboard (Settings, Variables and Secrets): a free key from console.groq.com
  *             (starts gsk_) makes answers even quicker and adds Groq's own free daily allowance. Never put a key in this file.
  *
@@ -21,7 +24,9 @@ const GROQ_CHAT = ['openai/gpt-oss-20b', 'openai/gpt-oss-120b']; // the second t
 const GROQ_EARS = 'whisper-large-v3-turbo';
 const CF_CHAT = '@cf/meta/llama-3.1-8b-instruct-fp8-fast';
 const CF_EARS = '@cf/openai/whisper-large-v3-turbo';
-const PER_MINUTE = { chat: 20, hear: 24 }; // per visitor, per Cloudflare location
+const CF_VOICE = '@cf/deepgram/aura-1', CF_VOICE_BACKUP = '@cf/myshell-ai/melotts';
+const VOICES = ['helios', 'orion', 'arcas', 'perseus', 'angus', 'orpheus', 'zeus', 'athena', 'asteria', 'luna', 'stella', 'hera'];
+const PER_MINUTE = { chat: 20, hear: 24, speak: 90 }; // per visitor, per Cloudflare location
 const EAR_HINT = 'Caesar, Koochooloo, S&P 500, Nasdaq, FTSE, Nvidia, Bitcoin, Ethereum.';
 const seen = new Map();
 
@@ -37,13 +42,13 @@ export default {
     };
     if (req.method === 'OPTIONS') return new Response(null, { status: allowed ? 204 : 403, headers: h });
     const path = new URL(req.url).pathname.replace(/\/+$/, '') || '/';
-    if (req.method === 'GET' && path === '/') return json({ ok: true, thinking: env.GROQ_KEY ? 'groq' : env.AI ? 'cloudflare' : 'none', ears: env.GROQ_KEY ? 'groq' : env.AI ? 'cloudflare' : 'none' }, 200, h);
+    if (req.method === 'GET' && path === '/') return json({ ok: true, thinking: env.GROQ_KEY ? 'groq' : env.AI ? 'cloudflare' : 'none', ears: env.GROQ_KEY ? 'groq' : env.AI ? 'cloudflare' : 'none', voice: env.AI ? 'cloudflare' : 'none' }, 200, h);
     if (!allowed) return json({ error: 'This line only serves the Koochooloo website.' }, 403, h);
     if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405, h);
-    const kind = path === '/chat' ? 'chat' : path === '/hear' ? 'hear' : '';
+    const kind = path === '/chat' ? 'chat' : path === '/hear' ? 'hear' : path === '/speak' ? 'speak' : '';
     if (!kind) return json({ error: 'not found' }, 404, h);
     if (!allow(req.headers.get('CF-Connecting-IP') || 'unknown', kind)) return json({ error: 'slow down' }, 429, { ...h, 'Retry-After': '20' });
-    try { return kind === 'chat' ? await chat(req, env, h) : await hear(req, env, h); }
+    try { return kind === 'chat' ? await chat(req, env, h) : kind === 'speak' ? await speak(req, env, h) : await hear(req, env, h); }
     catch (e) { return json({ error: 'the line failed', detail: String((e && e.message) || e).slice(0, 160) }, 502, h); }
   }
 };
@@ -128,6 +133,31 @@ async function hear(req, env, h) {
     return json({ text: String((j && j.text) || '').trim(), by: 'cloudflare' }, 200, h);
   }
   return json({ error: 'busy' }, 429, { ...h, 'Retry-After': '20' });
+}
+
+async function speak(req, env, h) { // Caesar's voice, sentence by sentence; short phrases come from Cloudflare's cache
+  let b; try { b = JSON.parse(await req.text()); } catch (e) { return json({ error: 'bad request' }, 400, h); }
+  const text = String((b && b.text) || '').replace(/\s+/g, ' ').trim().slice(0, 700);
+  if (!text) return json({ error: 'nothing to say' }, 400, h);
+  if (!env.AI) return json({ error: 'no voice on this line' }, 501, h);
+  const voice = VOICES.includes(b && b.voice) ? b.voice : (VOICES.includes(env.VOICE) ? env.VOICE : 'helios');
+  const store = typeof caches !== 'undefined' && caches.default && text.length <= 300 ? caches.default : null;
+  const key = new Request('https://caesar-line.cache/speak?v=' + voice + '&t=' + encodeURIComponent(text));
+  if (store) { const hit = await store.match(key); if (hit) return new Response(hit.body, { headers: { ...h, 'Content-Type': 'audio/mpeg', 'X-Caesar-Voice': 'cache' } }); }
+  let bytes, by = 'aura ' + voice;
+  try { bytes = await audioBytes(await env.AI.run(CF_VOICE, { text, speaker: voice, encoding: 'mp3' })); }
+  catch (e) { bytes = await audioBytes(await env.AI.run(CF_VOICE_BACKUP, { prompt: text, lang: 'en' })); by = 'melotts'; }
+  if (store) { try { await store.put(key, new Response(bytes, { headers: { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'public, max-age=2592000' } })); } catch (e) { /* cache is a bonus */ } }
+  return new Response(bytes, { headers: { ...h, 'Content-Type': 'audio/mpeg', 'X-Caesar-Voice': by } });
+}
+
+async function audioBytes(out) { // Workers AI returns a stream, raw bytes or base64, depending on the model
+  if (out instanceof ReadableStream) return new Uint8Array(await new Response(out).arrayBuffer());
+  if (out instanceof ArrayBuffer) return new Uint8Array(out);
+  if (ArrayBuffer.isView(out)) return new Uint8Array(out.buffer, out.byteOffset, out.byteLength);
+  if (out && typeof out.audio === 'string') { const bin = atob(out.audio); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
+  if (out && out.audio instanceof ReadableStream) return new Uint8Array(await new Response(out.audio).arrayBuffer());
+  throw new Error('no audio from the voice model');
 }
 
 function b64(buf) { const u = new Uint8Array(buf); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); }
